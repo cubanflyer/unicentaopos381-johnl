@@ -238,7 +238,11 @@ public class DeviceTicket {
                     case "file":
                         pw = new PrinterWritterFile(port);
                         m_apool.put(skey, pw);
-                        break;
+                        break;                       
+                   case "raw":
+                        pw = new PrinterWritterRaw(port);
+                        m_apool.put(skey, pw);
+                      break;
                     default:
                         throw new TicketPrinterException();
                 }
