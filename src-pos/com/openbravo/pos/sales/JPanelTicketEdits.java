@@ -59,6 +59,10 @@ public class JPanelTicketEdits extends JPanelTicket {
         m_catandlines.loadCatalog();
     }
 
+    @Override
+    public void reLoadCatalog(){      
+    }    
+ 
     /**
      *
      */
@@ -112,7 +116,7 @@ public class JPanelTicketEdits extends JPanelTicket {
     @Override
     protected void resetSouthComponent() {
     }
-    
+      
     private class CatalogListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {

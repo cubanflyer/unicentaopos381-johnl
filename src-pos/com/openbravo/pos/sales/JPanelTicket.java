@@ -436,7 +436,10 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
      *
      */
     protected abstract void resetSouthComponent();
-
+    
+    
+    protected abstract void reLoadCatalog();
+    
     /**
      *
      * @param oTicket
@@ -2380,6 +2383,9 @@ if (pickupSize!=null && (Integer.parseInt(pickupSize) >= tmpPickupId.length())){
                 if (newline != null) {
                     // line has been modified
                     paintTicketLine(i, newline);
+                    if (newline.getUpdated()){
+                        reLoadCatalog();
+                    }
                 }
             } catch (BasicException e) {
                 new MessageInf(e).show(this);

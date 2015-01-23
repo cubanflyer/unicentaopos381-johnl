@@ -16,10 +16,11 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.pos.sales;
 
 import com.openbravo.basic.BasicException;
+import com.openbravo.data.loader.Session;
+import com.openbravo.pos.forms.AppConfig;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -29,53 +30,73 @@ import java.beans.PropertyChangeListener;
 import javax.swing.JFrame;
 import com.openbravo.pos.forms.AppLocal;
 import com.openbravo.pos.forms.AppView;
+import com.openbravo.pos.forms.AppViewConnection;
 import com.openbravo.pos.ticket.TicketLineInfo;
+import com.openbravo.pos.util.AltEncrypter;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 /**
  *
  * @author adrianromero
  */
 public class JProductLineEdit extends javax.swing.JDialog {
-    
+
     private TicketLineInfo returnLine;
     private TicketLineInfo m_oLine;
     private boolean m_bunitsok;
     private boolean m_bpriceok;
-            
-    /** Creates new form JProductLineEdit */
+    private String productID;
+    private final AppConfig m_config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
+    private Session session;
+    private Connection connection;
+    private PreparedStatement pstmt;
+
+    /**
+     * Creates new form JProductLineEdit
+     */
     private JProductLineEdit(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
     }
-    /** Creates new form JProductLineEdit */
+
+    /**
+     * Creates new form JProductLineEdit
+     */
     private JProductLineEdit(java.awt.Dialog parent, boolean modal) {
         super(parent, modal);
     }
-    
+
     private TicketLineInfo init(AppView app, TicketLineInfo oLine) throws BasicException {
         // Inicializo los componentes
         initComponents();
 
+        productID = oLine.getProductID();
         if (oLine.getTaxInfo() == null) {
             throw new BasicException(AppLocal.getIntString("message.cannotcalculatetaxes"));
         }
+
+        // New routine to allow the base product to be update with edited price if requred
+        m_config.load();
+        m_jButtonUpdate.setVisible(Boolean.valueOf(m_config.getProperty("db.productupdate")));
+        m_jButtonUpdate.setEnabled(false);
 
         m_oLine = new TicketLineInfo(oLine);
         m_bunitsok = true;
         m_bpriceok = true;
 
-//  JG 7 May 14 Allow User edit of Product.Name if has EditLine permissions
-//        m_jName.setEnabled(m_oLine.getProductID() == null && app.getAppUserView().getUser().hasPermission("com.openbravo.pos.sales.JPanelTicketEdits"));
-        m_jName.setEnabled(app.getAppUserView().getUser().hasPermission("com.openbravo.pos.sales.JPanelTicketEdits"));        
+        m_jName.setEnabled(m_oLine.getProductID() == null && app.getAppUserView().getUser().hasPermission("com.openbravo.pos.sales.JPanelTicketEdits"));
         m_jPrice.setEnabled(app.getAppUserView().getUser().hasPermission("com.openbravo.pos.sales.JPanelTicketEdits"));
         m_jPriceTax.setEnabled(app.getAppUserView().getUser().hasPermission("com.openbravo.pos.sales.JPanelTicketEdits"));
-        
-//        m_jName.setText(m_oLine.getProperty("product.name"));
-        m_jName.setText(oLine.getProductName());        
+
+        m_jName.setText(m_oLine.getProperty("product.name"));
         m_jUnits.setDoubleValue(oLine.getMultiply());
-        m_jPrice.setDoubleValue(oLine.getPrice()); 
+        m_jPrice.setDoubleValue(oLine.getPrice());
         m_jPriceTax.setDoubleValue(oLine.getPriceTax());
         m_jTaxrate.setText(oLine.getTaxInfo().getName());
-        
+
         m_jName.addPropertyChangeListener("Edition", new RecalculateName());
         m_jUnits.addPropertyChangeListener("Edition", new RecalculateUnits());
         m_jPrice.addPropertyChangeListener("Edition", new RecalculatePrice());
@@ -85,52 +106,52 @@ public class JProductLineEdit extends javax.swing.JDialog {
         m_jUnits.addEditorKeys(m_jKeys);
         m_jPrice.addEditorKeys(m_jKeys);
         m_jPriceTax.addEditorKeys(m_jKeys);
-        
+
         if (m_jName.isEnabled()) {
             m_jName.activate();
         } else {
             m_jUnits.activate();
         }
-        
+
         printTotals();
 
-        getRootPane().setDefaultButton(m_jButtonOK);   
+        getRootPane().setDefaultButton(m_jButtonOK);
         returnLine = null;
         setVisible(true);
-      
+
         return returnLine;
     }
-    
+
     private void printTotals() {
-        
+
         if (m_bunitsok && m_bpriceok) {
             m_jSubtotal.setText(m_oLine.printSubValue());
             m_jTotal.setText(m_oLine.printValue());
             m_jButtonOK.setEnabled(true);
-       } else {
+        } else {
             m_jSubtotal.setText(null);
             m_jTotal.setText(null);
             m_jButtonOK.setEnabled(false);
         }
     }
-    
+
     private class RecalculateUnits implements PropertyChangeListener {
-        @Override
+
         public void propertyChange(PropertyChangeEvent evt) {
             Double value = m_jUnits.getDoubleValue();
             if (value == null || value == 0.0) {
                 m_bunitsok = false;
             } else {
                 m_oLine.setMultiply(value);
-                m_bunitsok = true;                
+                m_bunitsok = true;
             }
 
             printTotals();
         }
     }
-    
+
     private class RecalculatePrice implements PropertyChangeListener {
-        @Override
+
         public void propertyChange(PropertyChangeEvent evt) {
 
             Double value = m_jPrice.getDoubleValue();
@@ -144,10 +165,10 @@ public class JProductLineEdit extends javax.swing.JDialog {
 
             printTotals();
         }
-    }    
-    
+    }
+
     private class RecalculatePriceTax implements PropertyChangeListener {
-        @Override
+
         public void propertyChange(PropertyChangeEvent evt) {
 
             Double value = m_jPriceTax.getDoubleValue();
@@ -158,24 +179,25 @@ public class JProductLineEdit extends javax.swing.JDialog {
                 m_oLine.setPriceTax(value);
                 m_jPrice.setDoubleValue(m_oLine.getPrice());
                 m_bpriceok = true;
+                m_jButtonUpdate.setEnabled(Boolean.valueOf(m_config.getProperty("db.productupdate")));
             }
 
             printTotals();
         }
-    }   
-    
+    }
+
     private class RecalculateName implements PropertyChangeListener {
-        @Override
+
         public void propertyChange(PropertyChangeEvent evt) {
             m_oLine.setProperty("product.name", m_jName.getText());
         }
-    }   
-    
+    }
+
     private static Window getWindow(Component parent) {
         if (parent == null) {
             return new JFrame();
         } else if (parent instanceof Frame || parent instanceof Dialog) {
-            return (Window)parent;
+            return (Window) parent;
         } else {
             return getWindow(parent.getParent());
         }
@@ -190,23 +212,22 @@ public class JProductLineEdit extends javax.swing.JDialog {
      * @throws BasicException
      */
     public static TicketLineInfo showMessage(Component parent, AppView app, TicketLineInfo oLine) throws BasicException {
-         
+
         Window window = getWindow(parent);
-        
+
         JProductLineEdit myMsg;
-        if (window instanceof Frame) { 
+        if (window instanceof Frame) {
             myMsg = new JProductLineEdit((Frame) window, true);
         } else {
             myMsg = new JProductLineEdit((Dialog) window, true);
         }
         return myMsg.init(app, oLine);
-    }        
+    }
 
-    
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -228,6 +249,7 @@ public class JProductLineEdit extends javax.swing.JDialog {
         jLabel7 = new javax.swing.JLabel();
         m_jSubtotal = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
+        m_jButtonUpdate = new javax.swing.JButton();
         m_jButtonCancel = new javax.swing.JButton();
         m_jButtonOK = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
@@ -326,6 +348,21 @@ public class JProductLineEdit extends javax.swing.JDialog {
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
+        m_jButtonUpdate.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        m_jButtonUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/filesave.png"))); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("pos_messages"); // NOI18N
+        m_jButtonUpdate.setText(bundle.getString("Button.UpdateProduct")); // NOI18N
+        m_jButtonUpdate.setFocusPainted(false);
+        m_jButtonUpdate.setFocusable(false);
+        m_jButtonUpdate.setMargin(new java.awt.Insets(8, 16, 8, 16));
+        m_jButtonUpdate.setRequestFocusEnabled(false);
+        m_jButtonUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_jButtonUpdateActionPerformed(evt);
+            }
+        });
+        jPanel1.add(m_jButtonUpdate);
+
         m_jButtonCancel.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         m_jButtonCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/cancel.png"))); // NOI18N
         m_jButtonCancel.setText(AppLocal.getIntString("Button.Cancel")); // NOI18N
@@ -367,8 +404,8 @@ public class JProductLineEdit extends javax.swing.JDialog {
 
         getContentPane().add(jPanel3, java.awt.BorderLayout.EAST);
 
-        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((screenSize.width-580)/2, (screenSize.height-362)/2, 580, 362);
+        setSize(new java.awt.Dimension(580, 362));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void m_jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jButtonCancelActionPerformed
@@ -380,10 +417,36 @@ public class JProductLineEdit extends javax.swing.JDialog {
     private void m_jButtonOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jButtonOKActionPerformed
 
         returnLine = m_oLine;
-        
+
         dispose();
 
     }//GEN-LAST:event_m_jButtonOKActionPerformed
+
+    private void m_jButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {
+        // Update the database with the new price passed
+        String db_password = (m_config.getProperty("db.password"));
+
+        if (m_config.getProperty("db.user") != null && db_password != null && db_password.startsWith("crypt:")) {
+            // the password is encrypted
+            AltEncrypter cypher = new AltEncrypter("cypherkey" + m_config.getProperty("db.user"));
+            db_password = cypher.decrypt(db_password.substring(6));
+        }
+        try {
+            session = AppViewConnection.createSession(m_config);
+            connection = DriverManager.getConnection(m_config.getProperty("db.URL"), m_config.getProperty("db.user"), db_password);
+            pstmt = connection.prepareStatement("UPDATE PRODUCTS SET PRICESELL = ? WHERE ID = ?");
+            pstmt.setDouble(1, m_jPrice.getDoubleValue());
+            pstmt.setString(2, productID);
+            pstmt.executeUpdate();
+            m_jButtonUpdate.setEnabled(false);
+        } catch (BasicException | SQLException e) {
+            //put error messsage here
+            return;
+        }
+
+        m_oLine.setUpdated(true);
+        
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -400,6 +463,7 @@ public class JProductLineEdit extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JButton m_jButtonCancel;
     private javax.swing.JButton m_jButtonOK;
+    private javax.swing.JButton m_jButtonUpdate;
     private com.openbravo.editor.JEditorKeys m_jKeys;
     private com.openbravo.editor.JEditorString m_jName;
     private com.openbravo.editor.JEditorCurrency m_jPrice;
@@ -409,5 +473,5 @@ public class JProductLineEdit extends javax.swing.JDialog {
     private javax.swing.JLabel m_jTotal;
     private com.openbravo.editor.JEditorDouble m_jUnits;
     // End of variables declaration//GEN-END:variables
-    
+
 }

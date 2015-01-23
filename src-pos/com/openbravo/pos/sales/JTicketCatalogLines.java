@@ -107,7 +107,7 @@ public class JTicketCatalogLines extends javax.swing.JPanel {
     
     private void showView(String sView) {
         CardLayout cl = (CardLayout)(this.getLayout());
-        cl.show(this, sView);       
+            cl.show(this, sView);       
     }
     
     /** This method is called from within the constructor to
