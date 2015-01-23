@@ -2474,7 +2474,7 @@ if (pickupSize!=null && (Integer.parseInt(pickupSize) >= tmpPickupId.length())){
 
     private void btnSplitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSplitActionPerformed
 
-        if (m_oTicket.getLinesCount() > 0) {
+        if (m_oTicket.getLinesCount() > 1) {
             ReceiptSplit splitdialog = ReceiptSplit.getDialog(this, dlSystem.getResourceAsXML("Ticket.Line"), dlSales, dlCustomers, taxeslogic);
             
             TicketInfo ticket1 = m_oTicket.copyTicket();

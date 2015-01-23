@@ -192,7 +192,7 @@ public class JPanelConfiguration extends JPanel implements JPanelView {
         } else {
             return true;
         }
-    }      
+    }        
 
     
     /** This method is called from within the constructor to
@@ -217,14 +217,14 @@ public class JPanelConfiguration extends JPanel implements JPanelView {
         jbtnSave = new javax.swing.JButton();
 
         setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        setMinimumSize(new java.awt.Dimension(0, 0));
-        setPreferredSize(new java.awt.Dimension(750, 500));
+        setMinimumSize(new java.awt.Dimension(780, 550));
+        setPreferredSize(new java.awt.Dimension(780, 550));
 
         jTabbedPane1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jTabbedPane1.setPreferredSize(new java.awt.Dimension(730, 450));
 
         jPanelDatabase.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jPanelDatabase.setPreferredSize(new java.awt.Dimension(0, 400));
+        jPanelDatabase.setPreferredSize(new java.awt.Dimension(0, 450));
         jPanelDatabase.setLayout(new javax.swing.BoxLayout(jPanelDatabase, javax.swing.BoxLayout.LINE_AXIS));
         jTabbedPane1.addTab("Database Setup", jPanelDatabase);
 
@@ -325,8 +325,8 @@ public class JPanelConfiguration extends JPanel implements JPanelView {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
