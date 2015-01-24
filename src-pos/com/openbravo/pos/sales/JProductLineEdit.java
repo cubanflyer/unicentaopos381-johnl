@@ -161,6 +161,7 @@ public class JProductLineEdit extends javax.swing.JDialog {
                 m_oLine.setPrice(value);
                 m_jPriceTax.setDoubleValue(m_oLine.getPriceTax());
                 m_bpriceok = true;
+                m_jButtonUpdate.setEnabled(Boolean.valueOf(m_config.getProperty("db.productupdate")));                
             }
 
             printTotals();
