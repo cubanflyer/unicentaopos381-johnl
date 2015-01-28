@@ -26,7 +26,7 @@ package com.openbravo.pos.printer.escpos;
 public class CodesIthaca extends Codes {
 
     private static final byte[] INITSEQUENCE = {};
-
+    private static final byte[] PAGEMODE = {};
     private static final byte[] CHAR_SIZE_0 = {0x1D, 0x21, 0x00};
     private static final byte[] CHAR_SIZE_1 = {0x1D, 0x21, 0x01};
     private static final byte[] CHAR_SIZE_2 = {0x1D, 0x21, 0x30};
@@ -51,13 +51,13 @@ public class CodesIthaca extends Codes {
      *
      */
     public static final byte[] UNDERLINE_RESET = {0x1B, 0x2D, 0x00};
-    
+
     private static final byte[] OPEN_DRAWER = {0x1B, 0x78, 0x01};    
     private static final byte[] PARTIAL_CUT = {0x1B, 0x50, 0x00};
     private static final byte[] IMAGE_HEADER = {0x1D, 0x76, 0x30, 0x03};
-    private static final byte[] NEW_LINE = {0x0D, 0x0A}; // Print and carriage return
-    
-    private static final byte[] IMAGE_LOGO = {0x1B, 0x1C, 0x70, 0x01, 0x00};    
+    private static final byte[] NEW_LINE = {0x0D, 0x0A}; // Print and carriage return  
+
+    private static final byte[] IMAGE_LOGO = {0x1B, 0x1C, 0x70, 0x01, 0x00};   
     /** Creates a new instance of CodesIthaca */
     public CodesIthaca() {
     }
@@ -164,6 +164,15 @@ public class CodesIthaca extends Codes {
      *
      * @return
      */
+
+    public byte[] getImageLogo(Byte iNumber) {
+        byte[] IMAGE_LOGO = {0x1C, 0x70, iNumber, 0x00};
+        return IMAGE_LOGO;}
+    
+ 
     @Override
-    public byte[] getImageLogo(){ return IMAGE_LOGO; }
+    public byte[] setPageMode() {
+        return PAGEMODE;
+    }    
+    
 }

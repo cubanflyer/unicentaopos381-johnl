@@ -121,8 +121,10 @@ public abstract class Codes {
      *
      * @return
      */
-    public abstract byte[] getImageLogo();
+    public abstract byte[] getImageLogo(Byte iNumber);
 
+    public abstract byte[] setPageMode();
+    
     /**
      *
      * @param out

@@ -304,8 +304,21 @@ public class TicketParser extends DefaultHandler {
 // Added 23.05.13 used by star TSP700 to print stored logo image JDL            
         case OUTPUT_TICKET:
             if ("logo".equals(qName)){
-                    m_oOutputPrinter.printLogo();
-                  // }        
+//                    m_oOutputPrinter.printLogo();
+                Byte firstLogo = 0x01;
+// no logo number is passed then pass the first logo in the NV store
+                if (text.toString().isEmpty()){
+                    m_oOutputPrinter.printLogo(firstLogo);
+                } else {
+//Check if the value passed >0 and < 254    
+// if not pass the first logo in the NV store                    
+                   if (((Integer.parseInt(text.toString()))> 1) &&  ((Integer.parseInt(text.toString()))< 256)){
+// Convert entry to byte
+                            m_oOutputPrinter.printLogo(Byte.parseByte(text.toString()));                       
+                   }else{
+                            m_oOutputPrinter.printLogo(firstLogo);
+                   }
+                   }  
             }else if ("image".equals(qName)){
                 try {
                     // BufferedImage image = ImageIO.read(getClass().getClassLoader().getResourceAsStream(m_sText.toString()));

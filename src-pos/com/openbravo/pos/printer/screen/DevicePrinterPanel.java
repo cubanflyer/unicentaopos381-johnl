@@ -69,7 +69,7 @@ public class DevicePrinterPanel extends javax.swing.JPanel implements DevicePrin
      *
      */
     @Override
-    public void printLogo(){   
+    public void printLogo(Byte iNumber){   
     }
 
     /**

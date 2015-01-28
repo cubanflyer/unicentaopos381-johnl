@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 public class CodesTMU220 extends Codes {
 
     private static final byte[] INITSEQUENCE = {};
+    private static final byte[] PAGEMODE = {};
 
     /**
      *
@@ -185,10 +186,14 @@ public class CodesTMU220 extends Codes {
         return new byte[0];
     }
 
-    /**
-     *
-     * @return
-     */
     @Override
-    public byte[] getImageLogo(){ return IMAGE_LOGO; }    
+    public byte[] getImageLogo(Byte iNumber) {
+        byte[] IMAGE_LOGO = {0x1C, 0x70, iNumber, 0x00};
+        return IMAGE_LOGO;
+    }
+    
+    @Override
+    public byte[] setPageMode() {
+        return PAGEMODE;
+    }
 }

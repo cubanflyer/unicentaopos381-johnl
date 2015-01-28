@@ -105,26 +105,29 @@ public class DevicePrinterESCPOS implements DevicePrinter  {
     @Override
     public void beginReceipt() {
     }
+   
+    /**
+     *
+     * @param image
+     */
+    @Override
+    public void printImage(BufferedImage image) {      
+        m_CommOutputPrinter.write(ESCPOS.SELECT_PRINTER);        
+        m_CommOutputPrinter.write(m_codes.transImage(image));
+    }    
+    
     
     /**
      *
      * @param image
      */
     @Override
-    public void printImage(BufferedImage image) {
-        
+    public void printLogo(Byte iNumber) {        
         m_CommOutputPrinter.write(ESCPOS.SELECT_PRINTER);        
-        m_CommOutputPrinter.write(m_codes.transImage(image));
+        m_CommOutputPrinter.write(m_codes.getImageLogo(iNumber));
+
     }
     
-    /**
-     *
-     */
-    @Override
-    public void printLogo() {        
-        m_CommOutputPrinter.write(ESCPOS.SELECT_PRINTER);        
-        m_CommOutputPrinter.write(m_codes.getImageLogo());
-    }
 
     /**
      *

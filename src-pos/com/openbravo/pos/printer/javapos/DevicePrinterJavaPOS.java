@@ -158,7 +158,7 @@ public class DevicePrinterJavaPOS  implements DevicePrinter {
      *
      */
     @Override
-    public void printLogo(){   
+    public void printLogo(Byte iNumber){   
     }
 
     /**

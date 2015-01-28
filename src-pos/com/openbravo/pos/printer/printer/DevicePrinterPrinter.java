@@ -183,7 +183,7 @@ public class DevicePrinterPrinter implements DevicePrinter {
      * @param code the code of a productmiale
      */
     @Override
-    public void printLogo(){   
+    public void printLogo(Byte iNumber){   
     }
 
     /**

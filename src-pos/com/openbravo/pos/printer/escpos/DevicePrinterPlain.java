@@ -101,7 +101,7 @@ public class DevicePrinterPlain implements DevicePrinter  {
      *
      */
     @Override
-    public void printLogo(){
+    public void printLogo(Byte iNumber){
         
     }
     

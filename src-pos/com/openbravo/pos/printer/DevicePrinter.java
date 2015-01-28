@@ -139,7 +139,7 @@ public interface DevicePrinter {
     /**
      *
      */
-    public void printLogo();
+    public void printLogo(Byte iNumber);
 
     /**
      *

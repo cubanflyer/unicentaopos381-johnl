@@ -143,7 +143,7 @@ public class DevicePrinterNull implements DevicePrinter {
      *
      */
     @Override
-    public void printLogo() {
+    public void printLogo(Byte iNumber) {
         
     }
 }
