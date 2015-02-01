@@ -2579,14 +2579,23 @@ m_App.getAppUserView().showTask("com.openbravo.pos.customers.CustomersPanel");
             Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-// Autologoff after sending to kitchen   
-       
-            String autoLogoff = (m_App.getProperties().getProperty("till.autoLogoff"));
-            if (autoLogoff != null){
-                if (autoLogoff.equals("true")){  
-                    ((JRootApp)m_App).closeAppView();    
-                      }
-                }    
+// Autologoff after sending to kitchen 
+            // lets check what mode we are operating in   
+            switch (m_App.getProperties().getProperty("machine.ticketsbag")) {
+                case "restaurant":
+//Go back to the main login screen if not set to go back to the tables.               
+                    if ("false".equals(m_App.getProperties().getProperty("till.autoLogoffrestaurant"))) {
+                        deactivate();
+                        ((JRootApp) m_App).closeAppView();
+                        break;
+                    }
+                    deactivate();
+                    setActiveTicket(null, null);
+                    break;
+                default:
+                    deactivate();
+                    ((JRootApp) m_App).closeAppView();
+            }   
 
     }//GEN-LAST:event_j_btnKitchenPrtActionPerformed
 
