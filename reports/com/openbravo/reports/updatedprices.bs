@@ -33,10 +33,10 @@ report.setSentence("SELECT CSVIMPORT.REFERENCE, CSVIMPORT.CODE,"+
 
 
 
-report.addField("REFERENCE", com.openbravo.data.loader.Datas.STRING);
-report.addField("CODE", com.openbravo.data.loader.Datas.STRING);
-report.addField("NAME", com.openbravo.data.loader.Datas.STRING);
-report.addField("PRICEBUY", com.openbravo.data.loader.Datas.DOUBLE);
+report.addField("reference", com.openbravo.data.loader.Datas.STRING);
+report.addField("code", com.openbravo.data.loader.Datas.STRING);
+report.addField("name", com.openbravo.data.loader.Datas.STRING);
+report.addField("pricebuy", com.openbravo.data.loader.Datas.DOUBLE);
 report.addField("pricesell", com.openbravo.data.loader.Datas.DOUBLE);
 report.addField("previousbuy", com.openbravo.data.loader.Datas.DOUBLE);
 report.addField("previoussell", com.openbravo.data.loader.Datas.DOUBLE);

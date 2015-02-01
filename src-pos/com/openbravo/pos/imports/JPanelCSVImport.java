@@ -1,6 +1,6 @@
 //    uniCenta oPOS  - Touch Friendly Point Of Sale
 //    Copyright (c) 2009-2014 uniCenta & previous Openbravo POS works
-//    http://www.unicenta.com
+//    http://www.unicenta.com 3.81
 //
 //    This file is part of uniCenta oPOS
 //
@@ -139,7 +139,6 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
         m_dlSystem = new DataLogicSystem();
         m_dlSystem.init(s);
 
-
         spr = new SaveProvider(
                 m_dlSales.getProductCatUpdate(),
                 m_dlSales.getProductCatInsert(),
@@ -194,7 +193,8 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
 
         File f = new File(CSVFileName);
         if (f.exists()) {
-            products = new CsvReader(CSVFileName);
+            //products = new CsvReader(CSVFileName);
+            products = new CsvReader(new InputStreamReader(new FileInputStream(CSVFileName), "UTF-8"));
             products.setDelimiter(((String) jComboSeparator.getSelectedItem()).charAt(0));
             products.readHeaders();
             // We need a minimum of 5 columns to map all required fields                            
@@ -281,8 +281,10 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
 
         File f = new File(CSVFileName);
         if (f.exists()) {
+
             // Read file
-            products = new CsvReader(CSVFileName);
+            //products = new CsvReader(CSVFileName);
+            products = new CsvReader(new InputStreamReader(new FileInputStream(CSVFileName), "UTF-8"));
             products.setDelimiter(((String) jComboSeparator.getSelectedItem()).charAt(0));
             products.readHeaders();
 
@@ -297,8 +299,12 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
                 currentRecord++;
 
                 // Strip Currency Symbols
-                BuyPrice = StringUtils.replaceChars(BuyPrice, "$", ""); // Remove currency symbol
-                SellPrice = StringUtils.replaceChars(SellPrice, "$", ""); // Remove currency symbol
+                BuyPrice = StringUtils.replaceChars(BuyPrice, "$", ""); // Remove Dolar, Euro and Pound sign Sign
+                SellPrice = StringUtils.replaceChars(SellPrice, "$", ""); // Remove Dolar, Euro and Pound Sign
+                BuyPrice = StringUtils.replaceChars(BuyPrice, "£", ""); // Remove Dolar, Euro and Pound sign Sign
+                SellPrice = StringUtils.replaceChars(SellPrice, "£", ""); // Remove Dolar, Euro and Pound Sign
+                BuyPrice = StringUtils.replaceChars(BuyPrice, "€", ""); // Remove Dolar, Euro and Pound sign Sign
+                SellPrice = StringUtils.replaceChars(SellPrice, "€", ""); // Remove Dolar, Euro and Pound Sign
 
                 dCategory = getCategory();
 
@@ -377,12 +383,15 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
         jTextMissing.setText(Integer.toString(missingData));
         jTextNoChange.setText(Integer.toString(noChanges));
         jTextBadPrice.setText(Integer.toString(badPrice));
-        jTextBadCats.setText(Integer.toString(badCategories.size()));
+        if (badCategories.size() == 1 && badCategories.get(0) == "") {
+            jTextBadCats.setText("0");
+        } else {
+            jTextBadCats.setText(Integer.toString(badCategories.size()));
+        }
     }
 
     /**
-     * Tests
-     * <code>testString</code> for validity as a number
+     * Tests <code>testString</code> for validity as a number
      *
      * @param testString the string to be checked
      * @return <code>True<code> if a real number <code>False<code> if not
@@ -410,12 +419,10 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
                 return (cat);
             }
         }
-
         if (!badCategories.contains(Category)) {
             badCategories.add(Category.trim()); // Save a list of the bad categories so we can tell the user later
         }
         return ((jComboDefaultCategory.getSelectedItem() == reject_bad_categories_text) ? "Bad Category" : (String) cat_list.get(m_CategoryModel.getSelectedText()));
-
     }
 
     /**
@@ -448,10 +455,9 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
         try {
             prodInfo = m_dlSales.getProductInfo(pID);
             dOriginalRate = taxeslogic.getTaxRate(prodInfo.getTaxCategoryID());
-            dCategory = (String) cat_list.get(prodInfo.getCategoryID());
+            dCategory = ((String) cat_list.get(prodInfo.getCategoryID())== null )? prodInfo.getCategoryID():(String) cat_list.get(prodInfo.getCategoryID());
             oldBuyPrice = prodInfo.getPriceBuy();
             oldSellPrice = prodInfo.getPriceSell();
-            productSellPrice *= (1 + dOriginalRate);
             if ((oldBuyPrice != productBuyPrice) || (oldSellPrice != productSellPrice)) {
                 createCSVEntry("Updated Price Details", oldBuyPrice, oldSellPrice * (1 + dOriginalRate));
                 createProduct("update");
@@ -476,7 +482,8 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
 
     /**
      * Returns this object
-     * @return 
+     *
+     * @return
      */
     @Override
     public JComponent getComponent() {
@@ -485,6 +492,7 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
 
     /**
      * Loads Tax and category data into their combo boxes.
+     *
      * @throws com.openbravo.basic.BasicException
      */
     @Override
@@ -519,11 +527,13 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
         jComboSeparator.addItem(";");
         jComboSeparator.addItem("~");
         jComboSeparator.addItem("^");
-
+        jComboSeparator.addItem("|");
+        
     }
 
     /**
-     * Resets all the form fields
+     * Resets all the form fields, update 7.4.14 JDL To fix display error if
+     * user does not exit before running next import
      */
     public void resetFields() {
         // Clear the form
@@ -556,7 +566,14 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
         jTextNoChange.setText("");
         jTextRecords.setText("");
         jTextBadPrice.setText("");
+        jTextBadCats.setText("");
         Headers.clear();
+        newRecords = 0;
+        invalidRecords = 0;
+        priceUpdates = 0;
+        missingData = 0;
+        noChanges = 0;
+        badPrice = 0;
     }
 
     /**
@@ -595,8 +612,8 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
         myprod[1] = productReference;                                           // Reference string
         myprod[2] = productBarcode;                                             // Barcode String        
         myprod[3] = productName;                                                // Name string        
-        myprod[4] = false;                                                      // IScomment flag (Attribute modifier)
-        myprod[5] = false;                                                      // ISscale flag
+        myprod[4] = false;                                     // IScomment flag (Attribute modifier)
+        myprod[5] = false;                                     // ISscale flag
         myprod[6] = productBuyPrice;                                            // Buy price double
         myprod[7] = productSellPrice;                                           // Sell price double
         myprod[8] = dCategory;                                                  // Category string
@@ -605,22 +622,22 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
         myprod[11] = null;                                                      // Image
         myprod[12] = null;                                                      // Stock cost double
         myprod[13] = null;                                                      // Stock volume double
-        myprod[14] = jCheckInCatalogue.isSelected();                            // In catalog flag
+        myprod[14] = jCheckInCatalogue.isSelected();           // In catalog flag
         myprod[15] = null;                                                      // catalog order        
         myprod[16] = null;                                                      //
-        myprod[17] = false;                                                     // IsKitchen flag
-        myprod[18] = false;                                                     // isService flag
+        myprod[17] = false;                                    // IsKitchen flag
+        myprod[18] = false;                                    // isService flag
         myprod[19] = "<HTML>" + productName;                                    //     
-        myprod[20] = false;                                                     // isVariable price flag
-        myprod[21] = false;                                                     // Compulsory Att flag
+        myprod[20] = false;                                    // isVariable price flag
+        myprod[21] = false;                                    // Compulsory Att flag
         myprod[22] = productName;                                               // Text tip string
-        myprod[23] = false;                                                     // Warranty flag
-        myprod[24] = 0.0;                                                       // StockUnits
+        myprod[23] = false;                                    // Warranty flag
+        myprod[24] = 0.0;
         try {
-            if (pType == "new") {
+            if ("new".equals(pType)) {
                 spr.insertData(myprod);
-
             } else {
+                myprod[0]=prodInfo.getID();
                 spr.updateData(myprod);
             }
         } catch (BasicException ex) {
@@ -1028,7 +1045,7 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
         );
 
         jLabel17.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel17.setText("Import Version V2.1");
+        jLabel17.setText("Import Version V2.2");
 
         jLabel18.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jLabel18.setText(bundle.getString("label.csvdelimit")); // NOI18N
@@ -1265,7 +1282,7 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
                                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
                                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 97, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(

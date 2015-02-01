@@ -192,7 +192,10 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + "STOCKCURRENT.UNITS "                     //21                       
                 + "FROM STOCKCURRENT LEFT JOIN PRODUCTS ON (STOCKCURRENT.PRODUCT = PRODUCTS.ID) "
                 + "WHERE ID = ? "
-                + "GROUP BY ID, REFERENCE, NAME;"
+                //+ "GROUP BY ID, REFERENCE, NAME "
+                // JL changed GROUP BY to ORDER BY, as it does not work with embedded for multiple grouping , 
+                // can find no reason for the group by use at the moment        
+ 		+ "ORDER BY ID, REFERENCE, NAME "
 		, SerializerWriteString.INSTANCE
 		, ProductInfoExt.getSerializerRead()).find(id);
     }

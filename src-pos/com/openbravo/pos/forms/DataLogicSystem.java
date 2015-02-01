@@ -278,7 +278,7 @@ public class DataLogicSystem extends BeanFactoryDataSingle {
         
 // added 1.3.14.14 JDL new routine to write to CSV table, to clean up CSV import routine        
         m_insertCSVEntry = new StaticSentence(s
-                , "INSERT INTO CSVIMPORT (ID, ROWNUMBER, CSVERROR, REFERENCE, CODE, NAME, PRICEBUY, PRICESELL, PREVIOUSBUY, PREVIOUSSELL,CATEGORY) " +
+                , "INSERT INTO CSVIMPORT (ID, ROWNUMBER, CSVERROR, REFERENCE, CODE, NAME, PRICEBUY, PRICESELL, PREVIOUSBUY, PREVIOUSSELL, CATEGORY) " +
                   "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                 , new SerializerWriteBasic(new Datas[] {
                     Datas.STRING,
