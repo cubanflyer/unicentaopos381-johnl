@@ -48,6 +48,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import javax.swing.*;
@@ -94,6 +95,7 @@ public class JRootApp extends JPanel implements AppView {
     private String SQL;
     private String sJLVersion;
     private DatabaseMetaData md;
+    private SimpleDateFormat formatter;
 
     static {
         initOldClasses();
@@ -110,16 +112,34 @@ public class JRootApp extends JPanel implements AppView {
             m_date = getLineDate();
             m_jLblTitle.setText(m_dlSystem.getResourceAsText("Window.Title"));
             m_jLblTitle.repaint();
-            jLabel2.setText("  " + m_date + " " + m_clock);
+            jLabel2.setText("  " + m_date + "  " + m_clock);
         }
     }
 
     private String getLineTimer() {
-        return Formats.HOURMIN.formatValue(new Date());
+        try {
+            if (m_props.getProperty("clock.time") == "") {
+                return Formats.HOURMIN.formatValue(new Date());
+            } else {
+                formatter = new SimpleDateFormat(m_props.getProperty("clock.time"));
+                return formatter.format(new Date());
+            }
+        } catch (IllegalArgumentException e) {
+            return Formats.HOURMIN.formatValue(new Date());
+        }
     }
 
     private String getLineDate() {
-        return Formats.SIMPLEDATE.formatValue(new Date());
+        try {
+            if (m_props.getProperty("clock.date") == "") {
+                return Formats.SIMPLEDATE.formatValue(new Date());
+            } else {
+                formatter = new SimpleDateFormat(m_props.getProperty("clock.date"));
+                return formatter.format(new Date());
+            }
+        } catch (IllegalArgumentException e) {
+            return Formats.SIMPLEDATE.formatValue(new Date());
+        }
     }
 
     /**
@@ -288,7 +308,7 @@ public class JRootApp extends JPanel implements AppView {
             }
         }
 
- // change text under logo
+        // change text under logo
         String newText = m_props.getProperty("start.text");
         if (newText != null) {
             if (newText.equals("")) {
@@ -635,7 +655,6 @@ public class JRootApp extends JPanel implements AppView {
     }
 
     // La accion del selector
-
     private class AppUserAction extends AbstractAction {
 
         private final AppUser m_actionuser;
