@@ -2592,9 +2592,6 @@ m_App.getAppUserView().showTask("com.openbravo.pos.customers.CustomersPanel");
                     deactivate();
                     setActiveTicket(null, null);
                     break;
-                default:
-                    deactivate();
-                    ((JRootApp) m_App).closeAppView();
             }   
 
     }//GEN-LAST:event_j_btnKitchenPrtActionPerformed

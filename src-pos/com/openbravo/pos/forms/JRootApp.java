@@ -181,7 +181,6 @@ public class JRootApp extends JPanel implements AppView {
         // Create or upgrade the database if database version is not the expected
         String sDBVersion = readDataBaseVersion();
 // modified to allow users of 3.90 to implement my changes
-        System.out.println (sDBVersion);
         if ((!AppLocal.APP_VERSION.equals(sDBVersion)) & !(sDBVersion.equals("3.90"))) {
 
             // Create or upgrade database
