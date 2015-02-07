@@ -352,7 +352,7 @@ public class JRootApp extends JPanel implements AppView {
 
     public String getDbVersion() {
         String sdbmanager = m_dlSystem.getDBVersion();
-        if ("HSQL Database Engine".equals(sdbmanager)) {
+        if (("HSQL Database Engine".equals(sdbmanager)) | ("HSQLDB".equals(sdbmanager))) {
             return ("h");
         } else if ("MySQL".equals(sdbmanager)) {
             return ("m");
