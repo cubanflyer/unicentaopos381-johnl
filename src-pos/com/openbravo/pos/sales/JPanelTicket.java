@@ -951,7 +951,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 // added by janar153 @ 24.12.2013 to add scale barcode support
 // JG 27 Apr 2014 - missing bracket enclosures                } else if((sCode.length() == 13) && sCode.startsWith("2") || sCode.startsWith("02")) {
 //                } else if((sCode.length() == 13) || ((sCode.length() == 8)) && (sCode.startsWith("2") || sCode.startsWith("02"))) {
-                } else if((sCode.length() == 13) || (sCode.length() == 8) || (sCode.startsWith("2") || sCode.startsWith("02"))) {                    
+                } else if ((sCode.length() == 13) && ((sCode.startsWith("2")) || (sCode.startsWith("02")))) {                                         
                     try {
                         ProductInfoExt oProduct = dlSales.getProductInfoByCode(sCode);
                         if(oProduct == null) {
