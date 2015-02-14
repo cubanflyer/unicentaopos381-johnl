@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.pos.sales;
 
 import com.openbravo.basic.BasicException;
@@ -37,22 +36,24 @@ import java.util.List;
  * @author adrianromero
  */
 public class DataLogicReceipts extends BeanFactoryDataSingle {
-    
+
     private Session s;
-    
-    /** Creates a new instance of DataLogicReceipts */
+
+    /**
+     * Creates a new instance of DataLogicReceipts
+     */
     public DataLogicReceipts() {
     }
-    
+
     /**
      *
      * @param s
      */
     @Override
-    public void init(Session s){
+    public void init(Session s) {
         this.s = s;
     }
-     
+
     /**
      *
      * @param Id
@@ -60,33 +61,37 @@ public class DataLogicReceipts extends BeanFactoryDataSingle {
      * @throws BasicException
      */
     public final TicketInfo getSharedTicket(String Id) throws BasicException {
-        
+
         if (Id == null) {
-            return null; 
+            return null;
         } else {
-            Object[]record = (Object[]) new StaticSentence(s
-                    , "SELECT CONTENT FROM SHAREDTICKETS WHERE ID = ?"
-                    , SerializerWriteString.INSTANCE
-                    , new SerializerReadBasic(new Datas[] {Datas.SERIALIZABLE})).find(Id);
+            Object[] record = (Object[]) new StaticSentence(s, "SELECT CONTENT FROM SHAREDTICKETS WHERE ID = ?", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.SERIALIZABLE})).find(Id);
             return record == null ? null : (TicketInfo) record[0];
         }
     }
 
     /**
      *
-     * @return
-     * @throws BasicException
+     * @return @throws BasicException
      */
     public final List<SharedTicketInfo> getSharedTicketList() throws BasicException {
-        
-        return (List<SharedTicketInfo>) new StaticSentence(s
-// JG 20 Aug 13 Bug Fix: invalid SQL string
-//                , "SELECT ID, NAME, CONTENT PICKUPID FROM SHAREDTICKETS ORDER BY ID"                
-                , "SELECT ID, NAME, CONTENT, PICKUPID FROM SHAREDTICKETS ORDER BY ID"
-                , null
-                , new SerializerReadClass(SharedTicketInfo.class)).list();
+
+        return (List<SharedTicketInfo>) new StaticSentence(s // JG 20 Aug 13 Bug Fix: invalid SQL string
+                //                , "SELECT ID, NAME, CONTENT PICKUPID FROM SHAREDTICKETS ORDER BY ID"                
+                , "SELECT ID, NAME, CONTENT, PICKUPID FROM SHAREDTICKETS ORDER BY ID", null, new SerializerReadClass(SharedTicketInfo.class)).list();
     }
-    
+
+    /**
+     * Get shared ticket list for current logged in user only.
+     *
+     * @return @throws BasicException
+     */
+    public final List<SharedTicketInfo> getSharedTicketListByUser(String User) throws BasicException {
+
+        return (List<SharedTicketInfo>) new StaticSentence(s             
+                , "SELECT ID, NAME, CONTENT, PICKUPID FROM SHAREDTICKETS WHERE NAME LIKE '%" + User + " -% '" , null, new SerializerReadClass(SharedTicketInfo.class)).list();
+    }
+
     /**
      *
      * @param id
@@ -95,28 +100,26 @@ public class DataLogicReceipts extends BeanFactoryDataSingle {
      * @throws BasicException
      */
     public final void updateSharedTicket(final String id, final TicketInfo ticket, int pickupid) throws BasicException {
-         
-        Object[] values = new Object[] {
-            id, 
-            ticket.getName(), 
-            ticket, 
+
+        Object[] values = new Object[]{
+            id,
+            ticket.getName(),
+            ticket,
             pickupid
         };
-        Datas[] datas = new Datas[] {
-            Datas.STRING, 
-            Datas.STRING, 
-            Datas.SERIALIZABLE, 
+        Datas[] datas = new Datas[]{
+            Datas.STRING,
+            Datas.STRING,
+            Datas.SERIALIZABLE,
             Datas.INT
         };
-        new PreparedSentence(s
-                , "UPDATE SHAREDTICKETS SET "
+        new PreparedSentence(s, "UPDATE SHAREDTICKETS SET "
                 + "NAME = ?, "
                 + "CONTENT = ?, "
                 + "PICKUPID = ? "
-                + "WHERE ID = ?"
-                , new SerializerWriteBasicExt(datas, new int[] {1, 2, 3, 0})).exec(values);
+                + "WHERE ID = ?", new SerializerWriteBasicExt(datas, new int[]{1, 2, 3, 0})).exec(values);
     }
-    
+
     /**
      *
      * @param id
@@ -125,30 +128,28 @@ public class DataLogicReceipts extends BeanFactoryDataSingle {
      * @throws BasicException
      */
     public final void insertSharedTicket(final String id, final TicketInfo ticket, int pickupid) throws BasicException {
-        
-        Object[] values = new Object[] {
-            id, 
-            ticket.getName(), 
-            ticket, pickupid, 
+
+        Object[] values = new Object[]{
+            id,
+            ticket.getName(),
+            ticket, pickupid,
             ticket.getUser()
         };
         Datas[] datas;
-        datas = new Datas[] {
-            Datas.STRING, 
-            Datas.STRING, 
-            Datas.SERIALIZABLE, 
+        datas = new Datas[]{
+            Datas.STRING,
+            Datas.STRING,
+            Datas.SERIALIZABLE,
             Datas.INT
         };
-        new PreparedSentence(s
-            , "INSERT INTO SHAREDTICKETS ("
+        new PreparedSentence(s, "INSERT INTO SHAREDTICKETS ("
                 + "ID, "
                 + "NAME, "
                 + "CONTENT, "
                 + "PICKUPID) "
-                + "VALUES (?, ?, ?, ?)"
-            , new SerializerWriteBasicExt(datas, new int[] {0, 1, 2, 3})).exec(values);
+                + "VALUES (?, ?, ?, ?)", new SerializerWriteBasicExt(datas, new int[]{0, 1, 2, 3})).exec(values);
     }
-    
+
     /**
      *
      * @param id
@@ -156,9 +157,7 @@ public class DataLogicReceipts extends BeanFactoryDataSingle {
      */
     public final void deleteSharedTicket(final String id) throws BasicException {
 
-        new StaticSentence(s
-            , "DELETE FROM SHAREDTICKETS WHERE ID = ?"
-            , SerializerWriteString.INSTANCE).exec(id);      
+        new StaticSentence(s, "DELETE FROM SHAREDTICKETS WHERE ID = ?", SerializerWriteString.INSTANCE).exec(id);
     }
 
     /**
@@ -168,15 +167,12 @@ public class DataLogicReceipts extends BeanFactoryDataSingle {
      * @throws BasicException
      */
     public final Integer getPickupId(String Id) throws BasicException {
-        
+
         if (Id == null) {
-            return null; 
+            return null;
         } else {
-            Object[]record = (Object[]) new StaticSentence(s
-                    , "SELECT PICKUPID FROM SHAREDTICKETS WHERE ID = ?"
-                    , SerializerWriteString.INSTANCE
-                    , new SerializerReadBasic(new Datas[] {Datas.INT})).find(Id);
-            return record == null ? 0 : (Integer)record[0];
+            Object[] record = (Object[]) new StaticSentence(s, "SELECT PICKUPID FROM SHAREDTICKETS WHERE ID = ?", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.INT})).find(Id);
+            return record == null ? 0 : (Integer) record[0];
         }
-    } 
+    }
 }

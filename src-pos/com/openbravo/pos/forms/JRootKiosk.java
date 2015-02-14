@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.pos.forms;
 
 import com.openbravo.pos.config.JFrmConfig;
@@ -76,7 +75,8 @@ public class JRootKiosk extends javax.swing.JFrame implements AppMessage {
             // Show the application
             add(m_rootapp, BorderLayout.CENTER);            
     
-            setTitle(AppLocal.APP_NAME + " - " + AppLocal.APP_VERSION);
+            setTitle(AppLocal.APP_NAME + " - " + AppLocal.APP_VERSION + " - " + AppLocal.APP_VERSIONJL + m_OS.getOS() + m_rootapp.getDbVersion() + "-" + AppLocal.APP_VERSIONJLCORE);
+            //setTitle(AppLocal.APP_NAME + " - " + AppLocal.APP_VERSION);
             
             Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
             setBounds(0, 0, d.width, d.height);        

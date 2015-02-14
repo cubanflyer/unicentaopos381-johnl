@@ -153,6 +153,16 @@ public class ProductInfoExt {
     */
         public double m_dStockUnits;
 
+    /**
+     * JDL 14 Feb 2015 product alias (short name)
+     */
+    protected String m_sAlias;
+    
+     /**
+     * JDL 14 Feb 2015 product always available
+     */   
+    protected boolean m_bAlwaysAvailable;
+    
     /*
      * Creates new ProductInfo
      */
@@ -188,8 +198,11 @@ public class ProductInfoExt {
 // ADDED JDL 25.05.13         
         m_bWarranty = false;            //22
 // ADDED JG 7 June 2014 - Display  
-        m_dStockUnits = 0.0;              //23
-
+        m_dStockUnits = 0.0;            //23
+// ADDED JDL 14 Feb 1025
+        m_sAlias=null;                  //24
+// ADDES JDL 14 Feb 2015
+        m_bAlwaysAvailable = false;     //25
     }
 
     /**
@@ -208,6 +221,22 @@ public class ProductInfoExt {
         m_ID = id;
     }
 
+    /**
+     *
+     * @return
+     */
+    public final String getAlias() {
+        return m_sAlias;
+    }
+
+    /**
+     *
+     * @param alias
+     */
+    public final void setAlias(String alias) {
+        m_sAlias = alias;
+    }     
+    
     /**
      *
      * @return
@@ -391,6 +420,22 @@ public class ProductInfoExt {
      *
      * @return
      */
+    public final boolean getAlwaysAvailable() {
+        return m_bAlwaysAvailable;
+    }
+
+    /**
+     *
+     * @param bValue
+     */
+    public final void setAlwaysAvailable(boolean bValue) {
+        m_bAlwaysAvailable = bValue;
+    }
+    
+    /**
+     *
+     * @return
+     */
     public final String getCategoryID() {
         return categoryid;
     }
@@ -476,6 +521,7 @@ public class ProductInfoExt {
         return m_dStockUnits;
         
     }
+
     public final void setStockUnits(double dStockUnits) {    
         m_dStockUnits = dStockUnits;
     }
@@ -634,7 +680,10 @@ public class ProductInfoExt {
                 product.m_bWarranty = dr.getBoolean(20);                        
 // JG July 2014 - added for Stock count
                 product.m_dStockUnits = dr.getDouble(21);                       
-
+// JDL 14 Feb 2015
+                product.m_sAlias = dr.getString(22);
+ // JDL 14 Feb 2015               
+                product.m_bAlwaysAvailable = dr.getBoolean(23);
                 return product;
             }
         };

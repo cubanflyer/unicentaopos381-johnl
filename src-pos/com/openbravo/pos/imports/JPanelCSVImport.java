@@ -458,6 +458,7 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
             dCategory = ((String) cat_list.get(prodInfo.getCategoryID())== null )? prodInfo.getCategoryID():(String) cat_list.get(prodInfo.getCategoryID());
             oldBuyPrice = prodInfo.getPriceBuy();
             oldSellPrice = prodInfo.getPriceSell();
+            productSellPrice *= (1 + dOriginalRate);
             if ((oldBuyPrice != productBuyPrice) || (oldSellPrice != productSellPrice)) {
                 createCSVEntry("Updated Price Details", oldBuyPrice, oldSellPrice * (1 + dOriginalRate));
                 createProduct("update");
@@ -631,8 +632,10 @@ public class JPanelCSVImport extends JPanel implements JPanelView {
         myprod[20] = false;                                    // isVariable price flag
         myprod[21] = false;                                    // Compulsory Att flag
         myprod[22] = productName;                                               // Text tip string
-        myprod[23] = false;                                    // Warranty flag
-        myprod[24] = 0.0;
+        myprod[23] = false;                                                     // Warranty flag
+        myprod[24] = 0.0;                                                       // StockUnits
+        myprod[25] = "";                                                        // Alias
+        myprod[26] = false;                                                     // AlwaysAvailable flag
         try {
             if ("new".equals(pType)) {
                 spr.insertData(myprod);

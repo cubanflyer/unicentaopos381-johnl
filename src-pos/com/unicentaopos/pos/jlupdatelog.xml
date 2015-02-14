@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+
+
+    <property name="boolean.type" value="boolean" dbms="postgresql, hypersql, hsqldb"/>
+    <property name="boolean.type" value="bit" dbms="mysql"/>
+    <property name="boolean.type" value="smallint" dbms="derby"/>
+    <property name="boolean.type" value="numeric(1)" dbms="oracle"/>
+
+    <property name="blob.type" value="blob" dbms="oracle, derby, hypersql, hsqldb"/>
+    <property name="blob.type" value="bytea" dbms="postgresql"/>
+    <property name="blob.type" value="mediumblob" dbms="mysql"/>
+
+    <changeSet author="UnicentaOpos - John L" id="Create AppJL Table">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="APPJL"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="APPJL">
+            <column name="ID" type="varchar(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+                <insert tableName="APPJL">
+            <column name="ID" value="Unicenta John L's changes"/>
+            <column name="NAME" value="uniCenta oPOS"/>
+            <column name="version" value="0.00"/>          
+        </insert> 
+        
+        
+    </changeSet>
+
+    <changeSet author="Unicentaopos - John L" id="Product Table Alias added m" dbms="mysql, derby, oracle">
+        <addColumn tableName="PRODUCTS"> 
+            <column name="ALIAS" type="varchar(50)"/>  
+            <column name="ALWAYSAVAILABLE" type="${boolean.type}" defaultValueNumeric="0" >
+                <constraints nullable="false"/>  
+            </column> 
+        </addColumn>             
+    </changeSet>
+
+    <changeSet author="Unicentaopos - John L" id="Product Table Alias added p" dbms="postgresql, hypersql, hsqldb">
+        <addColumn tableName="PRODUCTS"> 
+            <column name="ALIAS" type="varchar(50)"/>  
+            <column name="ALWAYSAVAILABLE" type="${boolean.type}" defaultValueBoolean="false" >
+                <constraints nullable="false"/>  
+            </column> 
+        </addColumn>    
+    </changeSet>
+
+    <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.0" >
+        <update tableName="APPJL">
+            <column name="VERSION" value="1.0"/>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>
+

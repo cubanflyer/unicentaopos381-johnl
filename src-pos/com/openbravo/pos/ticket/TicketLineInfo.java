@@ -16,6 +16,7 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.openbravo.pos.ticket;
 
 import com.openbravo.basic.BasicException;
@@ -149,6 +150,13 @@ public class TicketLineInfo implements SerializableWrite, SerializableRead, Seri
                 attributes.setProperty("product.texttip", product.getTextTip());
             }
 
+// Added JDL 14.02.15
+            attributes.setProperty("product.alwaysavailable", product.getAlwaysAvailable() ? "true" : "false");
+
+// Added JDL 14.02.15
+            if (product.getAlias() != null) {
+                attributes.setProperty("product.alias", product.getAlias());
+            }
 //
 // Added JDL 25.05.13
             attributes.setProperty("product.warranty", product.getWarranty() ? "true" : "false");
@@ -615,8 +623,6 @@ public class TicketLineInfo implements SerializableWrite, SerializableRead, Seri
      */
     public boolean isProductVprice() {
         return "true".equals(attributes.getProperty("product.vprice"));
-//
-
     }
 
 // Added JDL 09.02.13 for Chris
@@ -626,8 +632,6 @@ public class TicketLineInfo implements SerializableWrite, SerializableRead, Seri
      */
     public boolean isProductVerpatrib() {
         return "true".equals(attributes.getProperty("product.verpatrib"));
-//
-
     }
 
 // Added JDL 09.04.12 - Variable price product
@@ -637,8 +641,6 @@ public class TicketLineInfo implements SerializableWrite, SerializableRead, Seri
      */
     public String printTextTip() {
         return attributes.getProperty("product.texttip");
-//
-
     }
 
 // Added JDL 09.02.13
@@ -648,8 +650,24 @@ public class TicketLineInfo implements SerializableWrite, SerializableRead, Seri
      */
     public boolean isProductWarranty() {
         return "true".equals(attributes.getProperty("product.warranty"));
-//
+    }
 
+    // Added JDL 14.02.15
+    /**
+     *
+     * @return
+     */
+    public boolean isAlwaysAvailable() {
+        return "true".equals(attributes.getProperty("product.alwaysavailable"));
+    }
+
+// Added JDL 14.02.15 - Alias
+    /**
+     *
+     * @return
+     */
+    public String printAlias() {
+        return attributes.getProperty("product.alias");
     }
 
     /**

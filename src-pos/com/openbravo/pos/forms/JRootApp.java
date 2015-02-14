@@ -33,6 +33,7 @@ import com.openbravo.pos.printer.TicketPrinterException;
 import com.openbravo.pos.scale.DeviceScale;
 import com.openbravo.pos.scanpal2.DeviceScanner;
 import com.openbravo.pos.scanpal2.DeviceScannerFactory;
+import com.openbravo.pos.util.AltEncrypter;
 import java.awt.CardLayout;
 import java.awt.ComponentOrientation;
 import java.awt.Cursor;
@@ -43,15 +44,29 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import javax.swing.*;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
+import liquibase.resource.ClassLoaderResourceAccessor;
 
 /**
  *
@@ -178,47 +193,139 @@ public class JRootApp extends JPanel implements AppView {
 
         m_dlSystem = (DataLogicSystem) getBean("com.openbravo.pos.forms.DataLogicSystem");
 
+        /*        
+         This is where the new liquibase routine will go, the old scripts will be completely removed
+         to improve efficentency             
+                
+         */
         // Create or upgrade the database if database version is not the expected
         String sDBVersion = readDataBaseVersion();
-// modified to allow users of 3.90 to implement my changes
-        if ((!AppLocal.APP_VERSION.equals(sDBVersion)) & !(sDBVersion.equals("3.90"))) {
-
-            // Create or upgrade database
-            String sScript = sDBVersion == null
-                    ? m_dlSystem.getInitScript() + "-create.sql"
-                    : m_dlSystem.getInitScript() + "-upgrade-" + sDBVersion + ".sql";
-            if (JRootApp.class.getResource(sScript) == null) {
-                JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_DANGER, sDBVersion == null
-                        ? AppLocal.getIntString("message.databasenotsupported", session.DB.getName()) // Create script does not exists. Database not supported
-                        : AppLocal.getIntString("message.noupdatescript"))); // Upgrade script does not exist.
-                session.close();
-                return false;
+        if (!AppLocal.APP_VERSION.equals(sDBVersion)) {
+            if (getDbVersion().equals("x")) {
+                JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_DANGER,
+                        AppLocal.getIntString("message.databasenotsupported", session.DB.getName())));
             } else {
                 // Create or upgrade script exists.
                 if (JOptionPane.showConfirmDialog(this, AppLocal.getIntString(sDBVersion == null ? "message.createdatabase" : "message.updatedatabase"), AppLocal.getIntString("message.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+                    String db_user = (m_props.getProperty("db.user"));
+                    String db_url = (m_props.getProperty("db.URL"));
+                    String db_password = (m_props.getProperty("db.password"));
+
+                    if (db_user != null && db_password != null && db_password.startsWith("crypt:")) {
+                        // the password is encrypted
+                        AltEncrypter cypher = new AltEncrypter("cypherkey" + db_user);
+                        db_password = cypher.decrypt(db_password.substring(6));
+                    }
 
                     try {
-                        BatchSentence bsentence = new BatchSentenceResource(session, sScript);
-                        bsentence.putParameter("APP_ID", Matcher.quoteReplacement(AppLocal.APP_ID));
-                        bsentence.putParameter("APP_NAME", Matcher.quoteReplacement(AppLocal.APP_NAME));
-                        bsentence.putParameter("APP_VERSION", Matcher.quoteReplacement(AppLocal.APP_VERSION));
+                        ClassLoader cloader = new URLClassLoader(new URL[]{new File(m_props.getProperty("db.driverlib")).toURI().toURL()});
+                        DriverManager.registerDriver(new DriverWrapper((Driver) Class.forName(m_props.getProperty("db.driver"), true, cloader).newInstance()));
 
-                        java.util.List l = bsentence.list();
-                        if (l.size() > 0) {
-                            JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("Database.ScriptWarning"), l.toArray(new Throwable[l.size()])));
+                        String changelog = "com/unicentaopos/pos/liquibase/sqlscriptlog.xml";
+                        Liquibase liquibase = null;
+
+                        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(DriverManager.getConnection(db_url, db_user, db_password)));
+                        liquibase = new Liquibase(changelog, new ClassLoaderResourceAccessor(), database);
+                        liquibase.update("implement");
+
+                    } catch (DatabaseException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (LiquibaseException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (MalformedURLException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (InstantiationException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IllegalAccessException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } finally {
+                        if (con != null) {
+                            try {
+                                con.rollback();
+                                con.close();
+                            } catch (SQLException e) {
+                                //nothing to do
                         }
-                    } catch (BasicException e) {
-                        JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_DANGER, AppLocal.getIntString("Database.ScriptError"), e));
-                        session.close();
-                        return false;
                     }
-                } else {
-                    session.close();
-                    return false;
+                    }
                 }
             }
         }
+        
+        
+        try {
+// get the version jl changes 
+            con = session.getConnection();
+            md = con.getMetaData();
+            stmt = (Statement) con.createStatement();
+            SQL = "SELECT * from APPJL";
+            rs = stmt.executeQuery(SQL);
+            if (rs.next()) {
+                sJLVersion = rs.getString("version");
+            }
+        } catch (Exception e) {
+        }
+        if (!AppLocal.APP_VERSIONJL.equals(sJLVersion)) {
+            if (getDbVersion().equals("x")) {
+                JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_DANGER,
+                        AppLocal.getIntString("message.databasenotsupported", session.DB.getName())));
+                } else {
+                if (JOptionPane.showConfirmDialog(this, AppLocal.getIntString(sDBVersion == null ? "message.createdatabasejl" : "message.updatedatabasejl"), AppLocal.getIntString("message.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+                    String db_user = (m_props.getProperty("db.user"));
+                    String db_url = (m_props.getProperty("db.URL"));
+                    String db_password = (m_props.getProperty("db.password"));
 
+                    if (db_user != null && db_password != null && db_password.startsWith("crypt:")) {
+                        // the password is encrypted
+                        AltEncrypter cypher = new AltEncrypter("cypherkey" + db_user);
+                        db_password = cypher.decrypt(db_password.substring(6));
+                }
+
+                    try {
+                        ClassLoader cloader = new URLClassLoader(new URL[]{new File(m_props.getProperty("db.driverlib")).toURI().toURL()});
+                        DriverManager.registerDriver(new DriverWrapper((Driver) Class.forName(m_props.getProperty("db.driver"), true, cloader).newInstance()));
+
+                        String changelog = "com/unicentaopos/pos/liquibase/jlupdatelog.xml";
+                        Liquibase liquibase = null;
+
+                        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(DriverManager.getConnection(db_url, db_user, db_password)));
+                        liquibase = new Liquibase(changelog, new ClassLoaderResourceAccessor(), database);
+                        liquibase.update("implement");
+
+                    } catch (DatabaseException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (LiquibaseException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (MalformedURLException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (InstantiationException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IllegalAccessException ex) {
+                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                    } finally {
+                        if (con != null) {
+                            try {
+                                con.rollback();
+                                con.close();
+                            } catch (SQLException e) {
+                                //nothing to do
+            }
+        }
+                    }
+                }
+            } 
+        }
+// end of jl import
+
+        
 // Clear the cash drawer table as required, by setting 
         try {
             if (getDbVersion() == "d") {

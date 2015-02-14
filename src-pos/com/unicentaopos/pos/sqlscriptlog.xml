@@ -7,10 +7,19 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
+
+
+
+    <property name="boolean.type" value="boolean" dbms="postgresql, hypersql, hsqldb"/>
+    <property name="boolean.type" value="bit" dbms="mysql"/>
+    <property name="boolean.type" value="smallint" dbms="derby"/>
+    <property name="boolean.type" value="numeric(1)" dbms="oracle"/>
+
     <property name="blob.type" value="blob" dbms="oracle, derby, hypersql, hsqldb"/>
     <property name="blob.type" value="bytea" dbms="postgresql"/>
     <property name="blob.type" value="mediumblob" dbms="mysql"/>
 
+    
     <changeSet author="UnicentaOpos - John L" id="Create Applications Table">
         <preConditions onFail="MARK_RAN">
             <not>
@@ -92,14 +101,7 @@
             <column name="NAME" value="script.ServiceCharge"/>
             <column name="RESTYPE" valueNumeric="0"/>
             <column name="CONTENT" valueBlobResource="/com/openbravo/pos/templates/script.ServiceCharge.txt"/>
-        </insert>
-         
-        <addColumn tableName="CATEGORIES">
-            <column name="TEXTTIP" type="varchar(255)" defaultValue="NULL"></column>  
-            <column name="CATSHOWNAME" type="boolean" defaultValueBoolean="true" >
-                <constraints nullable="false"/>  
-            </column>         
-        </addColumn> 
+        </insert>         
 
         <addColumn tableName="CLOSEDCASH">                     
             <column name="NOSALES" type="int" defaultValueNumeric="0" >
@@ -118,29 +120,7 @@
             <column name="CARDNAME" type="varchar(255)"></column>                                                                                           
         </addColumn>                                                                                                    
         <sql> UPDATE PAYMENTS SET TENDERED = TOTAL WHERE TENDERED = 0</sql> 
-                                                                                                                               
-        <addColumn tableName="places">
-            <column name="CUSTOMER" type="varchar(255)"> </column>        
-            <column name="WAITER" type="varchar(255)"> </column> 
-            <column name="TICKETID" type="varchar(255)"> </column>       
-            <column name="TABLEMOVED" type="boolean" defaultValueBoolean="false" >
-                <constraints nullable="false"/>  
-            </column>                    
-        </addColumn>
-                                                                                                                                                                                                                                                               
-        <addColumn tableName="PRODUCTS"> 
-            <column name="ISVPRICE" type="boolean" defaultValueBoolean="false" >
-                <constraints nullable="false"/>  
-            </column> 
-            <column name="ISVERPATRIB" type="boolean" defaultValueBoolean="false" >
-                <constraints nullable="false"/> 
-            </column>
-            <column name="TEXTTIP" type="varchar(255)"/>        
-            <column name="WARRANTY" type="boolean" defaultValueBoolean="false" >
-                <constraints nullable="false"/>                   
-            </column>  
-        </addColumn>                                                                                                                                                                                                                                                            
-    
+                                                                                                                                                                                                                                                                                                                                                                                           
         <addColumn tableName="SHAREDTICKETS">
             <column name="APPUSER" type="varchar(255)"/>
             <column name="PICKUPID" type="int" defaultValueNumeric="0" >
@@ -152,12 +132,114 @@
             <column name="APPUSER" type="varchar(255)"/>
         </addColumn>
         
-        <update tableName="APPLICATIONS">
-            <column name="VERSION" value="3.56"/>
-        </update>
       
         <sql> DELETE FROM SHAREDTICKETS</sql>                                             
     </changeSet>
+
+
+
+    <changeSet author="Unicentaopos - John L" id="3.02 to 3.55m" dbms="mysql, derby, oracle">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="3.02">SELECT VERSION FROM APPLICATIONS</sqlCheck>   
+        </preConditions>
+
+        <addColumn tableName="CATEGORIES">
+            <column name="TEXTTIP" type="varchar(255)" defaultValue="NULL"></column>  
+            <column name="CATSHOWNAME" type="${boolean.type}" defaultValueNumeric="1" >
+                <constraints nullable="false"/>  
+            </column>         
+        </addColumn> 
+
+        <addColumn tableName="places">
+            <column name="CUSTOMER" type="varchar(255)"> </column>        
+            <column name="WAITER" type="varchar(255)"> </column> 
+            <column name="TICKETID" type="varchar(255)"> </column>       
+            <column name="TABLEMOVED" type="${boolean.type}" defaultValueNumeric="0" >
+                <constraints nullable="false"/>  
+            </column>                    
+        </addColumn>  
+
+        <addColumn tableName="PRODUCTS"> 
+            <column name="ISVPRICE" type="${boolean.type}" defaultValueNumeric="0" >
+                <constraints nullable="false"/>  
+            </column> 
+            <column name="ISVERPATRIB" type="${boolean.type}" defaultValueNumeric="0" >
+                <constraints nullable="false"/> 
+            </column>
+            <column name="TEXTTIP" type="varchar(255)"/>        
+            <column name="WARRANTY" type="${boolean.type}" defaultValueNumeric="0" >
+                <constraints nullable="false"/>                   
+            </column>  
+        </addColumn> 
+        
+        <update tableName="APPLICATIONS">
+            <column name="VERSION" value="3.56"/>
+        </update>
+        
+    </changeSet>
+
+    <changeSet author="Unicentaopos - John L" id="3.02 to 3.55p" dbms="postgresql, hypersql, hsqldb">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="3.02">SELECT VERSION FROM APPLICATIONS</sqlCheck>   
+        </preConditions>
+
+        <addColumn tableName="CATEGORIES">
+            <column name="TEXTTIP" type="varchar(255)" defaultValue="NULL"></column>  
+            <column name="CATSHOWNAME" type="${boolean.type}" defaultValueBoolean="true" >
+                <constraints nullable="false"/>  
+            </column>         
+        </addColumn> 
+
+        <addColumn tableName="places">
+            <column name="CUSTOMER" type="varchar(255)"> </column>        
+            <column name="WAITER" type="varchar(255)"> </column> 
+            <column name="TICKETID" type="varchar(255)"> </column>       
+            <column name="TABLEMOVED" type="${boolean.type}" defaultValueBoolean="false" >
+                <constraints nullable="false"/>  
+            </column>                    
+        </addColumn>  
+
+        <addColumn tableName="PRODUCTS"> 
+            <column name="ISVPRICE" type="${boolean.type}" defaultValueBoolean="false" >
+                <constraints nullable="false"/>  
+            </column> 
+            <column name="ISVERPATRIB" type="${boolean.type}" defaultValueBoolean="false" >
+                <constraints nullable="false"/> 
+            </column>
+            <column name="TEXTTIP" type="varchar(255)"/>        
+            <column name="WARRANTY" type="${boolean.type}" defaultValueBoolean="false" >
+                <constraints nullable="false"/>                   
+            </column>  
+        </addColumn> 
+                
+        <update tableName="APPLICATIONS">
+            <column name="VERSION" value="3.56"/>
+        </update>
+        
+    </changeSet>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <changeSet author="UnicentaOpos - John L" id="Create CSVImport Table">
         <preConditions onFail="MARK_RAN">
@@ -218,7 +300,35 @@
     </changeSet>         
           
             
-    <changeSet author="Unicentaopos - John L" id="3.60 to 3.70">
+    <changeSet author="Unicentaopos - John L" id="3.60 to 3.70m" dbms="mysql, derby, oracle">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="3.60">SELECT VERSION FROM APPLICATIONS</sqlCheck>   
+        </preConditions> 
+        
+        <insert tableName="PRODUCTS">
+            <column name="ID" value="xxx999_999xxx_x9x9x9"/>
+            <column name="REFERENCE" value="xxx999"/>
+            <column name="CODE" value="xxx999"/>
+            <column name="NAME" value="***"/>
+            <column name="CATEGORY" value="000"/>
+            <column name="TAXCAT" value="001"/>
+            <column name="ISSERVICE" valueNumeric="1"/>
+            <column name="PRICEBUY" valueNumeric="0.0"/>
+            <column name="PRICESELL" valueNumeric="0.0"/>
+        </insert>  
+          
+        <insert tableName="PRODUCTS_CAT"> 
+            <column name="PRODUCT" value="xxx999_999xxx_x9x9x9"/>
+        </insert> 
+
+        <update tableName="APPLICATIONS">
+            <column name="VERSION" value="3.70"/>
+        </update>
+        <sql> DELETE FROM SHAREDTICKETS</sql>          
+    </changeSet>            
+
+
+    <changeSet author="Unicentaopos - John L" id="3.60 to 3.70" dbms="postgresql, hypersql, hsqldb">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="3.60">SELECT VERSION FROM APPLICATIONS</sqlCheck>   
         </preConditions> 
@@ -233,14 +343,7 @@
             <column name="ISSERVICE" valueBoolean="true"/>
             <column name="PRICEBUY" valueNumeric="0.0"/>
             <column name="PRICESELL" valueNumeric="0.0"/>
-        </insert>
-  
-        <dropIndex tableName="PRODUCTS" indexName="PRODUCTS_CAT_INX_1"/>
-        
-        <createIndex tableName="PRODUCTS_CAT"
-                 indexName="PRODUCTS_CAT_INX_1">
-            <column name="CATORDER"/>
-        </createIndex>
+        </insert>  
           
         <insert tableName="PRODUCTS_CAT"> 
             <column name="PRODUCT" value="xxx999_999xxx_x9x9x9"/>
@@ -250,8 +353,11 @@
             <column name="VERSION" value="3.70"/>
         </update>
         <sql> DELETE FROM SHAREDTICKETS</sql>          
-    </changeSet>            
-                
+    </changeSet>               
+                              
+                                             
+                                                            
+                                                                                          
     <changeSet author="Unicentaopos - John L" id="3.70 to 3.80">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="3.70">SELECT VERSION FROM APPLICATIONS</sqlCheck>   
@@ -276,7 +382,8 @@
             <column name="VERSION" value="3.81"/>
         </update>
         <sql> DELETE FROM SHAREDTICKETS</sql>                
-    </changeSet>                                                   
+    </changeSet>   
+    
 
     <changeSet author="UnicentaOpos - John L" id="Create Roles Table">
         <preConditions onFail="MARK_RAN">
@@ -292,7 +399,7 @@
             <column name="NAME" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="PERMISSIONS" type="blob"/>
+            <column name="PERMISSIONS" type="${blob.type}"/>
         </createTable>
 
         <insert tableName="ROLES">
@@ -335,26 +442,26 @@
             <column name="ROLE" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="VISIBLE" type="boolean">
+            <column name="VISIBLE" type="${boolean.type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="IMAGE" type="blob"/>
+            <column name="IMAGE" type="${blob.type}"/>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="ROLE"
-                             constraintName ="PEOPLE_FK_1"
-                             referencedColumnNames = "ID"
-                             baseTableName="PEOPLE"
-                             referencedTableName="ROLES"/>
+                                 constraintName ="PEOPLE_FK_1"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="PEOPLE"
+                                 referencedTableName="ROLES"/>
 
         <createIndex tableName="PEOPLE"
-                 indexName="PEOPLE_NAME_INX"
-                 unique="true">
+                     indexName="PEOPLE_NAME_INX"
+                     unique="true">
             <column name="NAME" type="varchar(255)"/>
         </createIndex>
         <createIndex tableName="PEOPLE"
-                 indexName="PEOPLE_CARD_INX"
-                 unique="false">
+                     indexName="PEOPLE_CARD_INX"
+                     unique="false">
             <column name="CARD" type="varchar(255)"/>
         </createIndex>
     </changeSet>
@@ -438,12 +545,12 @@
             <column name="RESTYPE" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="CONTENT" type="blob"/>
+            <column name="CONTENT" type="${blob.type}"/>
         </createTable>
 
         <createIndex tableName="RESOURCES"
-                 indexName="RESOURCES_NAME_INX"
-                 unique="true">
+                     indexName="RESOURCES_NAME_INX"
+                     unique="true">
             <column name="NAME" type="varchar(255)"/>
         </createIndex>
     </changeSet>
@@ -838,8 +945,8 @@
         </createTable>
 
         <createIndex tableName="TAXCUSTCATEGORIES"
-                 indexName="TAXCUSTCAT_NAME_INX"
-                 unique="true">
+                     indexName="TAXCUSTCAT_NAME_INX"
+                     unique="true">
             <column name="NAME" type="varchar(255)"/>
         </createIndex>
     </changeSet>
@@ -879,39 +986,39 @@
             <column name="PHONE" type="varchar(255)"/>
             <column name="PHONE2" type="varchar(255)"/>
             <column name="FAX" type="varchar(255)"/>
-            <column name="NOTE" type="varchar(255)"/>
-            <column name="VISIBLE" type="boolean" defaultValueBoolean="true">
+            <column name="NOTES" type="varchar(255)"/>
+            <column name="VISIBLE" type="${boolean.type}" defaultValueBoolean="true">
                 <constraints nullable="false"/>
             </column>
             <column name="CURDATE" type="timestamp"/>
             <column name="CURDEBT" type="double precision" defaultValueNumeric="0.0"/>
-            <column name="IMAGE" type="blob"/>
+            <column name="IMAGE" type="${blob.type}"/>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="TAXCATEGORY"
-                             constraintName ="CUSTOMERS_TAXCAT"
-                             referencedColumnNames = "ID"
-                             baseTableName="CUSTOMERS"
-                             referencedTableName="TAXCUSTCATEGORIES"/>
+                                 constraintName ="CUSTOMERS_TAXCAT"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="CUSTOMERS"
+                                 referencedTableName="TAXCUSTCATEGORIES"/>
 
         <createIndex tableName="CUSTOMERS"
-                 indexName="CUSTOMERS_SKEY_INX"
-                 unique="true">
+                     indexName="CUSTOMERS_SKEY_INX"
+                     unique="true">
             <column name="SEARCHKEY" type="varchar(255)"/>
         </createIndex>
         <createIndex tableName="CUSTOMERS"
-                 indexName="CUSTOMERS_TAXID_INX"
-                 unique="false">
+                     indexName="CUSTOMERS_TAXID_INX"
+                     unique="false">
             <column name="TAXID" type="varchar(255)"/>
         </createIndex>
         <createIndex tableName="CUSTOMERS"
-                 indexName="CUSTOMERS_NAME_INX"
-                 unique="false">
+                     indexName="CUSTOMERS_NAME_INX"
+                     unique="false">
             <column name="NAME" type="varchar(255)"/>
         </createIndex>
         <createIndex tableName="CUSTOMERS"
-                 indexName="CUSTOMERS_CARD_INX"
-                 unique="false">
+                     indexName="CUSTOMERS_CARD_INX"
+                     unique="false">
             <column name="CARD" type="varchar(255)"/>
         </createIndex>
     </changeSet>
@@ -932,21 +1039,21 @@
             </column>
             <column name="PARENTID" type="varchar(255)"/>
             <column name="TEXTTIP" type="varchar(255)" defaultValue="NULL"/>
-            <column name="CATSHOWNAME" type="boolean" defaultValueBoolean="true">
+            <column name="CATSHOWNAME" type="${boolean.type}" defaultValueBoolean="true">
                 <constraints nullable="false"/>
             </column>
-            <column name="IMAGE" type="blob"/>
+            <column name="IMAGE" type="${blob.type}"/>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="PARENTID"
-                             constraintName ="CATEGORIES_FK_1"
-                             referencedColumnNames = "ID"
-                             baseTableName="CATEGORIES"
-                             referencedTableName="CATEGORIES"/>
+                                 constraintName ="CATEGORIES_FK_1"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="CATEGORIES"
+                                 referencedTableName="CATEGORIES"/>
 
         <createIndex tableName="CATEGORIES"
-                 indexName="CATEGORIES_NAME_INX"
-                 unique="true">
+                     indexName="CATEGORIES_NAME_INX"
+                     unique="true">
             <column name="NAME" type="varchar(255)"/>
         </createIndex>
 
@@ -973,8 +1080,8 @@
         </createTable>
 
         <createIndex tableName="TAXCATEGORIES"
-                 indexName="TAXCAT_NAME_INX"
-                 unique="true">
+                     indexName="TAXCAT_NAME_INX"
+                     unique="true">
             <column name="NAME" type="varchar(255)"/>
         </createIndex>
 
@@ -1010,33 +1117,33 @@
             <column name="RATE" type="double precision" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="RATECASCADE" type="boolean" defaultValueBoolean="false">
+            <column name="RATECASCADE" type="${boolean.type}" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="RATEORDER" type="int"/>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="CATEGORY"
-                             constraintName ="TAXES_CAT_FK"
-                             referencedColumnNames = "ID"
-                             baseTableName="TAXES"
-                             referencedTableName="TAXCATEGORIES"/>
+                                 constraintName ="TAXES_CAT_FK"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="TAXES"
+                                 referencedTableName="TAXCATEGORIES"/>
 
         <addForeignKeyConstraint baseColumnNames="CUSTCATEGORY"
-                             constraintName ="TAXES_CUSTCAT_FK"
-                             referencedColumnNames = "ID"
-                             baseTableName="TAXES"
-                             referencedTableName="TAXCUSTCATEGORIES"/>
+                                 constraintName ="TAXES_CUSTCAT_FK"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="TAXES"
+                                 referencedTableName="TAXCUSTCATEGORIES"/>
 
         <addForeignKeyConstraint baseColumnNames="PARENTID"
-                             constraintName ="TAXES_TAXES_FK"
-                             referencedColumnNames = "ID"
-                             baseTableName="TAXES"
-                             referencedTableName="TAXES"/>
+                                 constraintName ="TAXES_TAXES_FK"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="TAXES"
+                                 referencedTableName="TAXES"/>
 
         <createIndex tableName="TAXES"
-                 indexName="TAXES_NAME_INX"
-                 unique="true">
+                     indexName="TAXES_NAME_INX"
+                     unique="true">
             <column name="NAME" type="varchar(255)"/>
         </createIndex>
 
@@ -1089,11 +1196,11 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="ATTRIBUTE_ID"
-                             constraintName ="ATTVAL_ATT"
-                             referencedColumnNames = "ID"
-                             baseTableName="ATTRIBUTEVALUE"
-                             onDelete="CASCADE"
-                             referencedTableName="ATTRIBUTE"/>
+                                 constraintName ="ATTVAL_ATT"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="ATTRIBUTEVALUE"
+                                 onDelete="CASCADE"
+                                 referencedTableName="ATTRIBUTE"/>
     </changeSet>
 
     <changeSet author="UnicentaOpos - John L" id="Create Attributeset Table">
@@ -1134,21 +1241,21 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="ATTRIBUTESET_ID"
-                             constraintName ="ATTUSE_SET"
-                             referencedColumnNames = "ID"
-                             baseTableName="ATTRIBUTEUSE"
-                             onDelete="CASCADE"
-                             referencedTableName="ATTRIBUTESET"/>
+                                 constraintName ="ATTUSE_SET"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="ATTRIBUTEUSE"
+                                 onDelete="CASCADE"
+                                 referencedTableName="ATTRIBUTESET"/>
 
         <addForeignKeyConstraint baseColumnNames="ATTRIBUTE_ID"
-                             constraintName ="ATTUSE_ATT"
-                             referencedColumnNames = "ID"
-                             baseTableName="ATTRIBUTEUSE"
-                             referencedTableName="ATTRIBUTE"/>
+                                 constraintName ="ATTUSE_ATT"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="ATTRIBUTEUSE"
+                                 referencedTableName="ATTRIBUTE"/>
 
         <createIndex tableName="ATTRIBUTEUSE"
-                 indexName="ATTUSE_LINE"
-                 unique="true">
+                     indexName="ATTUSE_LINE"
+                     unique="true">
             <column name="ATTRIBUTESET_ID" type="varchar(255)"/>
             <column name="LINENO" type="varchar(255)"/>
         </createIndex>
@@ -1172,11 +1279,11 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="ATTRIBUTESET_ID"
-                             constraintName ="ATTSETINST_SET"
-                             referencedColumnNames = "ID"
-                             baseTableName="ATTRIBUTESETINSTANCE"
-                             onDelete="CASCADE"
-                             referencedTableName="ATTRIBUTESET"/>
+                                 constraintName ="ATTSETINST_SET"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="ATTRIBUTESETINSTANCE"
+                                 onDelete="CASCADE"
+                                 referencedTableName="ATTRIBUTESET"/>
     </changeSet>
 
     <changeSet author="UnicentaOpos - John L" id="Create Attributeinstance Table">
@@ -1200,17 +1307,17 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="ATTRIBUTESETINSTANCE_ID"
-                             constraintName ="ATTINST_SET"
-                             referencedColumnNames = "ID"
-                             baseTableName="ATTRIBUTEINSTANCE"
-                             onDelete="CASCADE"
-                             referencedTableName="ATTRIBUTESETINSTANCE"/>
+                                 constraintName ="ATTINST_SET"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="ATTRIBUTEINSTANCE"
+                                 onDelete="CASCADE"
+                                 referencedTableName="ATTRIBUTESETINSTANCE"/>
 
         <addForeignKeyConstraint baseColumnNames="ATTRIBUTE_ID"
-                             constraintName ="ATTINST_ATT"
-                             referencedColumnNames = "ID"
-                             baseTableName="ATTRIBUTEINSTANCE"
-                             referencedTableName="ATTRIBUTE"/>
+                                 constraintName ="ATTINST_ATT"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="ATTRIBUTEINSTANCE"
+                                 referencedTableName="ATTRIBUTE"/>
     </changeSet>
 
     <changeSet author="UnicentaOpos - John L" id="Create Products Table">
@@ -1249,75 +1356,75 @@
             <column name="ATTRIBUTESET_ID" type="varchar(255)"/>
             <column name="STOCKCOST" type="double precision"/>
             <column name="STOCKVOLUME" type="double precision"/>
-            <column name="ISCOM" type="boolean" defaultValueBoolean="false">
+            <column name="ISCOM" type="${boolean.type}" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="ISSCALE" type="boolean" defaultValueBoolean="false">
+            <column name="ISSCALE" type="${boolean.type}" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="ISKITCHEN" type="boolean" defaultValueBoolean="false">
+            <column name="ISKITCHEN" type="${boolean.type}" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="PRINTKB" type="boolean" defaultValueBoolean="false">
+            <column name="PRINTKB" type="${boolean.type}" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="SENDSTATUS" type="boolean" defaultValueBoolean="false">
+            <column name="SENDSTATUS" type="${boolean.type}" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="ISSERVICE" type="boolean" defaultValueBoolean="false">
+            <column name="ISSERVICE" type="${boolean.type}" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="DISPLAY" type="varchar(255)"/>
-            <column name="ATTRIBUTES" type="blob"/>
-            <column name="ISVPRICE" type="boolean" defaultValueBoolean="false">
+            <column name="ATTRIBUTES" type="${blob.type}"/>
+            <column name="ISVPRICE" type="${boolean.type}" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="ISVERPATRIB" type="boolean" defaultValueBoolean="false">
+            <column name="ISVERPATRIB" type="${boolean.type}" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
             <column name="TEXTTIP" type="varchar(255)"/>
-            <column name="WARRANTY" type="boolean" defaultValueBoolean="false">
+            <column name="WARRANTY" type="${boolean.type}" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="IMAGE" type="blob"/>
+            <column name="IMAGE" type="${blob.type}"/>
             <column name="STOCKUNITS" type="double precision" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="CATEGORY"
-                             constraintName ="PRODUCTS_FK_1"
-                             referencedColumnNames = "ID"
-                             baseTableName="PRODUCTS"
-                             referencedTableName="CATEGORIES"/>
+                                 constraintName ="PRODUCTS_FK_1"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="PRODUCTS"
+                                 referencedTableName="CATEGORIES"/>
 
         <addForeignKeyConstraint baseColumnNames="TAXCAT"
-                             constraintName ="PRODUCTS_TAXCAT_FK"
-                             referencedColumnNames = "ID"
-                             baseTableName="PRODUCTS"
-                             referencedTableName="TAXCATEGORIES"/>
+                                 constraintName ="PRODUCTS_TAXCAT_FK"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="PRODUCTS"
+                                 referencedTableName="TAXCATEGORIES"/>
 
         <addForeignKeyConstraint baseColumnNames="ATTRIBUTESET_ID"
-                             constraintName ="PRODUCTS_ATTRSET_FK"
-                             referencedColumnNames = "ID"
-                             baseTableName="PRODUCTS"
-                             referencedTableName="ATTRIBUTESET"/>
+                                 constraintName ="PRODUCTS_ATTRSET_FK"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="PRODUCTS"
+                                 referencedTableName="ATTRIBUTESET"/>
 
         <createIndex tableName="PRODUCTS"
-                 indexName="PRODUCTS_INX_0"
-                 unique="true">
+                     indexName="PRODUCTS_INX_0"
+                     unique="true">
             <column name="REFERENCE" type="varchar(255)"/>
         </createIndex>
 
         <createIndex tableName="PRODUCTS"
-                 indexName="PRODUCTS_INX_1"
-                 unique="true">
+                     indexName="PRODUCTS_INX_1"
+                     unique="true">
             <column name="CODE" type="varchar(255)"/>
         </createIndex>
 
         <createIndex tableName="PRODUCTS"
-                 indexName="PRODUCTS_NAME_INX"
-                 unique="true">
+                     indexName="PRODUCTS_NAME_INX"
+                     unique="true">
             <column name="NAME" type="varchar(255)"/>
         </createIndex>
 
@@ -1336,6 +1443,8 @@
             <column name="CATEGORY" value="000"/>
             <column name="TAXCAT" value="001"/>
             <column name="ISSERVICE" valueNumeric="1"/>
+            <column name="PRICEBUY" valueNumeric="0.0"/>
+            <column name="PRICESELL" valueNumeric="0.0"/>
         </insert>
     </changeSet>
 
@@ -1352,6 +1461,8 @@
             <column name="CATEGORY" value="000"/>
             <column name="TAXCAT" value="001"/>
             <column name="ISSERVICE" valueBoolean="true"/>
+            <column name="PRICEBUY" valueNumeric="0.0"/>
+            <column name="PRICESELL" valueNumeric="0.0"/>
         </insert>
                        
     </changeSet>
@@ -1374,13 +1485,13 @@
 
 
         <addForeignKeyConstraint baseColumnNames="PRODUCT"
-                             constraintName ="PRODUCTS_CAT_FK_1"
-                             referencedColumnNames = "ID"
-                             baseTableName="PRODUCTS_CAT"
-                             referencedTableName="PRODUCTS"/>
+                                 constraintName ="PRODUCTS_CAT_FK_1"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="PRODUCTS_CAT"
+                                 referencedTableName="PRODUCTS"/>
 
         <createIndex tableName="PRODUCTS_CAT"
-                 indexName="PRODUCTS_CAT_INX_1">
+                     indexName="PRODUCTS_CAT_INX_1">
             <column name="CATORDER"/>
         </createIndex>
 
@@ -1410,20 +1521,20 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="PRODUCT"
-                             constraintName ="PRODUCTS_COM_FK_1"
-                             referencedColumnNames = "ID"
-                             baseTableName="PRODUCTS_COM"
-                             referencedTableName="PRODUCTS"/>
+                                 constraintName ="PRODUCTS_COM_FK_1"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="PRODUCTS_COM"
+                                 referencedTableName="PRODUCTS"/>
 
         <addForeignKeyConstraint baseColumnNames="PRODUCT2"
-                             constraintName ="PRODUCTS_COM_FK_2"
-                             referencedColumnNames = "ID"
-                             baseTableName="PRODUCTS_COM"
-                             referencedTableName="PRODUCTS"/>
+                                 constraintName ="PRODUCTS_COM_FK_2"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="PRODUCTS_COM"
+                                 referencedTableName="PRODUCTS"/>
 
         <createIndex tableName="PRODUCTS_COM"
-                 indexName="PCOM_INX_PROD"
-                 unique="true">
+                     indexName="PCOM_INX_PROD"
+                     unique="true">
             <column name="PRODUCT" type="varchar(255)"/>
             <column name="PRODUCT2" type="varchar(255)"/>
         </createIndex>
@@ -1447,8 +1558,8 @@
         </createTable>
 
         <createIndex tableName="LOCATIONS"
-                 indexName="LOCATIONS_NAME_INX"
-                 unique="true">
+                     indexName="LOCATIONS_NAME_INX"
+                     unique="true">
             <column name="NAME" type="varchar(255)"/>
         </createIndex>
 
@@ -1492,25 +1603,25 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="PRODUCT"
-                             constraintName ="STOCKDIARY_FK_1"
-                             referencedColumnNames = "ID"
-                             baseTableName="STOCKDIARY"
-                             referencedTableName="PRODUCTS"/>
+                                 constraintName ="STOCKDIARY_FK_1"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="STOCKDIARY"
+                                 referencedTableName="PRODUCTS"/>
 
         <addForeignKeyConstraint baseColumnNames="ATTRIBUTESETINSTANCE_ID"
-                             constraintName ="STOCKDIARY_ATTSETINST"
-                             referencedColumnNames = "ID"
-                             baseTableName="STOCKDIARY"
-                             referencedTableName="ATTRIBUTESETINSTANCE"/>
+                                 constraintName ="STOCKDIARY_ATTSETINST"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="STOCKDIARY"
+                                 referencedTableName="ATTRIBUTESETINSTANCE"/>
 
         <addForeignKeyConstraint baseColumnNames="LOCATION"
-                             constraintName ="STOCKDIARY_FK_2"
-                             referencedColumnNames = "ID"
-                             baseTableName="STOCKDIARY"
-                             referencedTableName="LOCATIONS"/>
+                                 constraintName ="STOCKDIARY_FK_2"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="STOCKDIARY"
+                                 referencedTableName="LOCATIONS"/>
 
         <createIndex tableName="STOCKDIARY"
-                 indexName="STOCKDIARY_INX_1">
+                     indexName="STOCKDIARY_INX_1">
             <column name="DATENEW" type="timestamp"/>
         </createIndex>
     </changeSet>
@@ -1541,16 +1652,16 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="PRODUCT"
-                             constraintName ="STOCKLEVEL_PRODUCT"
-                             referencedColumnNames = "ID"
-                             baseTableName="STOCKLEVEL"
-                             referencedTableName="PRODUCTS"/>
+                                 constraintName ="STOCKLEVEL_PRODUCT"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="STOCKLEVEL"
+                                 referencedTableName="PRODUCTS"/>
 
         <addForeignKeyConstraint baseColumnNames="LOCATION"
-                             constraintName ="STOCKLEVEL_LOCATION"
-                             referencedColumnNames = "ID"
-                             baseTableName="STOCKLEVEL"
-                             referencedTableName="LOCATIONS"/>
+                                 constraintName ="STOCKLEVEL_LOCATION"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="STOCKLEVEL"
+                                 referencedTableName="LOCATIONS"/>
     </changeSet>
 
     <changeSet author="UnicentaOpos - John L" id="Create Stock current Table">
@@ -1574,26 +1685,26 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="PRODUCT"
-                             constraintName ="STOCKCURRENT_FK_1"
-                             referencedColumnNames = "ID"
-                             baseTableName="STOCKCURRENT"
-                             referencedTableName="PRODUCTS"/>
+                                 constraintName ="STOCKCURRENT_FK_1"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="STOCKCURRENT"
+                                 referencedTableName="PRODUCTS"/>
 
         <addForeignKeyConstraint baseColumnNames="ATTRIBUTESETINSTANCE_ID"
-                             constraintName ="STOCKCURRENT_ATTSETINST"
-                             referencedColumnNames = "ID"
-                             baseTableName="STOCKCURRENT"
-                             referencedTableName="ATTRIBUTESETINSTANCE"/>
+                                 constraintName ="STOCKCURRENT_ATTSETINST"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="STOCKCURRENT"
+                                 referencedTableName="ATTRIBUTESETINSTANCE"/>
 
         <addForeignKeyConstraint baseColumnNames="LOCATION"
-                             constraintName ="STOCKCURRENT_FK_2"
-                             referencedColumnNames = "ID"
-                             baseTableName="STOCKCURRENT"
-                             referencedTableName="LOCATIONS"/>
+                                 constraintName ="STOCKCURRENT_FK_2"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="STOCKCURRENT"
+                                 referencedTableName="LOCATIONS"/>
 
         <createIndex tableName="STOCKCURRENT"
-                 indexName="STOCKCURRENT_INX"
-                 unique="true">
+                     indexName="STOCKCURRENT_INX"
+                     unique="true">
             <column name="LOCATION" type="varchar(255)"/>
             <column name="PRODUCT" type="varchar(255)"/>
             <column name="ATTRIBUTESETINSTANCE_ID" type="varchar(255)"/>
@@ -1627,13 +1738,13 @@
         </createTable>
 
         <createIndex tableName="CLOSEDCASH"
-                 indexName="CLOSEDCASH_INX_1">
+                     indexName="CLOSEDCASH_INX_1">
             <column name="DATESTART" type="timestamp"/>
         </createIndex>
 
         <createIndex tableName="CLOSEDCASH"
-                 indexName="CLOSEDCASH_INX_SEQ"
-                 unique="true">
+                     indexName="CLOSEDCASH_INX_SEQ"
+                     unique="true">
             <column name="HOST" type="varchar(255)"/>
             <column name="HOSTSEQUENCE" type="int"/>
         </createIndex>
@@ -1657,17 +1768,17 @@
                 <constraints nullable="false"/>
             </column>
             <column name="PERSON" type="varchar(255)"/>
-            <column name="ATTRIBUTES" type="blob"/>
+            <column name="ATTRIBUTES" type="${blob.type}"/>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="MONEY"
-                             constraintName ="RECEIPTS_FK_MONEY"
-                             referencedColumnNames = "MONEY"
-                             baseTableName="RECEIPTS"
-                             referencedTableName="CLOSEDCASH"/>
+                                 constraintName ="RECEIPTS_FK_MONEY"
+                                 referencedColumnNames = "MONEY"
+                                 baseTableName="RECEIPTS"
+                                 referencedTableName="CLOSEDCASH"/>
 
         <createIndex tableName="RECEIPTS"
-                 indexName="RECEIPTS_INX_1">
+                     indexName="RECEIPTS_INX_1">
             <column name="DATENEW" type="timestamp"/>
         </createIndex>
     </changeSet>
@@ -1699,25 +1810,25 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="ID"
-                             constraintName ="TICKETS_FK_ID"
-                             referencedColumnNames = "ID"
-                             baseTableName="TICKETS"
-                             referencedTableName="RECEIPTS"/>
+                                 constraintName ="TICKETS_FK_ID"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="TICKETS"
+                                 referencedTableName="RECEIPTS"/>
 
         <addForeignKeyConstraint baseColumnNames="PERSON"
-                             constraintName ="TICKETS_FK_2"
-                             referencedColumnNames = "ID"
-                             baseTableName="TICKETS"
-                             referencedTableName="PEOPLE"/>
+                                 constraintName ="TICKETS_FK_2"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="TICKETS"
+                                 referencedTableName="PEOPLE"/>
 
         <addForeignKeyConstraint baseColumnNames="CUSTOMER"
-                             constraintName ="TICKETS_CUSTOMERS_FK"
-                             referencedColumnNames = "ID"
-                             baseTableName="TICKETS"
-                             referencedTableName="CUSTOMERS"/>
+                                 constraintName ="TICKETS_CUSTOMERS_FK"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="TICKETS"
+                                 referencedTableName="CUSTOMERS"/>
 
         <createIndex tableName="TICKETS"
-                 indexName="TICKETS_TICKETID">
+                     indexName="TICKETS_TICKETID">
             <column name="TICKETTYPE" type="int"/>
             <column name="TICKETID" type="int"/>
         </createIndex>
@@ -1748,34 +1859,34 @@
             <column name="TAXID" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="ATTRIBUTES" type="blob"/>
+            <column name="ATTRIBUTES" type="${blob.type}"/>
         </createTable>
 
         <addPrimaryKey columnNames="TICKET, LINE" constraintName="TICKETLINES_PKEY" tableName="TICKETLINES"/>
 
         <addForeignKeyConstraint baseColumnNames="TICKET"
-                             constraintName ="TICKETLINES_FK_TICKET"
-                             referencedColumnNames = "ID"
-                             baseTableName="TICKETLINES"
-                             referencedTableName="TICKETS"/>
+                                 constraintName ="TICKETLINES_FK_TICKET"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="TICKETLINES"
+                                 referencedTableName="TICKETS"/>
 
         <addForeignKeyConstraint baseColumnNames="PRODUCT"
-                             constraintName ="TICKETLINES_FK_2"
-                             referencedColumnNames = "ID"
-                             baseTableName="TICKETLINES"
-                             referencedTableName="PRODUCTS"/>
+                                 constraintName ="TICKETLINES_FK_2"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="TICKETLINES"
+                                 referencedTableName="PRODUCTS"/>
 
         <addForeignKeyConstraint baseColumnNames="ATTRIBUTESETINSTANCE_ID"
-                             constraintName ="TICKETLINES_ATTSETINST"
-                             referencedColumnNames = "ID"
-                             baseTableName="TICKETLINES"
-                             referencedTableName="ATTRIBUTESETINSTANCE"/>
+                                 constraintName ="TICKETLINES_ATTSETINST"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="TICKETLINES"
+                                 referencedTableName="ATTRIBUTESETINSTANCE"/>
 
         <addForeignKeyConstraint baseColumnNames="TAXID"
-                             constraintName ="TICKETLINES_FK_3"
-                             referencedColumnNames = "ID"
-                             baseTableName="TICKETLINES"
-                             referencedTableName="TAXES"/>
+                                 constraintName ="TICKETLINES_FK_3"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="TICKETLINES"
+                                 referencedTableName="TAXES"/>
     </changeSet>
 
     <changeSet author="UnicentaOpos - John L" id="Create Lineremoved Table">
@@ -1843,17 +1954,17 @@
                 <constraints nullable="false"/>
             </column>
             <column name="CARDNAME" type="varchar(255)"/>
-            <column name="RETURNMSG" type="blob"/>
+            <column name="RETURNMSG" type="${blob.type}"/>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="RECEIPT"
-                             constraintName ="PAYMENTS_FK_RECEIPT"
-                             referencedColumnNames = "ID"
-                             baseTableName="PAYMENTS"
-                             referencedTableName="RECEIPTS"/>
+                                 constraintName ="PAYMENTS_FK_RECEIPT"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="PAYMENTS"
+                                 referencedTableName="RECEIPTS"/>
 
         <createIndex tableName="PAYMENTS"
-                 indexName="PAYMENTS_INX">
+                     indexName="PAYMENTS_INX">
             <column name="PAYMENT" type="varchar(255)"/>
         </createIndex>
     </changeSet>
@@ -1884,16 +1995,16 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="TAXID"
-                             constraintName ="TAXLINES_TAX"
-                             referencedColumnNames = "ID"
-                             baseTableName="TAXLINES"
-                             referencedTableName="TAXES"/>
+                                 constraintName ="TAXLINES_TAX"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="TAXLINES"
+                                 referencedTableName="TAXES"/>
 
         <addForeignKeyConstraint baseColumnNames="RECEIPT"
-                             constraintName ="TAXLINES_RECEIPT"
-                             referencedColumnNames = "ID"
-                             baseTableName="TAXLINES"
-                             referencedTableName="RECEIPTS"/>
+                                 constraintName ="TAXLINES_RECEIPT"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="TAXLINES"
+                                 referencedTableName="RECEIPTS"/>
     </changeSet>
 
     <changeSet author="UnicentaOpos - John L" id="Create Floors Table">
@@ -1910,12 +2021,12 @@
             <column name="NAME" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="IMAGE" type="blob"/>
+            <column name="IMAGE" type="${blob.type}"/>
         </createTable>
 
         <createIndex tableName="FLOORS"
-                 indexName="FLOORS_NAME_INX"
-                 unique="true">
+                     indexName="FLOORS_NAME_INX"
+                     unique="true">
             <column name="NAME" type="varchar(255)"/>
         </createIndex>
 
@@ -1952,20 +2063,20 @@
             <column name="CUSTOMER" type="varchar(255)"/>
             <column name="WAITER" type="varchar(255)"/>
             <column name="TICKETID" type="varchar(255)"/>
-            <column name="TABLEMOVED" type="boolean" defaultValueBoolean="false">
+            <column name="TABLEMOVED" type="${boolean.type}" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="FLOOR"
-                             constraintName ="PLACES_FK_1"
-                             referencedColumnNames = "ID"
-                             baseTableName="PLACES"
-                             referencedTableName="FLOORS"/>
+                                 constraintName ="PLACES_FK_1"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="PLACES"
+                                 referencedTableName="FLOORS"/>
 
         <createIndex tableName="PLACES"
-                 indexName="PLACES_NAME_INX"
-                 unique="true">
+                     indexName="PLACES_NAME_INX"
+                     unique="true">
             <column name="NAME" type="varchar(255)"/>
         </createIndex>
 
@@ -2089,15 +2200,15 @@
             <column name="CHAIRS" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="ISDONE" type="boolean">
+            <column name="ISDONE" type="${boolean.type}">
                 <constraints nullable="false"/>
             </column>
             <column name="DESCRIPTION" type="varchar(255)"/>
         </createTable>
 
         <createIndex tableName="RESERVATIONS"
-                 indexName="RESERVATIONS_INX_1"
-                 unique="true">
+                     indexName="RESERVATIONS_INX_1"
+                     unique="true">
             <column name="DATENEW" type="timestamp"/>
         </createIndex>
     </changeSet>
@@ -2119,16 +2230,16 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="ID"
-                             constraintName ="RES_CUST_FK_1"
-                             referencedColumnNames = "ID"
-                             baseTableName="RESERVATION_CUSTOMERS"
-                             referencedTableName="reservations"/>
+                                 constraintName ="RES_CUST_FK_1"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="RESERVATION_CUSTOMERS"
+                                 referencedTableName="reservations"/>
 
         <addForeignKeyConstraint baseColumnNames="CUSTOMER"
-                             constraintName ="RES_CUST_FK_2"
-                             referencedColumnNames = "ID"
-                             baseTableName="RESERVATION_CUSTOMERS"
-                             referencedTableName="CUSTOMERS"/>
+                                 constraintName ="RES_CUST_FK_2"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="RESERVATION_CUSTOMERS"
+                                 referencedTableName="CUSTOMERS"/>
     </changeSet>
 
     <changeSet author="UnicentaOpos - John L" id="Create THIRDPARTIES Table">
@@ -2161,14 +2272,14 @@
         </createTable>
 
         <createIndex tableName="THIRDPARTIES"
-                 indexName="THIRDPARTIES_CIF_INX"
-                 unique="true">
+                     indexName="THIRDPARTIES_CIF_INX"
+                     unique="true">
             <column name="CIF" type="varchar(255)"/>
         </createIndex>
 
         <createIndex tableName="THIRDPARTIES"
-                 indexName="THIRDPARTIES_NAME_INX"
-                 unique="true">
+                     indexName="THIRDPARTIES_NAME_INX"
+                     unique="true">
             <column name="NAME" type="varchar(255)"/>
         </createIndex>
     </changeSet>
@@ -2187,7 +2298,7 @@
             <column name="NAME" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="CONTENT" type="blob"/>
+            <column name="CONTENT" type="${blob.type}"/>
             <column name="PICKUPID" type="int" defaultValue="0">
                 <constraints nullable="false"/>
             </column>
@@ -2243,10 +2354,10 @@
         </createTable>
 
         <addForeignKeyConstraint baseColumnNames="PPLID"
-                             constraintName ="LEAVES_PPLID"
-                             referencedColumnNames = "ID"
-                             baseTableName="LEAVES"
-                             referencedTableName="PEOPLE"/>
+                                 constraintName ="LEAVES_PPLID"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="LEAVES"
+                                 referencedTableName="PEOPLE"/>
     </changeSet>
 
     <changeSet author="UnicentaOpos - John L" id="Create BREAKS Table">
@@ -2264,7 +2375,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="NOTES" type="varchar(255)"/>
-            <column name="VISIBLE" type="boolean">
+            <column name="VISIBLE" type="${boolean.type}">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -2361,7 +2472,7 @@
             <column name="VESSELNAME" type="varchar(255)"/>
             <column name="SIZE" type="int"/>
             <column name="DAYS" type="int"/>
-            <column name="POWER" type="boolean" defaultValueBoolean="false">
+            <column name="POWER" type="${boolean.type}" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -2570,18 +2681,16 @@
         <sql>CREATE TABLE PICKUP_NUMBER (ID INTEGER DEFAULT 0 NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;
             INSERT INTO PICKUP_NUMBER VALUES(1)</sql>
     </changeSet>
-        
+
+    <changeSet author="UnicentaOpos - John L" id="delete shared tickets">
+        <sql>DELETE FROM SHAREDTICKETS</sql>
+    </changeSet>
+
     <changeSet author="UnicentaOpos - John L" id="Register Version 3.81" >
         <update tableName="APPLICATIONS">
-            <column name="VERSION" value="3.02"/>
+            <column name="VERSION" value="3.81"/>
         </update>
     </changeSet>
-                             
-   
-                                
-                                                             
-                                                                                          
-                                                                                                                                                    
-                                  
-  
+
 </databaseChangeLog>
+

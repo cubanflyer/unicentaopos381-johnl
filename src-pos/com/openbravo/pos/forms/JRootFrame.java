@@ -63,7 +63,6 @@ public class JRootFrame extends javax.swing.JFrame implements AppMessage {
         
         if (m_rootapp.initApp(m_props)) {
 
-
             if ("true".equals(props.getProperty("machine.uniqueinstance"))) {
                 // Register the running application
                 try {
@@ -80,8 +79,9 @@ public class JRootFrame extends javax.swing.JFrame implements AppMessage {
                 this.setIconImage(ImageIO.read(JRootFrame.class.getResourceAsStream("/com/openbravo/images/favicon.png")));
             } catch (IOException e) {
             }   
+            setTitle(AppLocal.APP_NAME + " - " + AppLocal.APP_VERSION + " - " + AppLocal.APP_VERSIONJL + m_OS.getOS() + m_rootapp.getDbVersion() + "-" + AppLocal.APP_VERSIONJLCORE);
 
-            setTitle(AppLocal.APP_NAME + " - " + AppLocal.APP_VERSION);       
+            // setTitle(AppLocal.APP_NAME + " - " + AppLocal.APP_VERSION);       
             pack();
             setLocationRelativeTo(null);        
             
@@ -141,5 +141,4 @@ public class JRootFrame extends javax.swing.JFrame implements AppMessage {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-    
 }

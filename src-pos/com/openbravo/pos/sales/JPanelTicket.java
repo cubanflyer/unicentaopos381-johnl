@@ -1820,10 +1820,7 @@ if (pickupSize!=null && (Integer.parseInt(pickupSize) >= tmpPickupId.length())){
             // more arguments
             for(ScriptArg arg : args) {
                 script.put(arg.getKey(), arg.getValue());
-//                System.out.println(arg.getKey());
-//                System.out.println(arg.getValue());
             }             
-
             return script.eval(code);
         }            
     }
@@ -2484,10 +2481,8 @@ if (pickupSize!=null && (Integer.parseInt(pickupSize) >= tmpPickupId.length())){
             if (splitdialog.showDialog(ticket1, ticket2, m_oTicketExt)) {
                 if (closeTicket(ticket2, m_oTicketExt)) { // already checked  that number of lines > 0                            
                     setActiveTicket(ticket1, m_oTicketExt);// set result ticket
-// maybe look at returning to table set up after splitting the bill
-
-                    
-                }
+// maybe look at returning to table set up after splitting the bill     
+                }                          
             }
         }
         

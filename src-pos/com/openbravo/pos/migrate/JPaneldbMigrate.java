@@ -16,14 +16,13 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
+//
+//    Updated to use liguibase JDL
 package com.openbravo.pos.migrate;
 
 import com.openbravo.basic.BasicException;
 import com.openbravo.data.gui.JMessageDialog;
 import com.openbravo.data.gui.MessageInf;
-import com.openbravo.data.loader.BatchSentence;
-import com.openbravo.data.loader.BatchSentenceResource;
 import com.openbravo.data.loader.Session;
 import com.openbravo.data.user.DirtyManager;
 import com.openbravo.pos.config.PanelConfig;
@@ -46,8 +45,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.regex.Matcher;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
+import liquibase.resource.ClassLoaderResourceAccessor;
 
 /**
  *
@@ -73,13 +80,17 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
     private String ticketsnumRefund;
     private String ticketsnumPayment;
     private List<PanelConfig> m_panelconfig;
-    private String eScript = "";
-    private String eScript1 = "";
-    private String eScript2 = "";
-    private String eScript3 = "";
+
+    private String db_user2;
+    private String db_url2;
+    private char[] pass;
+    private String db_password2;
+    private String changelog;
+    private Liquibase liquibase;
 
     /**
      * Creates new form JPaneldbMigrate
+     *
      * @param oApp
      */
     public JPaneldbMigrate(AppView oApp) {
@@ -102,7 +113,6 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
             c.loadProperties(config);
         }
 
-
         jtxtDbDriverLib.getDocument().addDocumentListener(dirty);
         jtxtDbDriver.getDocument().addDocumentListener(dirty);
         jtxtDbURL.getDocument().addDocumentListener(dirty);
@@ -111,12 +121,8 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
         jbtnDbDriverLib.addActionListener(new DirectoryEvent(jtxtDbDriverLib));
         jNewdbType.addActionListener(dirty);
 
-
-
         jNewdbType.addItem("MySQL");
         jNewdbType.addItem("PostgreSQL");
-
-
 
     }
 
@@ -131,49 +137,30 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
             return (false);
         }
 
-// JG Aug 2014 for 3.80
-        eScript = "/com/openbravo/pos/scripts/" + sdbmanager2 + "-create.sql";
-        eScript1 = "/com/openbravo/pos/scripts/" + sdbmanager2 + "-createjl.sql";
-        eScript2 = "/com/openbravo/pos/scripts/" + sdbmanager2 + "-DropFK.sql";
-        eScript3 = "/com/openbravo/pos/scripts/SQL-CreateFK.sql";
-
-        if ("".equals(eScript)) {
-            return (false);
-        }
-        // create a blank database to migrate into
         try {
-            BatchSentence bsentence = new BatchSentenceResource(session2, eScript);;
-            bsentence.putParameter("APP_ID", Matcher.quoteReplacement(AppLocal.APP_ID));
-            bsentence.putParameter("APP_NAME", Matcher.quoteReplacement(AppLocal.APP_NAME));
-            bsentence.putParameter("APP_VERSION", Matcher.quoteReplacement(AppLocal.APP_VERSION));
+            ClassLoader cloader = new URLClassLoader(new URL[]{new File(m_props.getProperty("db.driverlib")).toURI().toURL()});
+            DriverManager.registerDriver(new DriverWrapper((Driver) Class.forName(m_props.getProperty("db.driver"), true, cloader).newInstance()));
 
+            changelog = "com/unicentaopos/pos/liquibase/migratelog.xml";
 
-            java.util.List l = bsentence.list();
-            if (l.size() > 0) {
-                JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("migration.warning"), l.toArray(new Throwable[l.size()])));
+            Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(DriverManager.getConnection(db_url2, db_user2, db_password2)));
+            liquibase = new Liquibase(changelog, new ClassLoaderResourceAccessor(), database);
+            liquibase.update("implement");
+        } catch (DatabaseException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (LiquibaseException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-        } catch (BasicException e) {
-            JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_DANGER, AppLocal.getIntString("migration.warningnodefault"), e));
-            session.close();
-        } finally {
-        }
-
-
-        try {
-            BatchSentence bsentence = new BatchSentenceResource(session2, eScript2);
-            java.util.List l = bsentence.list();
-            if (l.size() > 0) {
-                JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("migration.warning"), l.toArray(new Throwable[l.size()])));
-            }
-
-        } catch (BasicException e) {
-            JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_DANGER, AppLocal.getIntString("migration.warningnofk"), e));
-            session.close();
-        } finally {
-        }
-
-
         return (true);
     }
 
@@ -182,23 +169,33 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
      * @return
      */
     public Boolean addFKeys() {
-        if ("".equals(eScript3)) {
-            return (false);
-        }
+
         try {
-            BatchSentence bsentence = new BatchSentenceResource(session2, eScript3);
-            java.util.List l = bsentence.list();
-            if (l.size() > 0) {
-                JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("migration.warning"), l.toArray(new Throwable[l.size()])));
+            ClassLoader cloader = new URLClassLoader(new URL[]{new File(m_props.getProperty("db.driverlib")).toURI().toURL()});
+            DriverManager.registerDriver(new DriverWrapper((Driver) Class.forName(m_props.getProperty("db.driver"), true, cloader).newInstance()));
+
+            changelog = "com/unicentaopos/pos/liquibase/createfkslog.xml";
+            
+            Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(DriverManager.getConnection(db_url2, db_user2, db_password2)));
+            liquibase = new Liquibase(changelog, new ClassLoaderResourceAccessor(), database);
+            liquibase.update("implement");
+        } catch (DatabaseException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (LiquibaseException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-        } catch (BasicException e) {
-            JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_DANGER, AppLocal.getIntString("database.ScriptNotFound"), e));
-            session.close();
-        } finally {
-        }
         return (true);
-
     }
 
     /**
@@ -225,10 +222,10 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
      */
     public Boolean getSeconddbDetails() {
 
-        String db_user2 = jtxtDbUser.getText();
-        String db_url2 = jtxtDbURL.getText();
-        char[] pass = jtxtDbPassword.getPassword();
-        String db_password2 = new String(pass);
+        db_user2 = jtxtDbUser.getText();
+        db_url2 = jtxtDbURL.getText();
+        pass = jtxtDbPassword.getPassword();
+        db_password2 = new String(pass);
 
         Properties connectionProps = new Properties();
         connectionProps.put("user", db_user2);
@@ -247,8 +244,6 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
             JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_DANGER, AppLocal.getIntString("database.UnableToConnect"), e));
             return (false);
         }
-
-
     }
 
     /**
@@ -274,7 +269,6 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
             sdbmanager = con.getMetaData().getDatabaseProductName();
         } catch (BasicException | SQLException e) {
 // put some error trap here  
-
             JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_DANGER, AppLocal.getIntString("database.UnableToConnect"), e));
             System.exit(0);
         }
@@ -526,6 +520,18 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                     stmt = (Statement) con.createStatement();
                     stmt2 = (Statement) con2.createStatement();
 
+//copy applications table
+                    SQL = "SELECT * FROM APPLICATIONS";
+                    rs = stmt.executeQuery(SQL);
+                    while (rs.next()) {
+                        SQL = "INSERT INTO APPLICATIONS (ID, NAME, VERSION) VALUES (?, ?, ?)";
+                        pstmt = con2.prepareStatement(SQL);
+                        pstmt.setString(1, rs.getString("ID"));
+                        pstmt.setString(2, rs.getString("NAME"));
+                        pstmt.setString(3, rs.getString("VERSION"));
+                        pstmt.executeUpdate();
+                    }
+                                        
 // copy attribute table       
                     SQL = "SELECT * FROM ATTRIBUTE";
                     rs = stmt.executeQuery(SQL);
@@ -624,7 +630,7 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.setString(5, rs.getString("TEXTTIP"));
                         pstmt.setBoolean(6, rs.getBoolean("CATSHOWNAME"));
 
-                        pstmt.executeUpdate();                        
+                        pstmt.executeUpdate();
                     }
 
 // copy closedcash  table       
@@ -640,8 +646,6 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.setTimestamp(5, rs.getTimestamp("DATEEND"));
                         pstmt.executeUpdate();
                     }
-
-
 
 // copy csvimport  table       
                     SQL = "SELECT * FROM CSVIMPORT";
@@ -662,8 +666,6 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.setString(11, rs.getString("CATEGORY"));
                         pstmt.executeUpdate();
                     }
-
-
 
 // copy CUSTOMERS  table       
                     SQL = "SELECT * FROM CUSTOMERS";
@@ -698,7 +700,6 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.executeUpdate();
                     }
 
-
 // copy FLOORS table       
                     SQL = "SELECT * FROM FLOORS";
                     rs = stmt.executeQuery(SQL);
@@ -710,8 +711,6 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.setBytes(3, rs.getBytes("IMAGE"));
                         pstmt.executeUpdate();
                     }
-
-
 
 // copy LEAVES table       
                     SQL = "SELECT * FROM LEAVES";
@@ -728,8 +727,6 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.executeUpdate();
                     }
 
-
-
 // copy LOCATIONS table       
                     SQL = "SELECT * FROM LOCATIONS";
                     rs = stmt.executeQuery(SQL);
@@ -741,7 +738,6 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.setString(3, rs.getString("ADDRESS"));
                         pstmt.executeUpdate();
                     }
-
 
 // copy MOORERS TABLE     
                     SQL = "SELECT * FROM MOORERS";
@@ -755,8 +751,6 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.setBoolean(4, rs.getBoolean("POWER"));
                         pstmt.executeUpdate();
                     }
-
-
 
 // copy payments table       
                     SQL = "SELECT * FROM PAYMENTS";
@@ -773,7 +767,6 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.setBytes(7, rs.getBytes("RETURNMSG"));
                         pstmt.executeUpdate();
                     }
-
 
 // copy PEOPLE table       
                     SQL = "SELECT * FROM PEOPLE";
@@ -809,13 +802,12 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.executeUpdate();
                     }
 
-
 // copy Products  table 
 // JG Aug 2014 - INSERT STOCKUNITS                    
                     SQL = "SELECT * FROM PRODUCTS";
                     rs = stmt.executeQuery(SQL);
                     while (rs.next()) {
-                        SQL = "INSERT INTO PRODUCTS (ID, REFERENCE, CODE, CODETYPE, NAME, PRICEBUY, PRICESELL, CATEGORY, TAXCAT, ATTRIBUTESET_ID, STOCKCOST, STOCKVOLUME, IMAGE, ISCOM, ISSCALE, ISKITCHEN, PRINTKB, SENDSTATUS, ISSERVICE, DISPLAY, ATTRIBUTES, ISVPRICE, ISVERPATRIB, TEXTTIP, WARRANTY, STOCKUNITS)"
+                        SQL = "INSERT INTO PRODUCTS (ID, REFERENCE, CODE, CODETYPE, NAME, PRICEBUY, PRICESELL, CATEGORY, TAXCAT, ATTRIBUTESET_ID, STOCKCOST, STOCKVOLUME, IMAGE, ISCOM, ISSCALE, ISKITCHEN, PRINTKB, SENDSTATUS, ISSERVICE, DISPLAY, ATTRIBUTES, ISVPRICE, ISVERPATRIB, TEXTTIP, WARRANTY, STOCKUNITS, ALIAS, ALWAYSAVAILABLE )"
                                 + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                         pstmt = con2.prepareStatement(SQL);
                         pstmt.setString(1, rs.getString("ID"));
@@ -844,13 +836,11 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.setString(24, rs.getString("TEXTTIP"));
                         pstmt.setBoolean(25, rs.getBoolean("WARRANTY"));
 // JG Aug 2014 for 3.80 from 3.70
-                        pstmt.setDouble(26, rs.getDouble("STOCKUNITS"));                        
-// Dis-Allow Product Control account
-                    if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
-                        pstmt.executeUpdate();
-                    }
-                }
-
+                        pstmt.setDouble(26, rs.getDouble("STOCKUNITS"));
+// JDL 14 Feb 2015       
+                        pstmt.setString(27, rs.getString("ALIAS"));
+                        pstmt.setBoolean(28, rs.getBoolean("ALWAYSAVAILABLE"));
+                        }
 
 // copy PRODUCTS_CAT table       
                     SQL = "SELECT * FROM PRODUCTS_CAT";
@@ -860,13 +850,7 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt = con2.prepareStatement(SQL);
                         pstmt.setString(1, rs.getString("PRODUCT"));
                         pstmt.setInt(2, rs.getInt("CATORDER"));
-// JG Aug 2014 for 3.80
-// Dis-Allow Product Control account
-if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
-                        pstmt.executeUpdate();
-                    }
-                }
-
+                        }
 
                     // copy PRODUCTS_COM table       
                     SQL = "SELECT * FROM PRODUCTS_COM";
@@ -921,7 +905,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.executeUpdate();
                     }
 
-
 // copy resources table       
                     SQL = "SELECT * FROM RESOURCES";
                     rs = stmt.executeQuery(SQL);
@@ -935,7 +918,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.executeUpdate();
                     }
 
-
                     // copy ROLES table       
                     SQL = "SELECT * FROM ROLES";
                     rs = stmt.executeQuery(SQL);
@@ -947,7 +929,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.setBytes(3, rs.getBytes("PERMISSIONS"));
                         pstmt.executeUpdate();
                     }
-
 
                     // copy SHAREDTICKETS table       
                     SQL = "SELECT * FROM SHAREDTICKETS";
@@ -963,7 +944,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.executeUpdate();
                     }
 
-
                     // copy SHIFT_BREAKS table       
                     SQL = "SELECT * FROM SHIFT_BREAKS";
                     rs = stmt.executeQuery(SQL);
@@ -978,7 +958,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.executeUpdate();
                     }
 
-
                     // copy SHIFTS table       
                     SQL = "SELECT * FROM SHIFTS";
                     rs = stmt.executeQuery(SQL);
@@ -992,7 +971,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.executeUpdate();
                     }
 
-
                     // copy STOCKCURRENT table       
                     SQL = "SELECT * FROM STOCKCURRENT";
                     rs = stmt.executeQuery(SQL);
@@ -1005,7 +983,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.setDouble(4, rs.getDouble("UNITS"));
                         pstmt.executeUpdate();
                     }
-
 
                     // copy STOCKDIARY table       
                     SQL = "SELECT * FROM STOCKDIARY";
@@ -1024,7 +1001,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.setString(9, rs.getString("APPUSER"));
                         pstmt.executeUpdate();
                     }
-
 
                     // copy STOCKLEVEL table       
                     SQL = "SELECT * FROM STOCKLEVEL";
@@ -1051,7 +1027,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.executeUpdate();
                     }
 
-
 // copy TAXCUSTCATEGORIES table       
                     SQL = "SELECT * FROM TAXCUSTCATEGORIES";
                     rs = stmt.executeQuery(SQL);
@@ -1062,8 +1037,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.setString(2, rs.getString("NAME"));
                         pstmt.executeUpdate();
                     }
-
-
 
 // copy TAXES table       
                     SQL = "SELECT * FROM TAXES";
@@ -1082,7 +1055,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.executeUpdate();
                     }
 
-
 // copy TAXLINES table       
                     SQL = "SELECT * FROM TAXLINES";
                     rs = stmt.executeQuery(SQL);
@@ -1096,7 +1068,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.setDouble(5, rs.getDouble("AMOUNT"));
                         pstmt.executeUpdate();
                     }
-
 
 // copy THIRDPARTIES table       
                     SQL = "SELECT * FROM THIRDPARTIES";
@@ -1137,7 +1108,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.executeUpdate();
                     }
 
-
 // copy TICKETS table       
                     SQL = "SELECT * FROM TICKETS";
                     rs = stmt.executeQuery(SQL);
@@ -1152,7 +1122,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         pstmt.setInt(6, rs.getInt("STATUS"));
                         pstmt.executeUpdate();
                     }
-
 
 // GET THE SEQUENCE NUMBERS
                     if (("Apache Derby".equals(sdbmanager)) || ("MySQL".equals(sdbmanager))) {
@@ -1189,8 +1158,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         }
                     }
 
-
-
 // WRITE SEQUENCE NUMBER
                     if (("Apache Derby".equals(sdbmanager2)) || ("MySQL".equals(sdbmanager2))) {
                         SQL = "UPDATE TICKETSNUM SET ID=" + ticketsnum;
@@ -1212,12 +1179,10 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                     addFKeys();
 
 // Write new database settings to properties file
-
-
 //JG Aug 2014 - added to .properties
                     if ("MySQL".equals(sdbmanager2)) {
                         config.setProperty("db.engine", "MySQL");
-                    }else{
+                    } else {
                         config.setProperty("db.engine", "PostgreSQL");
                     }
 //                    
@@ -1228,7 +1193,6 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                     AltEncrypter cypher = new AltEncrypter("cypherkey" + jtxtDbUser.getText());
                     config.setProperty("db.password", "crypt:" + cypher.encrypt(new String(jtxtDbPassword.getPassword())));
                     dirty.setDirty(false);
-
 
                     for (PanelConfig c : m_panelconfig) {
                         c.saveProperties(config);
@@ -1241,10 +1205,8 @@ if (!"xxx999_999xxx_x9x9x9".equals(rs.getString(1))) {
                         JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotsaveconfig"), e));
                     }
 
-
                     JOptionPane.showMessageDialog(this, "Migration complete.");
                     jbtnMigrate.setEnabled(false);
-
 
                 } catch (SQLException | HeadlessException e) {
                     JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_WARNING, SQL, e));
