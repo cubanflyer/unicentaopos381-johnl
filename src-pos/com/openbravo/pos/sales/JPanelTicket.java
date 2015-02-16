@@ -702,6 +702,10 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     
     private void removeTicketLine(int i){
 
+    if ((m_oTicket.getLine(i).getProperty("sendstatus")=="OK" && m_App.getAppUserView().getUser().hasPermission("kitchen.DeleteLine")) ||
+           (m_oTicket.getLine(i).getProperty("sendstatus")!="OK" && m_App.getAppUserView().getUser().hasPermission("sales.EditLines"))) {        
+        
+        
         if (executeEventAndRefresh("ticket.removeline", new ScriptArg("index", i)) == null) {
 // JN uniCenta record removed line
             String ticketID = Integer.toString(m_oTicket.getTicketId());
@@ -738,6 +742,11 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             // event receipt
             executeEventAndRefresh("ticket.change");
         }
+    }else{
+        JOptionPane.showMessageDialog(this, AppLocal.getIntString("message.cannotdeletesentline"), "Notice", JOptionPane.INFORMATION_MESSAGE);
+    
+    }
+    
     }
     
     private ProductInfoExt getInputProduct() { 
@@ -1804,8 +1813,7 @@ if (pickupSize!=null && (Integer.parseInt(pickupSize) >= tmpPickupId.length())){
             script.put("dbURL", m_App.getProperties().getProperty("db.URL")); 
             script.put("dbUser", sDBUser);
             script.put("dbPassword", sDBPassword);
-// End mod
-            
+// End mod            
             script.put("ticket", ticket);
             script.put("place", ticketext);
             script.put("taxes", taxcollection);
@@ -1816,7 +1824,6 @@ if (pickupSize!=null && (Integer.parseInt(pickupSize) >= tmpPickupId.length())){
             script.put("warranty",warrantyPrint);
             script.put("pickupid",getPickupString(ticket));
        
-
             // more arguments
             for(ScriptArg arg : args) {
                 script.put(arg.getKey(), arg.getValue());
