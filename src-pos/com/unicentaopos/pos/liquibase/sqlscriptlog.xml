@@ -218,29 +218,6 @@
         
     </changeSet>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <changeSet author="UnicentaOpos - John L" id="Create CSVImport Table">
         <preConditions onFail="MARK_RAN">
             <not>
@@ -404,22 +381,22 @@
 
         <insert tableName="ROLES">
             <column name="ID" value="0"/>
-            <column name="NAME" value="Administrator ROLE"/>
+            <column name="NAME" value="Administrator role"/>
             <column name="PERMISSIONS" valueBlobResource="/com/openbravo/pos/templates/Role.Administrator.xml"/>
         </insert>
         <insert tableName="ROLES">
             <column name="ID" value="1"/>
-            <column name="NAME" value="Manager ROLE"/>
+            <column name="NAME" value="Manager role"/>
             <column name="PERMISSIONS" valueBlobResource="/com/openbravo/pos/templates/Role.Manager.xml"/>
         </insert>
         <insert tableName="ROLES">
             <column name="ID" value="2"/>
-            <column name="NAME" value="Employee ROLE"/>
+            <column name="NAME" value="Employee role"/>
             <column name="PERMISSIONS" valueBlobResource="/com/openbravo/pos/templates/Role.Employee.xml"/>
         </insert>
         <insert tableName="ROLES">
             <column name="ID" value="3"/>
-            <column name="NAME" value="Guest ROLE"/>
+            <column name="NAME" value="Guest role"/>
             <column name="PERMISSIONS" valueBlobResource="/com/openbravo/pos/templates/Role.Guest.xml"/>
         </insert>
     </changeSet>

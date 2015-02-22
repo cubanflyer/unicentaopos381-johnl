@@ -37,7 +37,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-                <insert tableName="APPJL">
+        <insert tableName="APPJL">
             <column name="ID" value="Unicenta John L's changes"/>
             <column name="NAME" value="uniCenta oPOS"/>
             <column name="version" value="0.00"/>          
@@ -64,9 +64,15 @@
         </addColumn>    
     </changeSet>
 
-    <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.0" >
+    <changeSet author="Unicentaopos - John L" id="Add Colour column to Categories table" >
+        <addColumn tableName="CATEGORIES"> 
+            <column name="COLOUR" type="varchar(50)"/> 
+        </addColumn>    
+    </changeSet>
+
+    <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.1" >
         <update tableName="APPJL">
-            <column name="VERSION" value="1.0"/>
+            <column name="VERSION" value="1.0 beta "/>
         </update>
     </changeSet>
 

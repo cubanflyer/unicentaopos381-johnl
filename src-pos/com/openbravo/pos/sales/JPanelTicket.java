@@ -702,10 +702,8 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     
     private void removeTicketLine(int i){
 
-    if ((m_oTicket.getLine(i).getProperty("sendstatus")=="OK" && m_App.getAppUserView().getUser().hasPermission("kitchen.DeleteLine")) ||
-           (m_oTicket.getLine(i).getProperty("sendstatus")!="OK" && m_App.getAppUserView().getUser().hasPermission("sales.EditLines"))) {        
-        
-        
+    if (("OK".equals(m_oTicket.getLine(i).getProperty("sendstatus")) && m_App.getAppUserView().getUser().hasPermission("kitchen.DeleteLine")) ||
+           (!"OK".equals(m_oTicket.getLine(i).getProperty("sendstatus")) && m_App.getAppUserView().getUser().hasPermission("sales.EditLines"))) {  
         if (executeEventAndRefresh("ticket.removeline", new ScriptArg("index", i)) == null) {
 // JN uniCenta record removed line
             String ticketID = Integer.toString(m_oTicket.getTicketId());

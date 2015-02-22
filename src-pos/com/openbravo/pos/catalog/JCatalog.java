@@ -21,7 +21,6 @@ package com.openbravo.pos.catalog;
 import com.openbravo.basic.BasicException;
 import com.openbravo.data.gui.JMessageDialog;
 import com.openbravo.data.gui.MessageInf;
-import com.openbravo.pos.forms.AppConfig;
 import com.openbravo.pos.forms.AppLocal;
 import com.openbravo.pos.forms.DataLogicSales;
 import com.openbravo.pos.sales.TaxesLogic;
@@ -35,7 +34,6 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
@@ -259,23 +257,23 @@ public class JCatalog extends JPanel implements ListSelectionListener, CatalogSe
 // these the sub categories displayed in the main products Panel    
 
                     if (cat.getCatShowName()) {
-                        jcurrTab.addButton(new ImageIcon(tnbsubcat.getThumbNailText(cat.getImage(), cat.getName())), new SelectedCategory(cat), cat.getTextTip());
+                        jcurrTab.addButton(new ImageIcon(tnbsubcat.getThumbNailText(cat.getImage(), cat.getName())), new SelectedCategory(cat), cat.getTextTip(), "");
                     } else {
-                        jcurrTab.addButton(new ImageIcon(tnbsubcat.getThumbNailText(cat.getImage(), "")), new SelectedCategory(cat), cat.getTextTip());
+                        jcurrTab.addButton(new ImageIcon(tnbsubcat.getThumbNailText(cat.getImage(), "")), new SelectedCategory(cat), cat.getTextTip(), "");
                     }
                 }
 
 // Added JDL to allow any product that is set to always display, to be added.                
                 java.util.List<ProductInfoExt> prods = m_dlSales.getProductCatalogAlways();
                 for (ProductInfoExt prod : prods) {
-                    jcurrTab.addButton(new ImageIcon(tnbbutton.getThumbNailText(prod.getImage(), getProductLabel(prod))), new SelectedAction(prod), prod.getTextTip());
+                    jcurrTab.addButton(new ImageIcon(tnbbutton.getThumbNailText(prod.getImage(), getProductLabel(prod))), new SelectedAction(prod), prod.getTextTip(), "");
                 }
            
 // Add products
                 java.util.List<ProductInfoExt> products = m_dlSales.getProductCatalog(catid);
                 for (ProductInfoExt prod : products) {
 // These are the products selection panel                   
-                    jcurrTab.addButton(new ImageIcon(tnbbutton.getThumbNailText(prod.getImage(), getProductLabel(prod))), new SelectedAction(prod), prod.getTextTip());
+                    jcurrTab.addButton(new ImageIcon(tnbbutton.getThumbNailText(prod.getImage(), getProductLabel(prod))), new SelectedAction(prod), prod.getTextTip(), "");
                 }
             }
 
@@ -339,8 +337,6 @@ public class JCatalog extends JPanel implements ListSelectionListener, CatalogSe
     }
 
     private void showProductPanel(String id) {
-        AppConfig m_config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
-        m_config.load();
 
         ProductInfoExt product = m_productsset.get(id);
 
@@ -370,12 +366,7 @@ public class JCatalog extends JPanel implements ListSelectionListener, CatalogSe
                     } else {
 
                         // Load product panel                    
-                        if (!(Boolean.valueOf(m_config.getProperty("till.stockcontrol")))) {
-                            product = m_dlSales.getProductInfoNoSC(id);
-                        } else {
                             product = m_dlSales.getProductInfo(id);
-                        }
-
                         m_productsset.put(id, product);
 
                         JCatalogTab jcurrTab = new JCatalogTab();
@@ -384,9 +375,8 @@ public class JCatalog extends JPanel implements ListSelectionListener, CatalogSe
 
                         // Add products
                         for (ProductInfoExt prod : products) {
-// ADDED JDL 09.04.13 TEXT TIP FUNCTION   getProductLabel(prod)))      product.getDisplay()
-                            jcurrTab.addButton(new ImageIcon(tnbbutton.getThumbNailText(prod.getImage(), getProductLabel(prod))), new SelectedAction(prod), prod.getTextTip());
-
+// ADDED JDL 09.04.13 TEXT TIP FUNCTION  
+                            jcurrTab.addButton(new ImageIcon(tnbbutton.getThumbNailText(prod.getImage(), getProductLabel(prod))), new SelectedAction(prod), prod.getTextTip(),"");
                         }
                         selectIndicatorPanel(new ImageIcon(tnbbutton.getThumbNail(product.getImage())), product.getDisplay(), product.getTextTip());
 

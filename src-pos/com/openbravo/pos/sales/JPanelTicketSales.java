@@ -16,17 +16,21 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.pos.sales;
+
 import com.openbravo.basic.BasicException;
 import com.openbravo.pos.catalog.CatalogSelector;
 import com.openbravo.pos.catalog.JCatalog;
+import com.openbravo.pos.catalog.JCatalogFull;
+import com.openbravo.pos.forms.AppConfig;
+import com.openbravo.pos.forms.AppLocal;
 import com.openbravo.pos.forms.AppView;
 import com.openbravo.pos.ticket.ProductInfoExt;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
@@ -71,11 +75,23 @@ public class JPanelTicketSales extends JPanelTicket {
      */
     @Override
     protected Component getSouthComponent() {
+        AppConfig m_config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
+        m_config.load();
+        
+        if (("new".equals(m_config.getProperty("sales.layout")))) {
+            m_cat = new JCatalogFull(dlSales,
+                    "true".equals(m_jbtnconfig.getProperty("pricevisible")),
+                    "true".equals(m_jbtnconfig.getProperty("taxesincluded")),
+                    Integer.parseInt(m_jbtnconfig.getProperty("img-width", "64")),
+                    Integer.parseInt(m_jbtnconfig.getProperty("img-height", "54")));
+        } else {
         m_cat = new JCatalog(dlSales,
                 "true".equals(m_jbtnconfig.getProperty("pricevisible")),
                 "true".equals(m_jbtnconfig.getProperty("taxesincluded")),
                 Integer.parseInt(m_jbtnconfig.getProperty("img-width", "64")),
                 Integer.parseInt(m_jbtnconfig.getProperty("img-height", "54")));
+        }
+
         //   Integer.parseInt(m_jbtnconfig.getProperty("img-width", "32")),
         //   Integer.parseInt(m_jbtnconfig.getProperty("img-height", "32")));
         m_cat.addActionListener(new CatalogListener());

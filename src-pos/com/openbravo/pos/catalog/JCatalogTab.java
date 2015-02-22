@@ -21,6 +21,7 @@ package com.openbravo.pos.catalog;
 
 import com.openbravo.beans.JFlowPanel;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
@@ -60,7 +61,7 @@ public class JCatalogTab extends javax.swing.JPanel {
      * @param al
      * @param textTip
      */
-        public void addButton(Icon ico, ActionListener al, String textTip) {
+    public void addButton(Icon ico, ActionListener al, String textTip, String col) {
         JButton btn = new JButton();
         btn.applyComponentOrientation(getComponentOrientation());
         btn.setIcon(ico);
@@ -72,7 +73,10 @@ public class JCatalogTab extends javax.swing.JPanel {
         btn.setRequestFocusEnabled(false);
         btn.setHorizontalTextPosition(SwingConstants.CENTER);
         btn.setVerticalTextPosition(SwingConstants.BOTTOM);
-        btn.setMargin(new Insets(2, 2, 2, 2));
+        btn.setMargin(new Insets(0, 0, 0, 0));
+        if (!"".equals(col)) {
+            btn.setBorder(BorderFactory.createLineBorder(new Color((int) Integer.decode(col)), 3));
+        }
         btn.addActionListener(al);
         flowpanel.add(btn);        
     }
