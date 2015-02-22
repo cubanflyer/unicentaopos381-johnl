@@ -39,6 +39,7 @@ public class CategoryInfo implements IKeyed {
     private String m_sTextTip;
     private BufferedImage m_Image;
     private Boolean m_bCatShowName;
+    private String m_sColour;
 
     /** Creates new CategoryInfo
      * @param id
@@ -46,12 +47,13 @@ public class CategoryInfo implements IKeyed {
      * @param image
      * @param texttip
      * @param catshowname */
-    public CategoryInfo(String id, String name, BufferedImage image, String texttip, Boolean catshowname) {
+    public CategoryInfo(String id, String name, BufferedImage image, String texttip, Boolean catshowname, String colour) {
         m_sID = id;
         m_sName = name;
         m_Image = image;
         m_sTextTip = texttip;
         m_bCatShowName = catshowname;
+        m_sColour = colour;
     }
 
     /**
@@ -128,8 +130,22 @@ public class CategoryInfo implements IKeyed {
         m_bCatShowName = bcatshowname;
     }
     
+        /**
+     *
+     * @return
+     */
     
+    public Object getColour() {
+        return m_sColour;
+    }
     
+    /**
+     *
+     * @param 
+     */
+    public void setColour(String sColour) {
+        m_sColour = sColour;
+    }
     
     
     // *******************************
@@ -163,7 +179,7 @@ public class CategoryInfo implements IKeyed {
     public static SerializerRead getSerializerRead() {
         return new SerializerRead() {@Override
  public Object readValues(DataRead dr) throws BasicException {
-            return new CategoryInfo(dr.getString(1), dr.getString(2), ImageUtils.readImage(dr.getBytes(3)),dr.getString(4),dr.getBoolean(5));
+            return new CategoryInfo(dr.getString(1), dr.getString(2), ImageUtils.readImage(dr.getBytes(3)),dr.getString(4),dr.getBoolean(5), dr.getString(6));
         }};
     }
 }
