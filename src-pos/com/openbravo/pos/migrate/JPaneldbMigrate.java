@@ -621,7 +621,7 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                     SQL = "SELECT * FROM CATEGORIES";
                     rs = stmt.executeQuery(SQL);
                     while (rs.next()) {
-                        SQL = "INSERT INTO CATEGORIES(ID, NAME, PARENTID, IMAGE, TEXTTIP, CATSHOWNAME ) VALUES (?, ?, ?, ?, ?, ?)";
+                        SQL = "INSERT INTO CATEGORIES(ID, NAME, PARENTID, IMAGE, TEXTTIP, CATSHOWNAME, COLOUR ) VALUES (?, ?, ?, ?, ?, ?, ?)";
                         pstmt = con2.prepareStatement(SQL);
                         pstmt.setString(1, rs.getString("ID"));
                         pstmt.setString(2, rs.getString("NAME"));
@@ -629,7 +629,7 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.setBytes(4, rs.getBytes("IMAGE"));
                         pstmt.setString(5, rs.getString("TEXTTIP"));
                         pstmt.setBoolean(6, rs.getBoolean("CATSHOWNAME"));
-
+                        pstmt.setString(7,rs.getString("COLOUR"));
                         pstmt.executeUpdate();
                     }
 
