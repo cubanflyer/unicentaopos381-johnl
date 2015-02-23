@@ -133,7 +133,7 @@ public class JRootApp extends JPanel implements AppView {
 
     private String getLineTimer() {
         try {
-            if (m_props.getProperty("clock.time") == "") {
+            if ((m_props.getProperty("clock.time") == "") || (m_props.getProperty("clock.time") == null))  {
                 return Formats.HOURMIN.formatValue(new Date());
             } else {
                 formatter = new SimpleDateFormat(m_props.getProperty("clock.time"));
@@ -146,7 +146,7 @@ public class JRootApp extends JPanel implements AppView {
 
     private String getLineDate() {
         try {
-            if (m_props.getProperty("clock.date") == "") {
+           if ((m_props.getProperty("clock.date") == "")|| (m_props.getProperty("clock.date") == null)) {
                 return Formats.SIMPLEDATE.formatValue(new Date());
             } else {
                 formatter = new SimpleDateFormat(m_props.getProperty("clock.date"));
