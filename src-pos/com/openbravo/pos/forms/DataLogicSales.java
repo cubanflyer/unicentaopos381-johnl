@@ -243,7 +243,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + "DISPLAY, "                               //16
                 + "ISVPRICE, ISVERPATRIB, "                 //17,18
                 + "TEXTTIP, WARRANTY, "                      //19,20
-                + "STOCKCURRENT.UNITS "                     //21   
+                + "STOCKCURRENT.UNITS, "                     //21   
                 + "ALIAS, "                                 //22
                 + "ALWAYSAVAILABLE "                        //23                        
                 //                + "FROM STOCKCURRENT LEFT JOIN PRODUCTS ON (STOCKCURRENT.PRODUCT = PRODUCTS.ID) "
@@ -526,6 +526,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + "P.ISVERPATRIB, "
                 + "P.TEXTTIP, "
                 + "P.WARRANTY, "
+                + "P.STOCKUNITS, "
                 + "P.ALIAS, "
                 + "P.ALWAYSAVAILABLE "
                 + "FROM PRODUCTS P, "
@@ -662,7 +663,8 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + "FROM STOCKCURRENT RIGHT OUTER JOIN PRODUCTS ON (STOCKCURRENT.PRODUCT = PRODUCTS.ID) "
                 + "WHERE ?(QBF_FILTER) "
                 + "ORDER BY REFERENCE, NAME",
-                new String[]{"NAME", "PRICEBUY", "PRICESELL", "CATEGORY", "CODE", "UNITS"}), new SerializerWriteBasic(new Datas[]{
+                new String[] {"NAME", "PRICEBUY", "PRICESELL", "CATEGORY", "CODE", "UNITS"})                        
+		, new SerializerWriteBasic(new Datas[] {
                     Datas.OBJECT, Datas.STRING,
                     Datas.OBJECT, Datas.DOUBLE,
                     Datas.OBJECT, Datas.DOUBLE,
@@ -1452,9 +1454,9 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                         , "INSERT INTO PRODUCTS (ID, "
                         + "REFERENCE, CODE, NAME, ISCOM, "
                         + "ISSCALE, PRICEBUY, PRICESELL, CATEGORY, TAXCAT, "
-                        + "ATTRIBUTESET_ID, IMAGE, STOCKCOST, STOCKVOLUME, "
+                        + "ATTRIBUTESET_ID, IMAGE, STOCKCOST, STOCKVOLUME, " //14
                         + "ATTRIBUTES, ISKITCHEN, ISSERVICE, DISPLAY, ISVPRICE, "
-                        + "ISVERPATRIB, TEXTTIP, WARRANTY, STOCKUNITS, ALIAS, ALWAYSAVAILABLE ) "
+                        + "ISVERPATRIB, TEXTTIP, WARRANTY, STOCKUNITS, ALIAS, ALWAYSAVAILABLE ) "  //25
                         + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", new SerializerWriteBasicExt(productsRow.getDatas(),
                                 new int[]{0,
                                     1, 2, 3, 4,
