@@ -63,6 +63,7 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
         jCheckHideNoStock.addActionListener(dirty);
         jCheckRefresh.addActionListener(dirty);
         jUpdatedbprice.addActionListener(dirty);
+        jChangeSalesScreen.addActionListener(dirty);
     }
 
     /**
@@ -112,8 +113,7 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
         jCheckHideNoStock.setSelected(Boolean.valueOf(config.getProperty("panel.hidezerostockitems")));
         jCheckRefresh.setSelected(Boolean.valueOf(config.getProperty("panel.refreshproducts")));
         jUpdatedbprice.setSelected(Boolean.valueOf(config.getProperty("db.productupdate")));
-        
-        
+        jChangeSalesScreen.setSelected(Boolean.valueOf(config.getProperty("sales.newscreen")));
 
 // hide some values until the code has been implmented        
         jCheckRefresh.setVisible(false);
@@ -189,8 +189,7 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
         config.setProperty("dbtable.retaindays", jTableRetain.getValue().toString());
         config.setProperty("panel.hidezerostockitems", Boolean.toString(jCheckHideNoStock.isSelected()));
         config.setProperty("db.productupdate", Boolean.toString(jUpdatedbprice.isSelected()));
-        
- 
+        config.setProperty("sales.newscreen", Boolean.toString( jChangeSalesScreen.isSelected()));
 
         if (jCheckHideNoStock.isSelected()) {
             config.setProperty("panel.refreshproducts", Boolean.toString(jCheckRefresh.isSelected()));
@@ -238,6 +237,7 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
         jLabel4 = new javax.swing.JLabel();
         jCheckRefresh = new javax.swing.JCheckBox();
         jUpdatedbprice = new javax.swing.JCheckBox();
+        jChangeSalesScreen = new javax.swing.JCheckBox();
 
         setPreferredSize(new java.awt.Dimension(700, 550));
 
@@ -466,6 +466,11 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
         jPanel4.add(jUpdatedbprice);
         jUpdatedbprice.setBounds(10, 80, 180, 23);
 
+        jChangeSalesScreen.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jChangeSalesScreen.setText(bundle.getString("Label.ChangesSalesScreen")); // NOI18N
+        jPanel4.add(jChangeSalesScreen);
+        jChangeSalesScreen.setBounds(210, 80, 190, 23);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -532,6 +537,7 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox jChangeSalesScreen;
     private javax.swing.JCheckBox jCheckHideNoStock;
     private javax.swing.JCheckBox jCheckPrice00;
     private javax.swing.JCheckBox jCheckRefresh;

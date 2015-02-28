@@ -78,7 +78,6 @@ public class JProductLineEdit extends javax.swing.JDialog {
             throw new BasicException(AppLocal.getIntString("message.cannotcalculatetaxes"));
         }
 
-        // New routine to allow the base product to be update with edited price if requred
         m_config.load();
         m_jButtonUpdate.setVisible(Boolean.valueOf(m_config.getProperty("db.productupdate")));
         m_jButtonUpdate.setEnabled(false);
@@ -87,11 +86,14 @@ public class JProductLineEdit extends javax.swing.JDialog {
         m_bunitsok = true;
         m_bpriceok = true;
 
-        m_jName.setEnabled(m_oLine.getProductID() == null && app.getAppUserView().getUser().hasPermission("com.openbravo.pos.sales.JPanelTicketEdits"));
+//  JG 7 May 14 Allow User edit of Product.Name if has EditLine permissions
+//        m_jName.setEnabled(m_oLine.getProductID() == null && app.getAppUserView().getUser().hasPermission("com.openbravo.pos.sales.JPanelTicketEdits"));
+        m_jName.setEnabled(app.getAppUserView().getUser().hasPermission("com.openbravo.pos.sales.JPanelTicketEdits"));
         m_jPrice.setEnabled(app.getAppUserView().getUser().hasPermission("com.openbravo.pos.sales.JPanelTicketEdits"));
         m_jPriceTax.setEnabled(app.getAppUserView().getUser().hasPermission("com.openbravo.pos.sales.JPanelTicketEdits"));
 
-        m_jName.setText(m_oLine.getProperty("product.name"));
+//        m_jName.setText(m_oLine.getProperty("product.name"));
+        m_jName.setText(oLine.getProductName());
         m_jUnits.setDoubleValue(oLine.getMultiply());
         m_jPrice.setDoubleValue(oLine.getPrice());
         m_jPriceTax.setDoubleValue(oLine.getPriceTax());
@@ -137,6 +139,7 @@ public class JProductLineEdit extends javax.swing.JDialog {
 
     private class RecalculateUnits implements PropertyChangeListener {
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             Double value = m_jUnits.getDoubleValue();
             if (value == null || value == 0.0) {
@@ -152,6 +155,7 @@ public class JProductLineEdit extends javax.swing.JDialog {
 
     private class RecalculatePrice implements PropertyChangeListener {
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
 
             Double value = m_jPrice.getDoubleValue();
@@ -161,7 +165,7 @@ public class JProductLineEdit extends javax.swing.JDialog {
                 m_oLine.setPrice(value);
                 m_jPriceTax.setDoubleValue(m_oLine.getPriceTax());
                 m_bpriceok = true;
-                m_jButtonUpdate.setEnabled(Boolean.valueOf(m_config.getProperty("db.productupdate")));                
+                m_jButtonUpdate.setEnabled(Boolean.valueOf(m_config.getProperty("db.productupdate")));
             }
 
             printTotals();
@@ -170,6 +174,7 @@ public class JProductLineEdit extends javax.swing.JDialog {
 
     private class RecalculatePriceTax implements PropertyChangeListener {
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
 
             Double value = m_jPriceTax.getDoubleValue();
@@ -189,6 +194,7 @@ public class JProductLineEdit extends javax.swing.JDialog {
 
     private class RecalculateName implements PropertyChangeListener {
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             m_oLine.setProperty("product.name", m_jName.getText());
         }
@@ -423,7 +429,7 @@ public class JProductLineEdit extends javax.swing.JDialog {
 
     }//GEN-LAST:event_m_jButtonOKActionPerformed
 
-    private void m_jButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {
+    private void m_jButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jButtonUpdateActionPerformed
         // Update the database with the new price passed
         String db_password = (m_config.getProperty("db.password"));
 
@@ -446,9 +452,8 @@ public class JProductLineEdit extends javax.swing.JDialog {
         }
 
         m_oLine.setUpdated(true);
-        
-    }
-    
+    }//GEN-LAST:event_m_jButtonUpdateActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

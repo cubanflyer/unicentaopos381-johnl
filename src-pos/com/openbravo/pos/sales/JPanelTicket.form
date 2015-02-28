@@ -776,7 +776,7 @@
                 <Property name="axis" type="int" value="1"/>
               </Layout>
               <SubComponents>
-                <Component class="com.openbravo.beans.JNumberKeys" name="m_jNumberKeys">
+                <Component class="com.openbravo.beans.JNumberKeys" name="m_jNumberKey">
                   <Properties>
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[200, 200]"/>
@@ -786,7 +786,7 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="keyPerformed" listener="com.openbravo.beans.JNumberEventListener" parameters="com.openbravo.beans.JNumberEvent" handler="m_jNumberKeysKeyPerformed"/>
+                    <EventHandler event="keyPerformed" listener="com.openbravo.beans.JNumberEventListener" parameters="com.openbravo.beans.JNumberEvent" handler="m_jNumberKeyKeyPerformed"/>
                   </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="JPanelTicket_m_jNumberKeys"/>

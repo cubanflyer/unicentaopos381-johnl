@@ -217,7 +217,7 @@ public class JPanelConfiguration extends JPanel implements JPanelView {
         jbtnSave = new javax.swing.JButton();
 
         setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        setMinimumSize(new java.awt.Dimension(780, 550));
+        setMinimumSize(new java.awt.Dimension(0, 0));
         setPreferredSize(new java.awt.Dimension(780, 550));
 
         jTabbedPane1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
@@ -320,7 +320,8 @@ public class JPanelConfiguration extends JPanel implements JPanelView {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

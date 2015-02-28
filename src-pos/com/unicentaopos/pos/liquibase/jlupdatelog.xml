@@ -1977,12 +1977,21 @@
         <insert tableName="PERMISSIONS">
             <column name="USERID" value="3"/>
             <column name="CLASSNAME" value="com.openbravo.pos.sales.JPanelTicketSales"/>
-        </insert>                 
-             
-                                                                                   		
+        </insert>                                                                                                		
     </changeSet>
 
 
+    <changeSet author="UnicentaOpos - John L" id="Insert resource for reprint last ticket" >
+        <insert tableName="RESOURCES">
+            <column name="ID" value="61"/>
+            <column name="NAME" value="Printer.ReprintLastTicket"/>
+            <column name="RESTYPE" valueNumeric="1"/>
+            <column name="CONTENT" valueBlobResource="/com/openbravo/pos/templates/Printer.ReprintLastTicket.xml"/>
+        </insert>
+    </changeSet>
+    
+    
+    
     <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.1" >
         <update tableName="APPJL">
             <column name="VERSION" value="1.0 beta "/>

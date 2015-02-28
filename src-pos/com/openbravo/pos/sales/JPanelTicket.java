@@ -231,9 +231,9 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 //      JG 19 Feb 14 unnecessary parse - if (Boolean.valueOf(m_App.getProperties().getProperty("till.amountattop")).booleanValue()){
         if (Boolean.valueOf(m_App.getProperties().getProperty("till.amountattop"))){
             m_jPanEntries.remove(jPanel9);
-            m_jPanEntries.remove(m_jNumberKeys);        
+            m_jPanEntries.remove(m_jNumberKey);        
             m_jPanEntries.add(jPanel9);
-            m_jPanEntries.add(m_jNumberKeys);
+            m_jPanEntries.add(m_jNumberKey);
         }        
  
 //      JG 19 Feb 14 unnecessary parse -  jbtnMooring.setVisible(Boolean.valueOf(m_App.getProperties().getProperty("till.marineoption")).booleanValue());
@@ -242,7 +242,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         priceWith00 = ("true".equals(m_App.getProperties().getProperty("till.pricewith00")));
         if (priceWith00) {
             // use '00' instead of '.'
-            m_jNumberKeys.dotIs00(true);
+            m_jNumberKey.dotIs00(true);
         }
            
         m_ticketsbag = getJTicketsBag();
@@ -403,8 +403,8 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         // Authorization for buttons
         btnSplit.setEnabled(m_App.getAppUserView().getUser().hasPermission("sales.Total"));
         m_jDelete.setEnabled(m_App.getAppUserView().getUser().hasPermission("sales.EditLines"));
-        m_jNumberKeys.setMinusEnabled(m_App.getAppUserView().getUser().hasPermission("sales.EditLines"));
-        m_jNumberKeys.setEqualsEnabled(m_App.getAppUserView().getUser().hasPermission("sales.Total"));
+        m_jNumberKey.setMinusEnabled(m_App.getAppUserView().getUser().hasPermission("sales.EditLines"));
+        m_jNumberKey.setEqualsEnabled(m_App.getAppUserView().getUser().hasPermission("sales.Total"));
         m_jbtnconfig.setPermissions(m_App.getAppUserView().getUser());  
                
         m_ticketsbag.activate();  
@@ -1878,7 +1878,7 @@ if (pickupSize!=null && (Integer.parseInt(pickupSize) >= tmpPickupId.length())){
         m_jTotalEuros = new javax.swing.JLabel();
         m_jContEntries = new javax.swing.JPanel();
         m_jPanEntries = new javax.swing.JPanel();
-        m_jNumberKeys = new com.openbravo.beans.JNumberKeys();
+        m_jNumberKey = new com.openbravo.beans.JNumberKeys();
         jPanel9 = new javax.swing.JPanel();
         m_jPrice = new javax.swing.JLabel();
         m_jPor = new javax.swing.JLabel();
@@ -2248,14 +2248,14 @@ if (pickupSize!=null && (Integer.parseInt(pickupSize) >= tmpPickupId.length())){
 
         m_jPanEntries.setLayout(new javax.swing.BoxLayout(m_jPanEntries, javax.swing.BoxLayout.Y_AXIS));
 
-        m_jNumberKeys.setMinimumSize(new java.awt.Dimension(200, 200));
-        m_jNumberKeys.setPreferredSize(new java.awt.Dimension(250, 250));
-        m_jNumberKeys.addJNumberEventListener(new com.openbravo.beans.JNumberEventListener() {
+        m_jNumberKey.setMinimumSize(new java.awt.Dimension(200, 200));
+        m_jNumberKey.setPreferredSize(new java.awt.Dimension(250, 250));
+        m_jNumberKey.addJNumberEventListener(new com.openbravo.beans.JNumberEventListener() {
             public void keyPerformed(com.openbravo.beans.JNumberEvent evt) {
-                m_jNumberKeysKeyPerformed(evt);
+                m_jNumberKeyKeyPerformed(evt);
             }
         });
-        m_jPanEntries.add(m_jNumberKeys);
+        m_jPanEntries.add(m_jNumberKey);
 
         jPanel9.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         jPanel9.setLayout(new java.awt.GridBagLayout());
@@ -2402,10 +2402,10 @@ if (pickupSize!=null && (Integer.parseInt(pickupSize) >= tmpPickupId.length())){
 
     }//GEN-LAST:event_m_jEnterActionPerformed
 
-    private void m_jNumberKeysKeyPerformed(com.openbravo.beans.JNumberEvent evt) {//GEN-FIRST:event_m_jNumberKeysKeyPerformed
+    private void m_jNumberKeyKeyPerformed(com.openbravo.beans.JNumberEvent evt) {//GEN-FIRST:event_m_jNumberKeyKeyPerformed
 
         stateTransition(evt.getKey());
-    }//GEN-LAST:event_m_jNumberKeysKeyPerformed
+    }//GEN-LAST:event_m_jNumberKeyKeyPerformed
 
     private void m_jKeyFactoryKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_m_jKeyFactoryKeyTyped
 
@@ -2656,7 +2656,7 @@ m_App.getAppUserView().showTask("com.openbravo.pos.customers.CustomersPanel");
     private javax.swing.JLabel m_jLblTotalEuros2;
     private javax.swing.JLabel m_jLblTotalEuros3;
     private javax.swing.JButton m_jList;
-    private com.openbravo.beans.JNumberKeys m_jNumberKeys;
+    private com.openbravo.beans.JNumberKeys m_jNumberKey;
     private javax.swing.JPanel m_jOptions;
     private javax.swing.JPanel m_jPanContainer;
     private javax.swing.JPanel m_jPanEntries;

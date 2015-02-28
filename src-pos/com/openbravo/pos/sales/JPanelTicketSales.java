@@ -78,7 +78,7 @@ public class JPanelTicketSales extends JPanelTicket {
         AppConfig m_config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
         m_config.load();
         
-        if (("new".equals(m_config.getProperty("sales.layout")))) {
+        if (Boolean.valueOf(m_config.getProperty("sales.newscreen"))){
             m_cat = new JCatalogFull(dlSales,
                     "true".equals(m_jbtnconfig.getProperty("pricevisible")),
                     "true".equals(m_jbtnconfig.getProperty("taxesincluded")),
