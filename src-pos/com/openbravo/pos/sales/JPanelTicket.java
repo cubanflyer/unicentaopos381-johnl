@@ -62,6 +62,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import static java.lang.Integer.parseInt;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,6 +73,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRMapArrayDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -209,7 +211,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     @Override
     public void init(AppView app) throws BeanFactoryException {
        
-        
+
         
         m_config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
 
@@ -809,6 +811,13 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     
     private void incProductByCode(String sCode) {
     // precondicion: sCode != null
+        
+// Modify to allow number x with scanned products. JDL 8.8.2015        
+        int count=1;        
+        if (sCode.contains("*")){
+            count = (sCode.indexOf("*")==0) ? 1: parseInt (sCode.substring(0,sCode.indexOf("*")));
+           sCode=sCode.substring(sCode.indexOf("*")+1,sCode.length());
+        }
         try {
             ProductInfoExt oProduct = dlSales.getProductInfoByCode(sCode);
             if (oProduct == null) {                  
@@ -820,7 +829,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
                 stateToZero();
             } else {
                 // Se anade directamente una unidad con el precio y todo
-                incProduct(oProduct);
+                incProduct(count, oProduct);
             }
         } catch (BasicException eData) {
             stateToZero();           
