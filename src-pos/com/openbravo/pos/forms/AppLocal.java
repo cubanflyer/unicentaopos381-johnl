@@ -45,13 +45,14 @@ public class AppLocal {
     private static final LocaleResources m_resources;
     
     public static final String APP_IDJL = "Unicenta John L's changes";    
-    public static final String APP_VERSIONJL ="1.0 beta ";
-    public static final String APP_VERSIONJLCORE="220214";    
+    public static final String APP_VERSIONJL ="1.3";
+    public static final String APP_VERSIONJLCORE="130314";    
     
     static {
         m_resources = new LocaleResources();
         m_resources.addBundleName("pos_messages");
         m_resources.addBundleName("erp_messages");
+        m_resources.addBundleName("permissions_messages");
     }
     
     /** Creates a new instance of AppLocal */

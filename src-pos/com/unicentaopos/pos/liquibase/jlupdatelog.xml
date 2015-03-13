@@ -47,6 +47,12 @@
     </changeSet>
 
     <changeSet author="Unicentaopos - John L" id="Product Table Alias added m" dbms="mysql, derby, oracle">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists columnName="ALIAS" tableName="PRODUCTS"/>
+            </not>
+        </preConditions>   
+    
         <addColumn tableName="PRODUCTS"> 
             <column name="ALIAS" type="varchar(50)"/>  
             <column name="ALWAYSAVAILABLE" type="${boolean.type}" defaultValueNumeric="0" >
@@ -56,6 +62,12 @@
     </changeSet>
 
     <changeSet author="Unicentaopos - John L" id="Product Table Alias added p" dbms="postgresql, hypersql, hsqldb">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists columnName="ALIAS" tableName="PRODUCTS"/>
+            </not>
+        </preConditions>   
+    
         <addColumn tableName="PRODUCTS"> 
             <column name="ALIAS" type="varchar(50)"/>  
             <column name="ALWAYSAVAILABLE" type="${boolean.type}" defaultValueBoolean="false" >
@@ -65,6 +77,12 @@
     </changeSet>
 
     <changeSet author="Unicentaopos - John L" id="Add Colour column to Categories table" >
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists columnName="COLOUR" tableName="CATEGORIES"/>
+            </not>
+        </preConditions>   
+
         <addColumn tableName="CATEGORIES"> 
             <column name="COLOUR" type="varchar(50)"/> 
         </addColumn>    
@@ -97,25 +115,8 @@
                      unique="true">
             <column name="CLASSNAME" type="varchar(255)"/>
         </createIndex> 
-    </changeSet> 
-            
-    <changeSet author="UnicentaOpos - John L" id="Create New permissions Table">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="PERMISSIONS"/>
-            </not>
-        </preConditions>
-
-        <createTable tableName="PERMISSIONS">
-            <column name="USERID" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="CLASSNAME" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
+    </changeSet>   
+     
     <changeSet author="UnicentaOpos - John L" id="Insert into Permissions Table">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">SELECT COUNT(1) FROM DBPERMISSIONS</sqlCheck>
@@ -123,1880 +124,861 @@
 
         <insert tableName="DBPERMISSIONS">
             <column name="CLASSNAME" value="com.openbravo.pos.sales.JPanelTicketSales"/>
-            <column name="SECTION" value="Sales"/>
-            <column name="DISPLAYNAME" value="Sales"/>
-            <column name="DESCRIPTION" value="Allows the user access to the sales panel, this is required to sell items."/>
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname1"/>
+            <column name="DESCRIPTION" value="##label.description1"/>
         </insert>
  
         <insert tableName="DBPERMISSIONS">
             <column name="CLASSNAME" value="com.openbravo.pos.sales.JPanelTicketEdits"/>
-            <column name="SECTION" value="Sales"/>
-            <column name="DISPLAYNAME" value="Edit Sales"/>
-            <column name="DESCRIPTION" value="Allows the user access to the historic tickets panel."/>
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname2"/>
+            <column name="DESCRIPTION" value="##label.description2"/>
         </insert>
  
         <insert tableName="DBPERMISSIONS">
             <column name="CLASSNAME" value="com.openbravo.pos.customers.CustomersPayment"/>
-            <column name="SECTION" value="Sales"/>
-            <column name="DISPLAYNAME" value="Customer Payment"/>
-            <column name="DESCRIPTION" value="Allows the user access to the Customer Payment panel, used for account payments."/>
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname3"/>
+            <column name="DESCRIPTION" value="##label.description3"/>
         </insert>
  
         <insert tableName="DBPERMISSIONS">
             <column name="CLASSNAME" value="com.openbravo.pos.panels.JPanelPayments"/>
-            <column name="SECTION" value="Sales"/>
-            <column name="DISPLAYNAME" value="Payments"/>
-            <column name="DESCRIPTION" value="Allows the user to access the Payments panel, cash in/out of the till."/>
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname4"/>
+            <column name="DESCRIPTION" value="##label.description4"/>
         </insert>
  
+        <insert tableName="DBPERMISSIONS">		
+            <column name="CLASSNAME" value="db.updatedatabase"/>
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname5"/>
+            <column name="DESCRIPTION" value="##label.description5"/>
+        </insert>
+  
         <insert tableName="DBPERMISSIONS">
             <column name="CLASSNAME" value="com.openbravo.pos.panels.JPanelCloseMoney"/>
-            <column name="SECTION" value="Sales"/>
-            <column name="DISPLAYNAME" value="Close Cash"/>
-            <column name="DESCRIPTION" value="Allows the user to access the Close Cash panel."/>
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname6"/>
+            <column name="DESCRIPTION" value="##label.description6"/>
         </insert>
  
         <insert tableName="DBPERMISSIONS">
             <column name="CLASSNAME" value="sales.EditLines"/>
-            <column name="SECTION" value="Sales"/>
-            <column name="DISPLAYNAME" value="Edit Line"/>
-            <column name="DESCRIPTION" value="Allows user to edit ticket lines in sales screen."/>
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname7"/>
+            <column name="DESCRIPTION" value="##label.description7"/>
         </insert>
  
         <insert tableName="DBPERMISSIONS">
             <column name="CLASSNAME" value="sales.EditTicket"/>
-            <column name="SECTION" value="Sales"/>
-            <column name="DISPLAYNAME" value="Edit Ticket"/>
-            <column name="DESCRIPTION" value="Allows the user to edit an historic ticket."/>
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname8"/>
+            <column name="DESCRIPTION" value="##label.description8"/>
         </insert>
  
         <insert tableName="DBPERMISSIONS">
             <column name="CLASSNAME" value="sales.RefundTicket"/>
-            <column name="SECTION" value="Sales"/>
-            <column name="DISPLAYNAME" value="Refund Ticket"/>
-            <column name="DESCRIPTION" value="Allows the user to refund an historic ticket."/>
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname9"/>
+            <column name="DESCRIPTION" value="##label.description9"/>
         </insert>
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="sales.PrintTicket"/>
-            <column name="SECTION" value="Sales"/>
-            <column name="DISPLAYNAME" value="Print Ticktet"/>				
-            <column name="DESCRIPTION" value="Allows the user or print an historic ticket."/>				
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname10"/>
+            <column name="DESCRIPTION" value="##label.description10"/>			
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="sales.Total"/>
-            <column name="SECTION" value="Sales"/>
-            <column name="DISPLAYNAME" value="Total Sale"/>				
-            <column name="DESCRIPTION" value="Allows the user to complete sales ('=' button), if they are going to operate the till this is required."/>				
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname11"/>
+            <column name="DESCRIPTION" value="##label.description11"/>				
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="sales.ChangeTaxOptions"/>
-            <column name="SECTION" value="Sales"/>
-            <column name="DISPLAYNAME" value="Tax Options"/>				
-            <column name="DESCRIPTION" value="Allows the user to changes the tax options on the sales screen."/>				
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname12"/>
+            <column name="DESCRIPTION" value="##label.description12"/>			
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="payment.bank"/>
-            <column name="SECTION" value="Payments"/>
-            <column name="DISPLAYNAME" value="Bank Payment"/>				
-            <column name="DESCRIPTION" value="Allows the user to take bank payments when completing sale."/>				
+            <column name="SECTION" value="##label.sectionpayments"/>
+            <column name="DISPLAYNAME" value="##label.displayname13"/>
+            <column name="DESCRIPTION" value="##label.description13"/>			
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="payment.cash"/>
-            <column name="SECTION" value="Payments"/>
-            <column name="DISPLAYNAME" value="Cash Payment"/>				
-            <column name="DESCRIPTION" value="Allows the user to take cash payments when completing sale."/>				
+            <column name="SECTION" value="##label.sectionpayments"/>
+            <column name="DISPLAYNAME" value="##label.displayname14"/>
+            <column name="DESCRIPTION" value="##label.description14"/>			
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="payment.cheque"/>
-            <column name="SECTION" value="Payments"/>
-            <column name="DISPLAYNAME" value="Cheque Payment"/>				
-            <column name="DESCRIPTION" value="Allows the user to take cheque payments when completing sale."/>				
+            <column name="SECTION" value="##label.sectionpayments"/>
+            <column name="DISPLAYNAME" value="##label.displayname15"/>
+            <column name="DESCRIPTION" value="##label.description15"/>			
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="payment.paper"/>
-            <column name="SECTION" value="Payments"/>
-            <column name="DISPLAYNAME" value="Voucher Payment"/>				
-            <column name="DESCRIPTION" value="Allows the user to take voucher payments when completing sale."/>				
+            <column name="SECTION" value="##label.sectionpayments"/>
+            <column name="DISPLAYNAME" value="##label.displayname16"/>
+            <column name="DESCRIPTION" value="##label.description16"/>			
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="payment.magcard"/>
-            <column name="SECTION" value="Payments"/>
-            <column name="DISPLAYNAME" value="Card Payment"/>				
-            <column name="DESCRIPTION" value="Allows the user to take card payments when completing sale."/>				
+            <column name="SECTION" value="##label.sectionpayments"/>
+            <column name="DISPLAYNAME" value="##label.displayname17"/>
+            <column name="DESCRIPTION" value="##label.description17"/>				
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="payment.free"/>
-            <column name="SECTION" value="Payments"/>
-            <column name="DISPLAYNAME" value="Free Payment"/>				
-            <column name="DESCRIPTION" value="Allows the user to make the sale free of charge when completing sale. It is not recommened to enable this."/>				
+            <column name="SECTION" value="##label.sectionpayments"/>
+            <column name="DISPLAYNAME" value="##label.displayname18"/>
+            <column name="DESCRIPTION" value="##label.description18"/>				
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="payment.debt"/>
-            <column name="SECTION" value="Payments"/>	
-            <column name="DISPLAYNAME" value="Customer Dept Payment"/>			
-            <column name="DESCRIPTION" value="Allows the user to assign the payment to a customers account."/>				
+            <column name="SECTION" value="##label.sectionpayments"/>
+            <column name="DISPLAYNAME" value="##label.displayname19"/>
+            <column name="DESCRIPTION" value="##label.description19"/>			
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="refund.cash"/>
-            <column name="SECTION" value="Payments"/>	
-            <column name="DISPLAYNAME" value="Cash Refund"/>			
-            <column name="DESCRIPTION" value="Allow the user to issue a cash refund."/>				
+            <column name="SECTION" value="##label.sectionpayments"/>
+            <column name="DISPLAYNAME" value="##label.displayname20"/>
+            <column name="DESCRIPTION" value="##label.description20"/>			
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="refund.cheque"/>
-            <column name="SECTION" value="Payments"/>	
-            <column name="DISPLAYNAME" value="Cheque Refund"/>			
-            <column name="DESCRIPTION" value="Allow the user to issue a cheque refund."/>				
+            <column name="SECTION" value="##label.sectionpayments"/>
+            <column name="DISPLAYNAME" value="##label.displayname21"/>
+            <column name="DESCRIPTION" value="##label.description21"/>				
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="refund.paper"/>
-            <column name="SECTION" value="Payments"/>	
-            <column name="DISPLAYNAME" value="Voucher Refund"/>			
-            <column name="DESCRIPTION" value="Allow the user to issue a voucher refund."/>				
+            <column name="SECTION" value="##label.sectionpayments"/>
+            <column name="DISPLAYNAME" value="##label.displayname22"/>
+            <column name="DESCRIPTION" value="##label.description22"/>				
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="refund.magcard"/>
-            <column name="SECTION" value="Payments"/>	
-            <column name="DISPLAYNAME" value="Card Refund"/>			
-            <column name="DESCRIPTION" value="Allow the user to issue a card refund."/>				
+            <column name="SECTION" value="##label.sectionpayments"/>
+            <column name="DISPLAYNAME" value="##label.displayname23"/>
+            <column name="DESCRIPTION" value="##label.description23"/>				
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="sales.PrintKitchen"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Use Kitchen Printer"/>				
-            <column name="DESCRIPTION" value="Allows the user to send ticket to the kitchen printer."/>				
+            <column name="SECTION" value="##label.sectionbuttons"/>
+            <column name="DISPLAYNAME" value="##label.displayname24"/>
+            <column name="DESCRIPTION" value="##label.description24"/>			
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="button.totaldiscount"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Ticket Discount"/>				
-            <column name="DESCRIPTION" value="Enables the total discount button."/>				
+            <column name="SECTION" value="##label.sectionbuttons"/>
+            <column name="DISPLAYNAME" value="##label.displayname25"/>
+            <column name="DESCRIPTION" value="##label.description25"/>				
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="button.print"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Preview Receipt"/>				
-            <column name="DESCRIPTION" value="Enables the print ticket button, this will print a preview receipt, useful in restaurant mode."/>				
+            <column name="SECTION" value="##label.sectionbuttons"/>
+            <column name="DISPLAYNAME" value="##label.displayname26"/>
+            <column name="DESCRIPTION" value="##label.description26"/>			
         </insert>				
 				
         <insert tableName="DBPERMISSIONS">				
             <column name="CLASSNAME" value="button.opendrawer"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Open Casher Drawer"/>				
-            <column name="DESCRIPTION" value="Enables the 'NO Sale' - 'Open cash drawer' button."/>				
-        </insert>    
+            <column name="SECTION" value="##label.sectionbuttons"/>
+            <column name="DISPLAYNAME" value="##label.displayname27"/>
+            <column name="DESCRIPTION" value="##label.description27"/>
+        </insert>   
  
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="button.linediscount"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Line Discount Button"/>		
-            <column name="DESCRIPTION" value="Enables the single line discount button. *** Must also been enabled in 'Ticket.Buttons'."/>		
+            <column name="SECTION" value="##label.sectionbuttons"/>
+            <column name="DISPLAYNAME" value="##label.displayname28"/>
+            <column name="DESCRIPTION" value="##label.description28"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="button.sendorder"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Enable Send Order Button"/>		
-            <column name="DESCRIPTION" value="*** Must also been enabled in 'Ticket.Buttons'."/>		
+            <column name="SECTION" value="##label.sectionbuttons"/>
+            <column name="DISPLAYNAME" value="##label.displayname29"/>
+            <column name="DESCRIPTION" value="##label.description29"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="button.refundit"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Refund Button"/>	
-            <column name="DESCRIPTION" value="*** Must also been enabled in 'Ticket.Buttons'."/>		
+            <column name="SECTION" value="##label.sectionbuttons"/>
+            <column name="DISPLAYNAME" value="##label.displayname30"/>
+            <column name="DESCRIPTION" value="##label.description30"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="button.scharge"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Service Charge Button"/>	
-            <column name="DESCRIPTION" value="*** Must also been enabled in 'Ticket.Buttons'."/>		
+            <column name="SECTION" value="##label.sectionbuttons"/>
+            <column name="DISPLAYNAME" value="##label.displayname31"/>
+            <column name="DESCRIPTION" value="##label.description31"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuCustomers"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Customers Menu"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionadmin"/>
+            <column name="DISPLAYNAME" value="##label.displayname32"/>
+            <column name="DESCRIPTION" value="##label.description32"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.customers.CustomersPanel"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Customers"/>		
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectioncustomers"/>
+            <column name="DISPLAYNAME" value="##label.displayname33"/>
+            <column name="DESCRIPTION" value="##label.description33"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/customers.bs"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Menu.CustomersReport"/>		
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectioncustomers"/>
+            <column name="DISPLAYNAME" value="##label.displayname34"/>
+            <column name="DESCRIPTION" value="##label.description34"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/customersb.bs"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Customer Debts Report (Card Style)"/>		
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectioncustomers"/>
+            <column name="DISPLAYNAME" value="##label.displayname35"/>
+            <column name="DESCRIPTION" value="##label.description35"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/customersdebtors.bs"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Customer Debts Report"/>		
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectioncustomers"/>
+            <column name="DISPLAYNAME" value="##label.displayname36"/>
+            <column name="DESCRIPTION" value="##label.description36"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/customersdiary.bs"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Customers Diary Report"/>		
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectioncustomers"/>
+            <column name="DISPLAYNAME" value="##label.displayname37"/>
+            <column name="DESCRIPTION" value="##label.description37"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/customers_list.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Menu.CustomersList"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectioncustomers"/>
+            <column name="DISPLAYNAME" value="##label.displayname38"/>
+            <column name="DESCRIPTION" value="##label.description38"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/salebycustomer.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Customer Sales report"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectioncustomers"/>
+            <column name="DISPLAYNAME" value="##label.displayname39"/>
+            <column name="DESCRIPTION" value="##label.description39"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuStockManagement"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Stock Menu"/>		
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionadmin"/>
+            <column name="DISPLAYNAME" value="##label.displayname40"/>
+            <column name="DESCRIPTION" value="##label.description40"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.AttributesPanel"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Product Attributes"/>		
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname41"/>
+            <column name="DESCRIPTION" value="##label.description41"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.AttributeValuesPanel"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Attribute Values"/>		
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname42"/>
+            <column name="DESCRIPTION" value="##label.description42"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.AttributeSetsPanel"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=" Product Attribute Sets"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname43"/>
+            <column name="DESCRIPTION" value="##label.description43"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.AttributeUsePanel"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Product Attribute Use"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname44"/>
+            <column name="DESCRIPTION" value="##label.description44"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.AuxiliarPanel"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Auxiliary Products"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname45"/>
+            <column name="DESCRIPTION" value="##label.description45"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.CategoriesPanel"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Categories"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname46"/>
+            <column name="DESCRIPTION" value="##label.description46"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.ProductsPanel"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Products"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname47"/>
+            <column name="DESCRIPTION" value="##label.description47"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.ProductsWarehousePanel"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value="Product Location"/>		
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname48"/>
+            <column name="DESCRIPTION" value="##label.description48"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.StockDiaryPanel"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Stock Diary"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname49"/>
+            <column name="DESCRIPTION" value="##label.description49"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.StockManagement"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Stock Movement"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname50"/>
+            <column name="DESCRIPTION" value="##label.description50"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.TaxCategoriesPanel"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionmaintenance"/>
+            <column name="DISPLAYNAME" value="##label.displayname51"/>
+            <column name="DESCRIPTION" value="##label.description51"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.TaxCustCategoriesPanel"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionmaintenance"/>
+            <column name="DISPLAYNAME" value="##label.displayname52"/>
+            <column name="DESCRIPTION" value="##label.description52"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.TaxPanel"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionmaintenance"/>
+            <column name="DISPLAYNAME" value="##label.displayname53"/>
+            <column name="DESCRIPTION" value="##label.description53"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/barcodesheet.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Menu.BarcodeSheet"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname54"/>
+            <column name="DESCRIPTION" value="##label.description54"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/inventory.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname55"/>
+            <column name="DESCRIPTION" value="##label.description55"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/inventoryb.bs"/>
-            <column name="SECTION" value="Root"/>
-            <column name="DISPLAYNAME" value=""/>		
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname56"/>
+            <column name="DESCRIPTION" value="##label.description56"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/inventorybroken.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname57"/>
+            <column name="DESCRIPTION" value="##label.description57"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/inventorydiff.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname58"/>
+            <column name="DESCRIPTION" value="##label.description58"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/inventorydiffdetail.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname59"/>
+            <column name="DESCRIPTION" value="##label.description59"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/inventorylistdetail.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname60"/>
+            <column name="DESCRIPTION" value="##label.description60"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/productscatalog.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname61"/>
+            <column name="DESCRIPTION" value="##label.description61"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/products.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname62"/>
+            <column name="DESCRIPTION" value="##label.description62"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/productlabels.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname63"/>
+            <column name="DESCRIPTION" value="##label.description63"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/salecatalog.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname64"/>
+            <column name="DESCRIPTION" value="##label.description64"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/shelfedgelabels.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionstock"/>
+            <column name="DISPLAYNAME" value="##label.displayname65"/>
+            <column name="DESCRIPTION" value="##label.description65"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuSalesManagement"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionadmin"/>
+            <column name="DISPLAYNAME" value="##label.displayname66"/>
+            <column name="DESCRIPTION" value="##label.description66"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/cashflow.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Menu.CashFlow"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname67"/>
+            <column name="DESCRIPTION" value="##label.description67"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/cashregisterlog.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Menu.CashRegisterLog"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname68"/>
+            <column name="DESCRIPTION" value="##label.description68"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/categorysales.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Menu.CategorySales"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname69"/>
+            <column name="DESCRIPTION" value="##label.description69"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/chartsales.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Menu.SalesChart"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname70"/>
+            <column name="DESCRIPTION" value="##label.description70"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/closedpos.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Menu.Closing"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname71"/>
+            <column name="DESCRIPTION" value="##label.description71"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/closedpos_1.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Menu.Closing2"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname72"/>
+            <column name="DESCRIPTION" value="##label.description72"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/closedproducts.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Menu.ClosedProducts"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname73"/>
+            <column name="DESCRIPTION" value="##label.description73"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/closedproducts_1.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value="Menu.ClosedProducts"/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname74"/>
+            <column name="DESCRIPTION" value="##label.description74"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/extendedcashregisterlog.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname75"/>
+            <column name="DESCRIPTION" value="##label.description75"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/extproducts.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname76"/>
+            <column name="DESCRIPTION" value="##label.description76"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/paymentreport.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname77"/>
+            <column name="DESCRIPTION" value="##label.description77"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/piesalescat.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname78"/>
+            <column name="DESCRIPTION" value="##label.description78"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/productsales.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname79"/>
+            <column name="DESCRIPTION" value="##label.description79"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/productsalesprofit.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname80"/>
+            <column name="DESCRIPTION" value="##label.description80"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/saletaxes.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname81"/>
+            <column name="DESCRIPTION" value="##label.description81"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/taxcatsales.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname82"/>
+            <column name="DESCRIPTION" value="##label.description82"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/taxes.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname83"/>
+            <column name="DESCRIPTION" value="##label.description83"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/timeseriesproduct.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname84"/>
+            <column name="DESCRIPTION" value="##label.description84"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/top10sales.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname85"/>
+            <column name="DESCRIPTION" value="##label.description85"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/top10salesMySQL.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname86"/>
+            <column name="DESCRIPTION" value="##label.description86"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuMaintenance"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionadmin"/>
+            <column name="DISPLAYNAME" value="##label.displayname87"/>
+            <column name="DESCRIPTION" value="##label.description87"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.admin.PeoplePanel"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionmaintenance"/>
+            <column name="DISPLAYNAME" value="##label.displayname88"/>
+            <column name="DESCRIPTION" value="##label.description88"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.admin.RolesPanel"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionmaintenance"/>
+            <column name="DISPLAYNAME" value="##label.displayname89"/>
+            <column name="DESCRIPTION" value="##label.description89"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.admin.ResourcesPanel"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionmaintenance"/>
+            <column name="DISPLAYNAME" value="##label.displayname90"/>
+            <column name="DESCRIPTION" value="##label.description90"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.inventory.LocationsPanel"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionmaintenance"/>
+            <column name="DISPLAYNAME" value="##label.displayname91"/>
+            <column name="DESCRIPTION" value="##label.description91"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.mant.JPanelFloors"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionmaintenance"/>
+            <column name="DISPLAYNAME" value="##label.displayname92"/>
+            <column name="DESCRIPTION" value="##label.description92"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.mant.JPanelPlaces"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionmaintenance"/>
+            <column name="DISPLAYNAME" value="##label.displayname93"/>
+            <column name="DESCRIPTION" value="##label.description93"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/people.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=""/>		
+            <column name="SECTION" value="##label.sectionmaintenance"/>
+            <column name="DISPLAYNAME" value="##label.displayname94"/>
+            <column name="DESCRIPTION" value="##label.description94"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/usersales.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="A report "/>		
+            <column name="SECTION" value="##label.sectionmaintenance"/>
+            <column name="DISPLAYNAME" value="##label.displayname95"/>
+            <column name="DESCRIPTION" value="##label.description95"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.imports.JPanelCSV"/>
-            <column name="SECTION" value="Tools"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="Allows the user to access the Tools panel, for example CSV import option."/>		
+            <column name="SECTION" value="##label.sectiontools"/>
+            <column name="DISPLAYNAME" value="##label.displayname96"/>
+            <column name="DESCRIPTION" value="##label.description96"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.imports.JPanelCSVImport"/>
-            <column name="SECTION" value="Tools"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="Allows the user to access the CSV import option."/>		
+            <column name="SECTION" value="##label.sectiontools"/>
+            <column name="DISPLAYNAME" value="##label.displayname97"/>
+            <column name="DESCRIPTION" value="##label.description97"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.imports.JPanelCSVCleardb"/>
-            <column name="SECTION" value="Tools"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="Allows the user to clear the CSV imprt database."/>		
+            <column name="SECTION" value="##label.sectiontools"/>
+            <column name="DISPLAYNAME" value="##label.displayname98"/>
+            <column name="DESCRIPTION" value="##label.description98"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/badprice.bs"/>
-            <column name="SECTION" value="Tools"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="A report of any bad price details that CSV imported found whilst importing data."/>		
+            <column name="SECTION" value="##label.sectiontools"/>
+            <column name="DISPLAYNAME" value="##label.displayname99"/>
+            <column name="DESCRIPTION" value="##label.description99"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/invalidcategory.bs"/>
-            <column name="SECTION" value="Tools"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="A report of any bad Category details that CSV imported found whilst importing data, if the option was selected."/>		
+            <column name="SECTION" value="##label.sectiontools"/>
+            <column name="DISPLAYNAME" value="##label.displayname100"/>
+            <column name="DESCRIPTION" value="##label.description100"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/invaliddata.bs"/>
-            <column name="SECTION" value="Tools"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="A report of any invalid details that CSV imported found whilst importing data."/>		
+            <column name="SECTION" value="##label.sectiontools"/>
+            <column name="DISPLAYNAME" value="##label.displayname101"/>
+            <column name="DESCRIPTION" value="##label.description101"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/missingdata.bs"/>
-            <column name="SECTION" value="Tools"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="A report of any missing details that CSV imported found whilst importing data."/>		
+            <column name="SECTION" value="##label.sectiontools"/>
+            <column name="DISPLAYNAME" value="##label.displayname102"/>
+            <column name="DESCRIPTION" value="##label.description102"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/newproducts.bs"/>
-            <column name="SECTION" value="Tools"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="A report of any new products that CSV imported found whilst importing data. This only shows products taht did not have any errors."/>		
+            <column name="SECTION" value="##label.sectiontools"/>
+            <column name="DISPLAYNAME" value="##label.displayname103"/>
+            <column name="DESCRIPTION" value="##label.description103"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/updatedprices.bs"/>
-            <column name="SECTION" value="Tools"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="A report of any price updates for products already in the database, that CSV found found whilst importing data."/>		
+            <column name="SECTION" value="##label.sectiontools"/>
+            <column name="DISPLAYNAME" value="##label.displayname104"/>
+            <column name="DESCRIPTION" value="##label.description104"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuEmployees"/>
-            <column name="SECTION" value="Employees"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="Allows the user access to the 'Presence Management' functions."/>		
+            <column name="SECTION" value="##label.sectionadmin"/>
+            <column name="DISPLAYNAME" value="##label.displayname105"/>
+            <column name="DESCRIPTION" value="##label.description105"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.epm.BreaksPanel"/>
-            <column name="SECTION" value="Employees"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="Allows the user to access the 'Breaks' panel to configure employee break types."/>		
+            <column name="SECTION" value="##label.sectionpresence"/>
+            <column name="DISPLAYNAME" value="##label.displayname106"/>
+            <column name="DESCRIPTION" value="##label.description106"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.epm.LeavesPanel"/>
-            <column name="SECTION" value="Employees"/>		
-            <column name="DISPLAYNAME" value=""/>
-            <column name="DESCRIPTION" value="Allows the user to access the 'Leaves' panel to configure employee leaves."/>		
+            <column name="SECTION" value="##label.sectionpresence"/>
+            <column name="DISPLAYNAME" value="##label.displayname107"/>
+            <column name="DESCRIPTION" value="##label.description107"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.epm.JPanelEmployeePresence"/>
-            <column name="SECTION" value="Employees"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="Allows the user to use the 'Check In/Out' option, for time management."/>		
-        </insert>		
-		
-        <insert tableName="DBPERMISSIONS">		
-            <column name="CLASSNAME" value="com.openbravo.possync.ProductsSyncCreate"/>
-            <column name="SECTION" value="Sync"/>		
-            <column name="DISPLAYNAME" value=""/>
-            <column name="DESCRIPTION" value="This functions is from Openbravo time period and currently not a default function for Unicenta."/>		
-        </insert>		
-		
-        <insert tableName="DBPERMISSIONS">		
-            <column name="CLASSNAME" value="com.openbravo.possync.OrdersSyncCreate"/>
-            <column name="SECTION" value="Sync"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="This functions is from Openbravo time period and currently not a default function for Unicenta."/>		
-        </insert>		
+            <column name="SECTION" value="##label.sectionsystem"/>
+            <column name="DISPLAYNAME" value="##label.displayname108"/>
+            <column name="DESCRIPTION" value="##label.description108"/>
+        </insert>						
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="Menu.ChangePassword"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="Allows the current user to change their own Passord."/>		
+            <column name="SECTION" value="##label.sectionsystem"/>
+            <column name="DISPLAYNAME" value="##label.displayname109"/>
+            <column name="DESCRIPTION" value="##label.description109"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.panels.JPanelPrinter"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="Allows teh user to accesss the 'Printers' panel."/>		
+            <column name="SECTION" value="##label.sectionsystem"/>
+            <column name="DISPLAYNAME" value="##label.displayname110"/>
+            <column name="DESCRIPTION" value="##label.description110"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="com.openbravo.pos.config.JPanelConfiguration"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="Allows the user to access the configuration options for the system."/>		
+            <column name="SECTION" value="##label.sectionsystem"/>
+            <column name="DISPLAYNAME" value="##label.displayname111"/>
+            <column name="DESCRIPTION" value="##label.description111"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/dailypresencereport.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=" *** This report will not work with the embedded database."/>		
+            <column name="SECTION" value="##label.sectionpresence"/>
+            <column name="DISPLAYNAME" value="##label.displayname112"/>
+            <column name="DESCRIPTION" value="##label.description112"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/dailyschedulereport.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=" *** This report will not work with the embedded database."/>		
+            <column name="SECTION" value="##label.sectionpresence"/>
+            <column name="DISPLAYNAME" value="##label.displayname113"/>
+            <column name="DESCRIPTION" value="##label.description113"/>
         </insert>		
 		
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="/com/openbravo/reports/performancereport.bs"/>
-            <column name="SECTION" value="Root"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value=" *** This report will not work with the embedded database."/>		
+            <column name="SECTION" value="##label.sectionpresence"/>
+            <column name="DISPLAYNAME" value="##label.displayname114"/>
+            <column name="DESCRIPTION" value="##label.description114"/>
         </insert>
         
         <insert tableName="DBPERMISSIONS">		
             <column name="CLASSNAME" value="kitchen.DeleteLine"/>
-            <column name="SECTION" value="Sales"/>	
-            <column name="DISPLAYNAME" value=""/>	
-            <column name="DESCRIPTION" value="Alows the user to delete items sent to the kitchen from the ticket"/>		
+            <column name="SECTION" value="##label.sectionsales"/>
+            <column name="DISPLAYNAME" value="##label.displayname115"/>
+            <column name="DESCRIPTION" value="##label.description115"/>
         </insert>
-                    		
+          
+        <insert tableName="DBPERMISSIONS">		
+            <column name="CLASSNAME" value="com.openbravo.pos.admin.RolesPanelOriginal"/>
+            <column name="SECTION" value="##label.sectionmaintenance"/>
+            <column name="DISPLAYNAME" value="##label.displayname116"/>
+            <column name="DESCRIPTION" value="##label.description116"/>
+        </insert>
+                                  		
     </changeSet>
 
-    <changeSet author="UnicentaOpos - John L" id="Insert default permissions into database">
+
+    <changeSet author="UnicentaOpos - John L" id="Insert into RESOURCES Table Reprint last ticket">
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">SELECT COUNT(1) FROM PERMISSIONS</sqlCheck>
+            <sqlCheck expectedResult="0">SELECT COUNT(1) FROM RESOURCES WHERE NAME='Printer.ReprintLastTicket'</sqlCheck>
         </preConditions>
-        
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.sales.JPanelTicketSales"/>
-        </insert>
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.sales.JPanelTicketEdits"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.customers.CustomersPayment"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.panels.JPanelPayments"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.panels.JPanelCloseMoney"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="sales.EditLines"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="sales.EditTicket"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="sales.RefundTicket"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="sales.PrintTicket"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="sales.Total"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="sales.ChangeTaxOptions"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="payment.bank"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="payment.cash"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="payment.cheque"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="payment.paper"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="payment.magcard"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="payment.free"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="payment.debt"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="refund.cash"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="refund.cheque"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="refund.paper"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="refund.magcard"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="sales.PrintKitchen"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="button.totaldiscount"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="button.print"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="button.opendrawer"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="button.linediscount"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="button.sendorder"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="button.refundit"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="button.scharge"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuCustomers"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.customers.CustomersPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/customers.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/customersb.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/customersdebtors.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/customersdiary.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/customers_list.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/salebycustomer.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuStockManagement"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.AttributesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.AttributeValuesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.AttributeSetsPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.AttributeUsePanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.AuxiliarPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.CategoriesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.ProductsPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.ProductsWarehousePanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.StockDiaryPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.StockManagement"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.TaxCategoriesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.TaxCustCategoriesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.TaxPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/barcodesheet.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/inventory.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/inventoryb.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/inventorybroken.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/inventorydiff.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/inventorydiffdetail.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/inventorylistdetail.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/productscatalog.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/products.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/productlabels.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/salecatalog.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/shelfedgelabels.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuSalesManagement"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/cashflow.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/cashregisterlog.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/categorysales.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/chartsales.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/closedpos.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/closedpos_1.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/closedproducts.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/closedproducts_1.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/extendedcashregisterlog.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/extproducts.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/paymentreport.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/piesalescat.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/productsales.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/productsalesprofit.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/saletaxes.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/taxcatsales.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/taxes.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/timeseriesproduct.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/top10sales.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuMaintenance"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.admin.PeoplePanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.admin.RolesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.admin.ResourcesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.LocationsPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.mant.JPanelFloors"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.mant.JPanelPlaces"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/people.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/usersales.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.imports.JPanelCSV"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.imports.JPanelCSVImport"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.imports.JPanelCSVCleardb"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/badprice.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/invalidcategory.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/invaliddata.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/missingdata.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/newproducts.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/updatedprices.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuEmployees"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.epm.BreaksPanel"/> 
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.epm.LeavesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.epm.JPanelEmployeePresence"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="Menu.ChangePassword"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.panels.JPanelPrinter"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="0"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.config.JPanelConfiguration"/>
-        </insert> 
 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.sales.JPanelTicketSales"/>
-        </insert>
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.sales.JPanelTicketEdits"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.customers.CustomersPayment"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.panels.JPanelPayments"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.panels.JPanelCloseMoney"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="sales.EditLines"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="sales.EditTicket"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="sales.RefundTicket"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="sales.PrintTicket"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="sales.Total"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="sales.ChangeTaxOptions"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="payment.bank"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="payment.cash"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="payment.cheque"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="payment.paper"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="payment.magcard"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="payment.free"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="payment.debt"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="refund.cash"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="refund.cheque"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="refund.paper"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="refund.magcard"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="sales.PrintKitchen"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="button.totaldiscount"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="button.print"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="button.opendrawer"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="button.linediscount"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="button.sendorder"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="button.refundit"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="button.scharge"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuCustomers"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.customers.CustomersPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/customers.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/customersb.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/customersdebtors.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/customersdiary.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/customers_list.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/salebycustomer.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuStockManagement"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.AttributesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.AttributeValuesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.AttributeSetsPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.AttributeUsePanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.AuxiliarPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.CategoriesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.ProductsPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.ProductsWarehousePanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.StockDiaryPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.StockManagement"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.TaxCategoriesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.TaxCustCategoriesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.TaxPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/barcodesheet.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/inventory.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/inventoryb.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/inventorybroken.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/inventorydiff.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/inventorydiffdetail.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/inventorylistdetail.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/productscatalog.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/products.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/productlabels.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/salecatalog.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/shelfedgelabels.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuSalesManagement"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/cashflow.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/cashregisterlog.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/categorysales.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/chartsales.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/closedpos.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/closedpos_1.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/closedproducts.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/closedproducts_1.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/extendedcashregisterlog.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/extproducts.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/paymentreport.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/piesalescat.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/productsales.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/productsalesprofit.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/saletaxes.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/taxcatsales.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/taxes.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/timeseriesproduct.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/top10sales.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuMaintenance"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.admin.PeoplePanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.admin.RolesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.admin.ResourcesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.LocationsPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.mant.JPanelFloors"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.mant.JPanelPlaces"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/people.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/usersales.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.imports.JPanelCSV"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.imports.JPanelCSVImport"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.imports.JPanelCSVCleardb"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/badprice.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/invalidcategory.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/invaliddata.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/missingdata.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/newproducts.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/updatedprices.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuEmployees"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.epm.BreaksPanel"/> 
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.epm.LeavesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.epm.JPanelEmployeePresence"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="Menu.ChangePassword"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.panels.JPanelPrinter"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="1"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.config.JPanelConfiguration"/>
-        </insert> 
-
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.sales.JPanelTicketSales"/>
-        </insert>
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.sales.JPanelTicketEdits"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.customers.CustomersPayment"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.panels.JPanelPayments"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="sales.EditLines"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="sales.EditTicket"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="sales.PrintTicket"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="sales.Total"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="sales.ChangeTaxOptions"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="payment.bank"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="payment.cash"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="payment.cheque"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="payment.paper"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="payment.magcard"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="payment.debt"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="sales.PrintKitchen"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="button.totaldiscount"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="button.print"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="button.opendrawer"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="button.linediscount"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="button.sendorder"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuCustomers"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.customers.CustomersPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/customers.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/customersb.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/customersdiary.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuStockManagement"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.AuxiliarPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.CategoriesPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.inventory.ProductsPanel"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/barcodesheet.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/productscatalog.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/products.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/productlabels.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/salecatalog.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/shelfedgelabels.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.forms.MenuSalesManagement"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="/com/openbravo/reports/productsales.bs"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.epm.JPanelEmployeePresence"/>
-        </insert> 
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="2"/>
-            <column name="CLASSNAME" value="Menu.ChangePassword"/>
-        </insert> 
-                        
-        <insert tableName="PERMISSIONS">
-            <column name="USERID" value="3"/>
-            <column name="CLASSNAME" value="com.openbravo.pos.sales.JPanelTicketSales"/>
-        </insert>                                                                                                		
-    </changeSet>
-
-
-    <changeSet author="UnicentaOpos - John L" id="Insert resource for reprint last ticket" >
         <insert tableName="RESOURCES">
             <column name="ID" value="61"/>
             <column name="NAME" value="Printer.ReprintLastTicket"/>
-            <column name="RESTYPE" valueNumeric="1"/>
+            <column name="RESTYPE" valueNumeric="0"/>
             <column name="CONTENT" valueBlobResource="/com/openbravo/pos/templates/Printer.ReprintLastTicket.xml"/>
         </insert>
     </changeSet>
-    
-    
-    
+
+
     <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.1" >
         <update tableName="APPJL">
             <column name="VERSION" value="1.0 beta "/>
         </update>
     </changeSet>
 
+    <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.1 beta" >
+        <update tableName="APPJL">
+            <column name="VERSION" value="1.1 beta "/>
+        </update>
+    </changeSet>
+
+    <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.2 beta" >
+        <update tableName="APPJL">
+            <column name="VERSION" value="1.2 beta "/>
+        </update>
+    </changeSet>
+
+    <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.3 beta" >
+        <update tableName="APPJL">
+            <column name="VERSION" value="1.3 beta "/>
+        </update>
+    </changeSet>
+    
+    <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.2" >
+        <update tableName="APPJL">
+            <column name="VERSION" value="1.3"/>
+        </update>
+    </changeSet>    
+    
 </databaseChangeLog>
 

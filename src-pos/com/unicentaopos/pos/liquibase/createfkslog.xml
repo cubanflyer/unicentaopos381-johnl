@@ -156,26 +156,6 @@
                                  referencedTableName="PRODUCTS"/>
     </changeSet>
 
-    <changeSet author="UnicentaOpos - John L" id="Stock diary Table FKs">
-        <addForeignKeyConstraint baseColumnNames="PRODUCT"
-                                 constraintName ="STOCKDIARY_FK_1"
-                                 referencedColumnNames = "ID"
-                                 baseTableName="STOCKDIARY"
-                                 referencedTableName="PRODUCTS"/>
-
-        <addForeignKeyConstraint baseColumnNames="ATTRIBUTESETINSTANCE_ID"
-                                 constraintName ="STOCKDIARY_ATTSETINST"
-                                 referencedColumnNames = "ID"
-                                 baseTableName="STOCKDIARY"
-                                 referencedTableName="ATTRIBUTESETINSTANCE"/>
-
-        <addForeignKeyConstraint baseColumnNames="LOCATION"
-                                 constraintName ="STOCKDIARY_FK_2"
-                                 referencedColumnNames = "ID"
-                                 baseTableName="STOCKDIARY"
-                                 referencedTableName="LOCATIONS"/>
-    </changeSet>
-
     <changeSet author="UnicentaOpos - John L" id="Stock level Table FKs">
         <addForeignKeyConstraint baseColumnNames="PRODUCT"
                                  constraintName ="STOCKLEVEL_PRODUCT"
@@ -316,6 +296,25 @@
                                  referencedTableName="LOCATIONS"/>
     </changeSet>
 
+    <changeSet author="UnicentaOpos - John L" id="Stock diary Table FKs">
+        <addForeignKeyConstraint baseColumnNames="PRODUCT"
+                                 constraintName ="STOCKDIARY_FK_1"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="STOCKDIARY"
+                                 referencedTableName="PRODUCTS"/>
 
+        <addForeignKeyConstraint baseColumnNames="ATTRIBUTESETINSTANCE_ID"
+                                 constraintName ="STOCKDIARY_ATTSETINST"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="STOCKDIARY"
+                                 referencedTableName="ATTRIBUTESETINSTANCE"/>
+
+        <addForeignKeyConstraint baseColumnNames="LOCATION"
+                                 constraintName ="STOCKDIARY_FK_2"
+                                 referencedColumnNames = "ID"
+                                 baseTableName="STOCKDIARY"
+                                 referencedTableName="LOCATIONS"/>
+    </changeSet>
+    
 </databaseChangeLog>
 

@@ -62,6 +62,11 @@
             </column>
             <column name="PERMISSIONS" type="${blob.type}"/>
         </createTable>
+        <createIndex tableName="ROLES"
+                        indexName="ROLES_NAME_INX"
+                        unique="false">
+            <column name="NAME" type="varchar(255)"/>
+        </createIndex>                    
     </changeSet>
 
     <changeSet author="UnicentaOpos - John L" id="Create People Table">
@@ -206,6 +211,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="IMAGE" type="${blob.type}"/>
+            <column name="COLOUR" type="varchar(255)"/> 
         </createTable>
 
         <createIndex tableName="CATEGORIES"
@@ -679,7 +685,7 @@
             <column name="NAME" type="varchar(255)"/>
             <column name="TICKETID" type="varchar(255)"/>
             <column name="PRODUCTID" type="varchar(255)"/>
-            <column name="PRODUCTname" type="varchar(255)"/>
+            <column name="PRODUCTNAME" type="varchar(255)"/>
             <column name="UNITS" type="double precision">
                 <constraints nullable="false"/>
             </column>
@@ -973,6 +979,29 @@
             <column name="TICKETID" type="varchar(255)"/>
         </createTable>
     </changeSet>
+
+    <changeSet author="UnicentaOpos - John L" id="Create New dbpermissions Table">
+        <createTable tableName="DBPERMISSIONS">
+            <column name="CLASSNAME" type="varchar(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="SECTION" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DISPLAYNAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>            
+            <column name="DESCRIPTION" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+                        
+        <createIndex tableName="DBPERMISSIONS"
+                     indexName="DBPERMISSIONS_CLASSNAME_INX"
+                     unique="true">
+            <column name="CLASSNAME" type="varchar(255)"/>
+        </createIndex> 
+    </changeSet> 
 
     <changeSet author="UnicentaOpos - John L" id="Create TICKETSNUM Sequence" dbms="postgresql, hypersql, hsqldb">
         <sql>CREATE SEQUENCE TICKETSNUM START WITH 1</sql>

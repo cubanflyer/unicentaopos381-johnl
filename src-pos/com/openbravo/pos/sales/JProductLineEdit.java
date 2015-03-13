@@ -79,7 +79,12 @@ public class JProductLineEdit extends javax.swing.JDialog {
         }
 
         m_config.load();
-        m_jButtonUpdate.setVisible(Boolean.valueOf(m_config.getProperty("db.productupdate")));
+        if (!productID.equals("xxx999_999xxx_x9x9x9")) {
+            m_jButtonUpdate.setVisible(Boolean.valueOf(m_config.getProperty("db.productupdate")));
+        }else{
+            m_jButtonUpdate.setVisible(false);
+        }
+
         m_jButtonUpdate.setEnabled(false);
 
         m_oLine = new TicketLineInfo(oLine);

@@ -111,6 +111,7 @@ public class JRootApp extends JPanel implements AppView {
     private String sJLVersion;
     private DatabaseMetaData md;
     private SimpleDateFormat formatter;
+    private MessageInf msg;
 
     static {
         initOldClasses();
@@ -125,7 +126,7 @@ public class JRootApp extends JPanel implements AppView {
         public void actionPerformed(ActionEvent evt) {
             m_clock = getLineTimer();
             m_date = getLineDate();
-            m_jLblTitle.setText(m_dlSystem.getResourceAsText("Window.Title"));
+            m_jLblTitle.setText(m_dlSystem.getResourceAsText("Window.Title"));           
             m_jLblTitle.repaint();
             jLabel2.setText("  " + m_date + "  " + m_clock);
         }
@@ -133,7 +134,7 @@ public class JRootApp extends JPanel implements AppView {
 
     private String getLineTimer() {
         try {
-            if ((m_props.getProperty("clock.time") == "") || (m_props.getProperty("clock.time") == null))  {
+            if ((m_props.getProperty("clock.time") == "") || (m_props.getProperty("clock.time") == null)) {
                 return Formats.HOURMIN.formatValue(new Date());
             } else {
                 formatter = new SimpleDateFormat(m_props.getProperty("clock.time"));
@@ -146,7 +147,7 @@ public class JRootApp extends JPanel implements AppView {
 
     private String getLineDate() {
         try {
-           if ((m_props.getProperty("clock.date") == "")|| (m_props.getProperty("clock.date") == null)) {
+            if ((m_props.getProperty("clock.date") == "") || (m_props.getProperty("clock.date") == null)) {
                 return Formats.SIMPLEDATE.formatValue(new Date());
             } else {
                 formatter = new SimpleDateFormat(m_props.getProperty("clock.date"));
@@ -231,7 +232,8 @@ public class JRootApp extends JPanel implements AppView {
                     } catch (DatabaseException ex) {
                         Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (LiquibaseException ex) {
-                        Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                        MessageInf msg = new MessageInf(MessageInf.SGN_NOTICE, "Liquibase Error", ex.getCause().toString().replace("liquibase.exception.DatabaseException:", ""));
+                        msg.show(this);
                     } catch (MalformedURLException ex) {
                         Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (SQLException ex) {
@@ -249,14 +251,13 @@ public class JRootApp extends JPanel implements AppView {
                                 con.close();
                             } catch (SQLException e) {
                                 //nothing to do
+                            }
                         }
-                    }
                     }
                 }
             }
         }
-        
-        
+
         try {
 // get the version jl changes 
             con = session.getConnection();
@@ -273,7 +274,7 @@ public class JRootApp extends JPanel implements AppView {
             if (getDbVersion().equals("x")) {
                 JMessageDialog.showMessage(this, new MessageInf(MessageInf.SGN_DANGER,
                         AppLocal.getIntString("message.databasenotsupported", session.DB.getName())));
-                } else {
+            } else {
                 if (JOptionPane.showConfirmDialog(this, AppLocal.getIntString(sDBVersion == null ? "message.createdatabasejl" : "message.updatedatabasejl"), AppLocal.getIntString("message.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                     String db_user = (m_props.getProperty("db.user"));
                     String db_url = (m_props.getProperty("db.URL"));
@@ -283,7 +284,7 @@ public class JRootApp extends JPanel implements AppView {
                         // the password is encrypted
                         AltEncrypter cypher = new AltEncrypter("cypherkey" + db_user);
                         db_password = cypher.decrypt(db_password.substring(6));
-                }
+                    }
 
                     try {
                         ClassLoader cloader = new URLClassLoader(new URL[]{new File(m_props.getProperty("db.driverlib")).toURI().toURL()});
@@ -300,6 +301,9 @@ public class JRootApp extends JPanel implements AppView {
                         Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (LiquibaseException ex) {
                         Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
+                      //  MessageInf msg2 = new MessageInf(MessageInf.SGN_NOTICE, "Liquibase Error", ex.getCause().toString().replace("liquibase.exception.DatabaseException:", ""));
+                      //  msg2.show(this);
+                        //  msg = new MessageInf(MessageInf.SGN_NOTICE, "Liquibase Error", ex.getCause().toString().replace("liquibase.exception.DatabaseException:",""));
                     } catch (MalformedURLException ex) {
                         Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (SQLException ex) {
@@ -317,15 +321,14 @@ public class JRootApp extends JPanel implements AppView {
                                 con.close();
                             } catch (SQLException e) {
                                 //nothing to do
-            }
-        }
+                            }
+                        }
                     }
                 }
-            } 
+            }
         }
 // end of jl import
 
-        
 // Clear the cash drawer table as required, by setting 
         try {
             if (getDbVersion() == "d") {

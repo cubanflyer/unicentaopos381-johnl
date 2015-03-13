@@ -160,7 +160,7 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
             Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
             Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        }
         return (true);
     }
 
@@ -175,7 +175,7 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
             DriverManager.registerDriver(new DriverWrapper((Driver) Class.forName(m_props.getProperty("db.driver"), true, cloader).newInstance()));
 
             changelog = "com/unicentaopos/pos/liquibase/createfkslog.xml";
-            
+
             Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(DriverManager.getConnection(db_url2, db_user2, db_password2)));
             liquibase = new Liquibase(changelog, new ClassLoaderResourceAccessor(), database);
             liquibase.update("implement");
@@ -193,7 +193,7 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
             Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
             Logger.getLogger(JRootApp.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        }
 
         return (true);
     }
@@ -531,7 +531,7 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.setString(3, rs.getString("VERSION"));
                         pstmt.executeUpdate();
                     }
-                                        
+
 // copy attribute table       
                     SQL = "SELECT * FROM ATTRIBUTE";
                     rs = stmt.executeQuery(SQL);
@@ -629,7 +629,7 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.setBytes(4, rs.getBytes("IMAGE"));
                         pstmt.setString(5, rs.getString("TEXTTIP"));
                         pstmt.setBoolean(6, rs.getBoolean("CATSHOWNAME"));
-                        pstmt.setString(7,rs.getString("COLOUR"));
+                        pstmt.setString(7, rs.getString("COLOUR"));
                         pstmt.executeUpdate();
                     }
 
@@ -697,6 +697,19 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt.setBoolean(21, rs.getBoolean("VISIBLE"));
                         pstmt.setTimestamp(22, rs.getTimestamp("CURDATE"));
                         pstmt.setDouble(23, rs.getDouble("CURDEBT"));
+                        pstmt.executeUpdate();
+                    }
+
+// copy DBPERMISSIONS table       
+                    SQL = "SELECT * FROM DBPERMISSIONS";
+                    rs = stmt.executeQuery(SQL);
+                    while (rs.next()) {
+                        SQL = "INSERT INTO DBPERMISSIONS (CLASSNAME, SECTION, DISPLAYNAME, DESCRIPTION) VALUES (?, ?, ?, ?)";
+                        pstmt = con2.prepareStatement(SQL);
+                        pstmt.setString(1, rs.getString("CLASSNAME"));
+                        pstmt.setString(2, rs.getString("SECTION"));
+                        pstmt.setString(3, rs.getString("DISPLAYNAME"));
+                        pstmt.setString(4, rs.getString("DESCRIPTION"));
                         pstmt.executeUpdate();
                     }
 
@@ -808,7 +821,7 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                     rs = stmt.executeQuery(SQL);
                     while (rs.next()) {
                         SQL = "INSERT INTO PRODUCTS (ID, REFERENCE, CODE, CODETYPE, NAME, PRICEBUY, PRICESELL, CATEGORY, TAXCAT, ATTRIBUTESET_ID, STOCKCOST, STOCKVOLUME, IMAGE, ISCOM, ISSCALE, ISKITCHEN, PRINTKB, SENDSTATUS, ISSERVICE, DISPLAY, ATTRIBUTES, ISVPRICE, ISVERPATRIB, TEXTTIP, WARRANTY, STOCKUNITS, ALIAS, ALWAYSAVAILABLE )"
-                                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                         pstmt = con2.prepareStatement(SQL);
                         pstmt.setString(1, rs.getString("ID"));
                         pstmt.setString(2, rs.getString("REFERENCE"));
@@ -840,7 +853,8 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
 // JDL 14 Feb 2015       
                         pstmt.setString(27, rs.getString("ALIAS"));
                         pstmt.setBoolean(28, rs.getBoolean("ALWAYSAVAILABLE"));
-                        }
+                        pstmt.executeUpdate();
+                    }
 
 // copy PRODUCTS_CAT table       
                     SQL = "SELECT * FROM PRODUCTS_CAT";
@@ -850,7 +864,8 @@ public class JPaneldbMigrate extends JPanel implements JPanelView {
                         pstmt = con2.prepareStatement(SQL);
                         pstmt.setString(1, rs.getString("PRODUCT"));
                         pstmt.setInt(2, rs.getInt("CATORDER"));
-                        }
+                        pstmt.executeUpdate();
+                    }
 
                     // copy PRODUCTS_COM table       
                     SQL = "SELECT * FROM PRODUCTS_COM";

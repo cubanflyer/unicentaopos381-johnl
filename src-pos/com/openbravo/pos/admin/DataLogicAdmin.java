@@ -19,10 +19,12 @@
 
 package com.openbravo.pos.admin;
 
+import com.openbravo.basic.BasicException;
 import com.openbravo.data.loader.*;
 import com.openbravo.format.Formats;
 import com.openbravo.pos.forms.AppLocal;
 import com.openbravo.pos.forms.BeanFactoryDataSingle;
+import java.util.List;
 
 /**
  *
@@ -34,7 +36,13 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
     private TableDefinition m_tpeople;
     private TableDefinition m_troles;
     private TableDefinition m_tresources;    
-    
+    protected SentenceList m_sectionList; 
+    protected SentenceList m_rolesList;
+    protected SentenceFind m_description;
+    protected SentenceList m_displayList;
+    protected SentenceFind m_roleID;
+    protected SentenceExec m_insertentry;
+    private SentenceFind m_rolepermissions; 
     
     /** Creates a new instance of DataLogicAdmin */
     public DataLogicAdmin() {
@@ -74,9 +82,49 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
             , new Formats[] {Formats.STRING, Formats.STRING, Formats.INT, Formats.NULL}
             , new int[] {0}
         );           
+  
+        
+        m_sectionList = new StaticSentence(s, 
+                "SELECT DISTINCT SECTION FROM DBPERMISSIONS ORDER BY SECTION"
+                , null
+                , SerializerReadString.INSTANCE);          
+             
+        m_description = new StaticSentence(s
+                , "SELECT DESCRIPTION FROM DBPERMISSIONS WHERE CLASSNAME = ? "
+                , SerializerWriteString.INSTANCE
+                , SerializerReadString.INSTANCE);  
+        
+        m_displayList = new StaticSentence(s
+                , "SELECT DISPLAYNAME FROM DBPERMISSIONS WHERE SECTION = ? ORDER BY DISPLAYNAME"
+                , SerializerWriteString.INSTANCE
+                , SerializerReadString.INSTANCE);          
+        
+        m_roleID = new StaticSentence(s
+                , "SELECT ID FROM ROLES WHERE NAME = ? "
+                , SerializerWriteString.INSTANCE
+                , SerializerReadString.INSTANCE);  
+        
+        
+        m_rolesList = new StaticSentence(s
+                , "SELECT ID FROM ROLES "
+                , null
+                , SerializerReadString.INSTANCE);              
+        
+        m_rolepermissions = new PreparedSentence(s, "SELECT PERMISSIONS FROM ROLES WHERE ID = ?"
+                , SerializerWriteString.INSTANCE
+                , SerializerReadBytes.INSTANCE);      
+        
+        
+        m_insertentry = new StaticSentence(s
+                , "INSERT INTO DBPERMISSIONS (CLASSNAME, SECTION, DISPLAYNAME, DESCRIPTION) " +
+                  "VALUES (?, ?, ?, ?)"
+                , new SerializerWriteBasic(new Datas[] {
+                    Datas.STRING, 
+                    Datas.STRING, 
+                    Datas.STRING, 
+                    Datas.STRING,}));        
     }
-       
-    /**
+    /*
      *
      * @return
      */
@@ -87,7 +135,18 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
             , new SerializerReadClass(RoleInfo.class));
     }
 
-    /**
+    /*
+     *
+     * @return
+     */
+     public final List<DBPermissionsInfo> getAlldbPermissions() throws BasicException  {
+	return new PreparedSentence(s
+		, "SELECT CLASSNAME, SECTION, DISPLAYNAME, DESCRIPTION FROM DBPERMISSIONS ORDER BY DISPLAYNAME"
+		, null               
+		, DBPermissionsInfo.getSerializerRead()).list();
+    }  
+           
+     /*
      *
      * @return
      */
@@ -103,12 +162,25 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
         return m_troles;
     }
 
-    /**
+    /*
      *
      * @return
      */
     public final TableDefinition getTableResources() {
         return m_tresources;
+    }
+    
+    /**
+     *
+     * @param sRole
+     * @return
+     */
+    public final String findRolePermissions(String sRole) {    
+        try {
+            return Formats.BYTEA.formatValue(m_rolepermissions.find(sRole));        
+        } catch (BasicException e) {
+            return null;                    
+        }             
     }
     
     /**
@@ -121,4 +193,28 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
                 , null
                 , new SerializerReadClass(PeopleInfo.class));
     }
+    
+    public final List<String> getSectionsList() throws BasicException {
+        return m_sectionList.list();    
 }
+      
+    public final List<String> getDisplayList(String section) throws BasicException {
+        return m_displayList.list(section);    
+    }
+     
+    public final String getDescription(String className) throws BasicException {
+        return m_description.find(className).toString();    
+    }
+  
+    public final List<String> getRoles() throws BasicException {
+        return m_rolesList.list();
+    }        
+    
+    public final String getRoleID(String roleName) throws BasicException {
+        return m_roleID.find(roleName).toString();
+    }    
+
+    public final void insertEntry(Object[] entry) throws BasicException {
+        m_insertentry.exec(entry);
+    }
+ }
