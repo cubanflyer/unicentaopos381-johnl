@@ -16,11 +16,11 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.pos.sales.shared;
 
 import com.openbravo.basic.BasicException;
 import com.openbravo.data.gui.MessageInf;
+import com.openbravo.pos.forms.AppConfig;
 import com.openbravo.pos.forms.AppLocal;
 import com.openbravo.pos.forms.AppView;
 import com.openbravo.pos.sales.DataLogicReceipts;
@@ -28,6 +28,7 @@ import com.openbravo.pos.sales.JTicketsBag;
 import com.openbravo.pos.sales.SharedTicketInfo;
 import com.openbravo.pos.sales.TicketsEditor;
 import com.openbravo.pos.ticket.TicketInfo;
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 import javax.swing.JComponent;
@@ -40,65 +41,67 @@ import javax.swing.SwingUtilities;
  * @author JG uniCenta
  */
 public class JTicketsBagShared extends JTicketsBag {
-    
+
     private String m_sCurrentTicket = null;
     private DataLogicReceipts dlReceipts = null;
-    
-    
-    /** Creates new form JTicketsBagShared
+
+    /**
+     * Creates new form JTicketsBagShared
+     *
      * @param app
-     * @param panelticket */
+     * @param panelticket
+     */
     public JTicketsBagShared(AppView app, TicketsEditor panelticket) {
-        
+
         super(app, panelticket);
-        
+
         dlReceipts = (DataLogicReceipts) app.getBean("com.openbravo.pos.sales.DataLogicReceipts");
-        
+
         initComponents();
     }
-    
+
     /**
      *
      */
     @Override
     public void activate() {
-        
+
         // precondicion es que no tenemos ticket activado ni ticket en el panel
         m_sCurrentTicket = null;
-        selectValidTicket();     
-        
+        selectValidTicket();
+
         // Authorisation
         m_jDelTicket.setEnabled(m_App.getAppUserView().getUser().hasPermission("com.openbravo.pos.sales.JPanelTicketEdits"));
-       
+
     }
-    
+
     /**
      *
      * @return
      */
     @Override
     public boolean deactivate() {
-        
+
         // precondicion es que tenemos ticket activado aqui y ticket en el panel 
         saveCurrentTicket();
-        
+
         m_sCurrentTicket = null;
-        m_panelticket.setActiveTicket(null, null);       
-        
+        m_panelticket.setActiveTicket(null, null);
+
         return true;
-        
+
         // postcondicion es que no tenemos ticket activado ni ticket en el panel
     }
-        
+
     /**
      *
      */
     @Override
     public void deleteTicket() {
         m_sCurrentTicket = null;
-        selectValidTicket();      
+        selectValidTicket();
     }
-    
+
     /**
      *
      * @return
@@ -107,7 +110,7 @@ public class JTicketsBagShared extends JTicketsBag {
     protected JComponent getBagComponent() {
         return this;
     }
-    
+
     /**
      *
      * @return
@@ -116,33 +119,28 @@ public class JTicketsBagShared extends JTicketsBag {
     protected JComponent getNullComponent() {
         return new JPanel();
     }
-   
+
     private void saveCurrentTicket() {
 // Thanks Ibastavd & sunnytang 2012/2013 - Mod JG 23 Jul 13    
 // save current ticket, if exists,
         if (m_sCurrentTicket != null) {
             try {
-                dlReceipts.insertSharedTicket(m_sCurrentTicket, m_panelticket.getActiveTicket(),m_panelticket.getActiveTicket().getPickupId());
-                m_jListTickets.setText("*");
+                dlReceipts.insertSharedTicket(m_sCurrentTicket, m_panelticket.getActiveTicket(), m_panelticket.getActiveTicket().getPickupId());
                 TicketInfo l = dlReceipts.getSharedTicket(m_sCurrentTicket);
-                    if(l.getLinesCount() == 0) {
-//                      throw new BasicException(AppLocal.getIntString("message.nullticket"));
-//                    }else{
-                        dlReceipts.deleteSharedTicket(m_sCurrentTicket);
-                    }             
+                if (l.getLinesCount() == 0) {
+                    dlReceipts.deleteSharedTicket(m_sCurrentTicket);
+                }
+                checkLayaways();
             } catch (BasicException e) {
                 new MessageInf(e).show(this);
-            }  
-        }    
+            }
+        }
     }
-    
-    private void setActiveTicket(String id) throws BasicException{
-          
+
+    private void setActiveTicket(String id) throws BasicException {
         // BEGIN TRANSACTION
         TicketInfo ticket = dlReceipts.getSharedTicket(id);
-        if (ticket == null)  {
-            m_jListTickets.setText("");
-            // Does it exist
+        if (ticket == null) {
             throw new BasicException(AppLocal.getIntString("message.noticket"));
         } else {
             dlReceipts.getPickupId(id);
@@ -150,44 +148,68 @@ public class JTicketsBagShared extends JTicketsBag {
             dlReceipts.deleteSharedTicket(id);
             m_sCurrentTicket = id;
             m_panelticket.setActiveTicket(ticket, null);
-            ticket.setPickupId(pickUp);         
-            
-        } 
+            ticket.setPickupId(pickUp);
+        }
+        checkLayaways();
         // END TRANSACTION                 
     }
-    
-    private void selectValidTicket() {
-        
+
+    private void checkLayaways() {
+        AppConfig m_config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
+        m_config.load();
+        List<SharedTicketInfo> nl;
         try {
-            List<SharedTicketInfo> l = dlReceipts.getSharedTicketList();
-            if (l.isEmpty()) {
-                m_jListTickets.setText("");                
-                 newTicket();
+            if ("true".equals(m_config.getProperty("sharedticket.currentuser"))) {
+                nl = dlReceipts.getSharedTicketListByUser(m_App.getAppUserView().getUser().getName());
             } else {
-//                m_jListTickets.setText("*");
-//                setActiveTicket(l.get(0).getId());
+                nl = dlReceipts.getSharedTicketList();
+            }
+            if (nl.isEmpty()) {
+                m_jListTickets.setText("");
+                m_jListTickets.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/sale_pending.png")));
+            } else {
+                m_jListTickets.setText("*");
+                m_jListTickets.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/sales_active.png")));
+            }
+        } catch (BasicException e) {
+        }
+    }
+
+    private void selectValidTicket() {
+        AppConfig m_config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
+        m_config.load();
+        List<SharedTicketInfo> l;
+        try {
+            if ("true".equals(m_config.getProperty("sharedticket.currentuser"))) {
+                l = dlReceipts.getSharedTicketListByUser(m_App.getAppUserView().getUser().getName());
+            } else {
+                l = dlReceipts.getSharedTicketList();
+            }
+            checkLayaways();
+            if (l.isEmpty()) {
                 newTicket();
+            } else {
+                setActiveTicket(l.get(l.size() - 1).getId());
             }
         } catch (BasicException e) {
             new MessageInf(e).show(this);
+            checkLayaways();
             newTicket();
-        }    
-    }    
-    
-    private void newTicket() {      
-        
-        saveCurrentTicket();
+        }
+    }
 
-        TicketInfo ticket = new TicketInfo();    
+    private void newTicket() {
+        saveCurrentTicket();
+        TicketInfo ticket = new TicketInfo();
         m_sCurrentTicket = UUID.randomUUID().toString(); // m_fmtid.format(ticket.getId());
         m_panelticket.setActiveTicket(ticket, null);
- 
+
     }
-    
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -255,54 +277,54 @@ public class JTicketsBagShared extends JTicketsBag {
 
     private void m_jListTicketsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jListTicketsActionPerformed
 
-        
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                
+                AppConfig m_config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
+                m_config.load();
+                List<SharedTicketInfo> l;
                 try {
-                    List<SharedTicketInfo> l = dlReceipts.getSharedTicketList();
-//                    String itemCount = Integer.toString(l.size());
-//                    m_jListTickets.setText(itemCount);
-//                    m_jListTickets.setIcon(null);
+                    if ("true".equals(m_config.getProperty("sharedticket.currentuser"))) {
+                        l = dlReceipts.getSharedTicketListByUser(m_App.getAppUserView().getUser().getName());
+                    } else {
+                        l = dlReceipts.getSharedTicketList();
+                    }
                     JTicketsBagSharedList listDialog = JTicketsBagSharedList.newJDialog(JTicketsBagShared.this);
-                    String id = listDialog.showTicketsList(l); 
+                    String id = listDialog.showTicketsList(l);
 
                     if (id != null) {
                         saveCurrentTicket();
-                        setActiveTicket(id); 
+                        setActiveTicket(id);
                     }
                 } catch (BasicException e) {
                     new MessageInf(e).show(JTicketsBagShared.this);
                     newTicket();
-                }                    
+                }
             }
         });
-        
+
     }//GEN-LAST:event_m_jListTicketsActionPerformed
 
     private void m_jDelTicketActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jDelTicketActionPerformed
-        
+
         int res = JOptionPane.showConfirmDialog(this, AppLocal.getIntString("message.wannadelete"), AppLocal.getIntString("title.editor"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (res == JOptionPane.YES_OPTION) {
             deleteTicket();
 
         }
-        
+
     }//GEN-LAST:event_m_jDelTicketActionPerformed
 
     private void m_jNewTicketActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jNewTicketActionPerformed
-
         newTicket();
-        
     }//GEN-LAST:event_m_jNewTicketActionPerformed
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton m_jDelTicket;
     private javax.swing.JButton m_jListTickets;
     private javax.swing.JButton m_jNewTicket;
     // End of variables declaration//GEN-END:variables
-    
+
 }

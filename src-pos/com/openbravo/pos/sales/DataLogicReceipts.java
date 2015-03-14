@@ -65,7 +65,7 @@ public class DataLogicReceipts extends BeanFactoryDataSingle {
         if (Id == null) {
             return null;
         } else {
-            Object[] record = (Object[]) new StaticSentence(s, "SELECT CONTENT FROM SHAREDTICKETS WHERE ID = ?", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.SERIALIZABLE})).find(Id);
+            Object[] record = (Object[]) new StaticSentence(s, "SELECT CONTENT FROM SHAREDTICKETS WHERE ID = ? ", SerializerWriteString.INSTANCE, new SerializerReadBasic(new Datas[]{Datas.SERIALIZABLE})).find(Id);
             return record == null ? null : (TicketInfo) record[0];
         }
     }
@@ -82,14 +82,14 @@ public class DataLogicReceipts extends BeanFactoryDataSingle {
     }
 
     /**
-     * Get shared ticket list for current logged in user only.
-     *
+     *  Get shared ticket list for current logged in user only.
      * @return @throws BasicException
      */
     public final List<SharedTicketInfo> getSharedTicketListByUser(String User) throws BasicException {
 
-        return (List<SharedTicketInfo>) new StaticSentence(s             
-                , "SELECT ID, NAME, CONTENT, PICKUPID FROM SHAREDTICKETS WHERE NAME LIKE '%" + User + " -% '" , null, new SerializerReadClass(SharedTicketInfo.class)).list();
+        return (List<SharedTicketInfo>) new StaticSentence(s // JG 20 Aug 13 Bug Fix: invalid SQL string
+                //                , "SELECT ID, NAME, CONTENT PICKUPID FROM SHAREDTICKETS ORDER BY ID"                
+                , "SELECT ID, NAME, CONTENT, PICKUPID FROM SHAREDTICKETS WHERE NAME LIKE '%" + User + " -%' ", null, new SerializerReadClass(SharedTicketInfo.class)).list();
     }
 
     /**
