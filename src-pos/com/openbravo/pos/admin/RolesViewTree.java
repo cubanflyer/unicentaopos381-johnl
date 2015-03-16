@@ -19,6 +19,7 @@
 package com.openbravo.pos.admin;
 
 import com.openbravo.basic.BasicException;
+import com.openbravo.data.gui.MessageInf;
 import com.openbravo.data.loader.SentenceList;
 import com.openbravo.data.loader.Session;
 import com.openbravo.data.user.DirtyManager;
@@ -28,8 +29,12 @@ import com.openbravo.pos.forms.AppConfig;
 import com.openbravo.pos.forms.AppLocal;
 import com.openbravo.pos.forms.AppViewConnection;
 import com.openbravo.pos.forms.JRootApp;
+import com.openbravo.pos.sales.SharedTicketInfo;
+import com.openbravo.pos.sales.shared.JTicketsBagShared;
+import com.openbravo.pos.sales.shared.JTicketsBagSharedList;
 import eu.floraresearch.lablib.gui.checkboxtree.*;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -44,6 +49,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -97,7 +103,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         initComponents();
 
         passedDirty = dirty;
-
+        
         AppConfig config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
         config.load();
 
@@ -433,6 +439,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         jScrollPane2 = new javax.swing.JScrollPane();
         jPermissionDesc = new javax.swing.JTextArea();
         jAddEntry = new javax.swing.JButton();
+        jDeleteEntry = new javax.swing.JButton();
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel2.setText(AppLocal.getIntString("Label.Name")); // NOI18N
@@ -464,6 +471,13 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
             }
         });
 
+        jDeleteEntry.setText(bundle.getString("Button.deleteclass")); // NOI18N
+        jDeleteEntry.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jDeleteEntryActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -475,12 +489,14 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
                         .addComponent(jScrollPane1))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(22, 22, 22)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(m_jName, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(m_jName, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(29, 29, 29)
-                        .addComponent(jAddEntry, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 11, Short.MAX_VALUE))
+                        .addComponent(jAddEntry)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jDeleteEntry)
+                        .addGap(0, 14, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -495,7 +511,8 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(m_jName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jAddEntry))
+                    .addComponent(jAddEntry)
+                    .addComponent(jDeleteEntry))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -520,9 +537,17 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         }
     }//GEN-LAST:event_jAddEntryActionPerformed
 
+    private void jDeleteEntryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDeleteEntryActionPerformed
+       JPermissionsList permissions = JPermissionsList.getPermissionsList(this,s);
+       permissions.setVisible(true);
+       createTree();
+       
+    }//GEN-LAST:event_jDeleteEntryActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAddEntry;
+    private javax.swing.JButton jDeleteEntry;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextArea jPermissionDesc;

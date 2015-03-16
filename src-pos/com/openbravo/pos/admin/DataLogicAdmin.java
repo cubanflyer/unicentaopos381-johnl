@@ -43,6 +43,7 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
     protected SentenceFind m_roleID;
     protected SentenceExec m_insertentry;
     private SentenceFind m_rolepermissions; 
+    protected SentenceExec m_rolepermissionsdelete;
     
     /** Creates a new instance of DataLogicAdmin */
     public DataLogicAdmin() {
@@ -122,7 +123,13 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
                     Datas.STRING, 
                     Datas.STRING, 
                     Datas.STRING, 
-                    Datas.STRING,}));        
+                    Datas.STRING,}));   
+        
+        
+        m_rolepermissionsdelete = new StaticSentence(s, "DELETE * FROM DBPERMISSIONS WHERE CLASSNAME = ?"
+                , SerializerWriteString.INSTANCE
+                , null); 
+        
     }
     /*
      *
@@ -217,4 +224,11 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
     public final void insertEntry(Object[] entry) throws BasicException {
         m_insertentry.exec(entry);
     }
+    
+    public final void deleteEntry(String entry) throws BasicException {
+        m_rolepermissionsdelete.exec(entry);
+    }  
+    
+    
+    
  }
