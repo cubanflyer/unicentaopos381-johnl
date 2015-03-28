@@ -208,7 +208,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + "DISPLAY, "                               //16
                 + "ISVPRICE, ISVERPATRIB, "                 //17,18
                 + "TEXTTIP, WARRANTY, "                      //19,20
-                + "STOCKCURRENT.UNITS "                     //21  
+                + "STOCKCURRENT.UNITS, "                     //21  
                 + "ALIAS, "                                 //22
                 + "ALWAYSAVAILABLE "                        //23                        
                 + "FROM STOCKCURRENT LEFT JOIN PRODUCTS ON (STOCKCURRENT.PRODUCT = PRODUCTS.ID) "
@@ -280,7 +280,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + "DISPLAY, "                               //16
                 + "ISVPRICE, ISVERPATRIB, "                 //17,18
                 + "TEXTTIP, WARRANTY, "                     //19,20
-                + "STOCKCURRENT.UNITS "                     //21 
+                + "STOCKCURRENT.UNITS, "                     //21 
                 + "ALIAS, "                                 //22
                 + "ALWAYSAVAILABLE "                        //23
                 + "FROM STOCKCURRENT RIGHT JOIN PRODUCTS ON (STOCKCURRENT.PRODUCT = PRODUCTS.ID) "
@@ -657,7 +657,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + "DISPLAY, "                   //16
                 + "ISVPRICE, ISVERPATRIB, "     //17,18
                 + "TEXTTIP, WARRANTY, "         //19,20
-                + "STOCKCURRENT.UNITS "         //21
+                + "STOCKCURRENT.UNITS, "         //21
                 + "ALIAS, " //22
                 + "ALWAYSAVAILABLE " //23                          
                 + "FROM STOCKCURRENT RIGHT OUTER JOIN PRODUCTS ON (STOCKCURRENT.PRODUCT = PRODUCTS.ID) "
@@ -695,7 +695,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + "DISPLAY, "                       //16
                 + "ISVPRICE, ISVERPATRIB, "         //17,18
                 + "TEXTTIP, WARRANTY, "             //19,20
-                + "STOCKCURRENT.UNITS "             //21
+                + "STOCKCURRENT.UNITS, "             //21
                 +  "ALIAS, " //22
                 + "ALWAYSAVAILABLE " //23  
                 + "FROM STOCKCURRENT RIGHT OUTER JOIN PRODUCTS ON (STOCKCURRENT.PRODUCT = PRODUCTS.ID) "
@@ -733,7 +733,7 @@ public class DataLogicSales extends BeanFactoryDataSingle {
                 + "DISPLAY, "                       //16
                 + "ISVPRICE, ISVERPATRIB, "         //17,18
                 + "TEXTTIP, WARRANTY, "             //19,20
-                + "STOCKCURRENT.UNITS "             //21
+                + "STOCKCURRENT.UNITS, "             //21
                 + "ALIAS, " //22
                 + "ALWAYSAVAILABLE " //23                          
                 + "FROM STOCKCURRENT RIGHT OUTER JOIN PRODUCTS ON (STOCKCURRENT.PRODUCT = PRODUCTS.ID) "
