@@ -40,8 +40,10 @@ for (int i = 0 ; i < numlines ; i++) {
 				loop_unit  = loop_ticketline.getMultiply();  
  				String current_productid = current_ticketline.getProductID();
 				String loop_productid    = loop_ticketline.getProductID();
+   				String loop_attr = loop_ticketline.getProductAttSetInstDesc();
+				String current_attr = current_ticketline.getProductAttSetInstDesc();
 
-				if ( loop_productid.equals(current_productid) && (loop_ticketline.getPrice() == current_ticketline.getPrice()) && (loop_unit != 0) ){
+				if ( loop_productid.equals(current_productid) && (loop_ticketline.getPrice() == current_ticketline.getPrice()) && (loop_unit != 0) && (loop_attr.equals(current_attr))){
 					current_unit = current_unit + loop_unit;
 					loop_ticketline.setMultiply(0);	
 				}

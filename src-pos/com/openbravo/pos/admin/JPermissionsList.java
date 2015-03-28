@@ -219,8 +219,7 @@ public class JPermissionsList extends javax.swing.JDialog {
         Object[] options = {AppLocal.getIntString("Button.NoPermissionsYes"), AppLocal.getIntString("Button.NoPermissionsNo")};
         if (JOptionPane.showOptionDialog(this,
                 AppLocal.getIntString("message.deleteclass"), AppLocal.getIntString("Message.adminwarning"),
-                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]) == 0) {
-            System.out.println("OK");
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]) == 0) {        
             try {
                 con = ls.getConnection();
                 stmt = (Statement) con.createStatement();

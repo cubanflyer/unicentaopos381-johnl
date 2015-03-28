@@ -72,6 +72,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     private java.util.Date m_dDate;
     private Properties attributes;
     private UserInfo m_User;
+    private Double multiply;
     private CustomerInfoExt m_Customer;
     private String m_sActiveCash;
     private List<TicketLineInfo> m_aLines;
@@ -81,20 +82,20 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     private String loyaltyCardNumber;
     private Boolean oldTicket;
 
-
- // JG July 2014 Ticket creator Host - for ticket print
+    // JG July 2014 Ticket creator Host - for ticket print
     private static String Hostname;
 
     public static void setHostname(String name) {
-        Hostname=name;
+        Hostname = name;
     }
 
     public static String getHostname() {
         return Hostname;
     }
 
-    
-    /** Creates new TicketModel */
+    /**
+     * Creates new TicketModel
+     */
     public TicketInfo() {
         m_sId = UUID.randomUUID().toString();
         tickettype = RECEIPT_NORMAL;
@@ -109,7 +110,8 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         payments = new ArrayList<>(); // JG June 2102 diamond inference
         taxes = null;
         m_sResponse = null;
-        oldTicket=false;
+        oldTicket = false;
+        multiply = 0.0;
 
     }
 
@@ -166,7 +168,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
 
         payments = new ArrayList<>(); // JG June 2102 diamond inference
         taxes = null;
-  
+
     }
 
     /**
@@ -194,7 +196,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         for (PaymentInfo p : payments) {
             t.payments.add(p.copyPayment());
         }
-        t.oldTicket=oldTicket;
+        t.oldTicket = oldTicket;
         // taxes are not copied, must be calculated again.
 
         return t;
@@ -238,7 +240,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
      */
     public void setTicketId(int iTicketId) {
         m_iTicketId = iTicketId;
-    // refreshLines();
+        // refreshLines();
     }
 
     /**
@@ -256,7 +258,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public int getPickupId() {
         return m_iPickupId;
     }
-    
+
     /**
      *
      * @param info
@@ -270,7 +272,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
             name.append(m_User.getName());
             name.append(" - ");
         }
-        
+
         if (info == null) {
             if (m_iTicketId == 0) {
                 name.append("(").append(m_dateformat.format(m_dDate)).append(" ").append(Long.toString(m_dDate.getTime() % 1000)).append(")");
@@ -279,15 +281,15 @@ public final class TicketInfo implements SerializableRead, Externalizable {
             }
         } else {
             name.append(info.toString());
-          
-            }
+
+        }
         if (getCustomerId() != null) {
             name.append(" - ");
             name.append(m_Customer.toString());
         }
         return name.toString();
     }
-    
+
     /**
      *
      * @return
@@ -355,25 +357,25 @@ public final class TicketInfo implements SerializableRead, Externalizable {
             return m_Customer.getId();
         }
     }
-    
+
     /**
      *
      * @return
      */
-    public String getTransactionID(){
-        return (getPayments().size()>0)
-            ? ( getPayments().get(getPayments().size()-1) ).getTransactionID()
-            : StringUtils.getCardNumber(); //random transaction ID
+    public String getTransactionID() {
+        return (getPayments().size() > 0)
+                ? (getPayments().get(getPayments().size() - 1)).getTransactionID()
+                : StringUtils.getCardNumber(); //random transaction ID
     }
-    
+
     /**
      *
      * @return
      */
-    public String getReturnMessage(){
-        return ( (getPayments().get(getPayments().size()-1)) instanceof PaymentInfoMagcard )
-            ? ((PaymentInfoMagcard)(getPayments().get(getPayments().size()-1))).getReturnMessage()
-            : LocalRes.getIntString("button.ok");
+    public String getReturnMessage() {
+        return ((getPayments().get(getPayments().size() - 1)) instanceof PaymentInfoMagcard)
+                ? ((PaymentInfoMagcard) (getPayments().get(getPayments().size() - 1))).getReturnMessage()
+                : LocalRes.getIntString("button.ok");
 
     }
 
@@ -448,6 +450,27 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         m_aLines.add(oLine);
     }
 
+    public int checkAndAddLine(TicketLineInfo oLine, boolean flag) {
+        // returns index of product in the ticket list or -1 if new product
+        if (m_aLines.size() == 0 || !flag) {
+            oLine.setTicket(m_sId, m_aLines.size());
+            m_aLines.add(oLine);
+            return -1;
+        } else {
+            int size = m_aLines.size();
+            for (int i = 0; i < size; i++) {
+                TicketLineInfo temp = m_aLines.get(i);
+                if ((temp.getProductID().equals(oLine.getProductID())) && oLine.getProductAttSetId() == null) {
+                    m_aLines.get(i).setMultiply(m_aLines.get(i).getMultiply() + oLine.getMultiply());
+                    return i;
+                }
+            }
+            oLine.setTicket(m_sId, m_aLines.size());
+            m_aLines.add(oLine);
+            return -1;
+        }
+    }
+
     /**
      *
      * @param index
@@ -490,7 +513,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public int getLinesCount() {
         return m_aLines.size();
     }
-    
+
     /**
      *
      * @return
@@ -545,7 +568,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public double getTotal() {
         return getSubTotal() + getTax();
     }
-    
+
     /**
      *
      * @return
@@ -558,7 +581,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
             }
         }
         return sum;
-          }
+    }
 
     /**
      *
@@ -566,7 +589,7 @@ public final class TicketInfo implements SerializableRead, Externalizable {
      */
     public double getTendered() {
         return getTotalPaid();
-    }    
+    }
 
     /**
      *
@@ -685,34 +708,33 @@ public final class TicketInfo implements SerializableRead, Externalizable {
      */
     public String printId() {
 // We need acces to the config file        
-      AppConfig m_config =  new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));        
-      m_config.load();
-      String receiptSize =(m_config.getProperty("till.receiptsize"));
-      String receiptPrefix =(m_config.getProperty("till.receiptprefix"));
+        AppConfig m_config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
+        m_config.load();
+        String receiptSize = (m_config.getProperty("till.receiptsize"));
+        String receiptPrefix = (m_config.getProperty("till.receiptprefix"));
 // we have finished with m_config so unload it      
-      m_config =null;
-
+        m_config = null;
 
         if (m_iTicketId > 0) {
-            String tmpTicketId=Integer.toString(m_iTicketId);
-            if (receiptSize == null || (Integer.parseInt(receiptSize) <= tmpTicketId.length())){
-                if (receiptPrefix != null){
-                    tmpTicketId=receiptPrefix+tmpTicketId;
-                } 
+            String tmpTicketId = Integer.toString(m_iTicketId);
+            if (receiptSize == null || (Integer.parseInt(receiptSize) <= tmpTicketId.length())) {
+                if (receiptPrefix != null) {
+                    tmpTicketId = receiptPrefix + tmpTicketId;
+                }
                 return tmpTicketId;
-            }            
-            while (tmpTicketId.length()<Integer.parseInt(receiptSize)){
-                tmpTicketId="0"+tmpTicketId;
             }
-            if (receiptPrefix != null){
-                    tmpTicketId=receiptPrefix+tmpTicketId;
-            }             
+            while (tmpTicketId.length() < Integer.parseInt(receiptSize)) {
+                tmpTicketId = "0" + tmpTicketId;
+            }
+            if (receiptPrefix != null) {
+                tmpTicketId = receiptPrefix + tmpTicketId;
+            }
             return tmpTicketId;
         } else {
             return "";
         }
     }
-    
+
     /**
      *
      * @return
@@ -727,10 +749,12 @@ public final class TicketInfo implements SerializableRead, Externalizable {
      */
     public String printUser() {
         return m_User == null ? "" : m_User.getName();
-        
+
     }
+
     /**
      * JG July 2014
+     *
      * @return
      */
     /**
@@ -740,39 +764,36 @@ public final class TicketInfo implements SerializableRead, Externalizable {
     public String getHost() {
         return m_sHost;
     }
-    
+
     public String printHost() {
         return StringUtils.encodeXML(m_sHost);
     }
-   
-    
-    
-// Added JDL 28.05.13 for loyalty card functions
 
+// Added JDL 28.05.13 for loyalty card functions
     /**
      *
      */
-        public void clearCardNumber(){
-        loyaltyCardNumber=null;
+    public void clearCardNumber() {
+        loyaltyCardNumber = null;
     }
-    
+
     /**
      *
      * @param cardNumber
      */
-    public void setLoyaltyCardNumber(String cardNumber){
-        loyaltyCardNumber=cardNumber;
+    public void setLoyaltyCardNumber(String cardNumber) {
+        loyaltyCardNumber = cardNumber;
     }
-    
+
     /**
      *
      * @return
      */
-    public String getLoyaltyCardNumber(){
+    public String getLoyaltyCardNumber() {
         return (loyaltyCardNumber);
     }
 // Loyalty card functions added
-         
+
     /**
      *
      * @return
@@ -833,8 +854,8 @@ public final class TicketInfo implements SerializableRead, Externalizable {
      *
      * @return
      */
-    public String VoucherReturned(){
-        return Formats.CURRENCY.formatValue(getTotalPaid()- getTotal());
+    public String VoucherReturned() {
+        return Formats.CURRENCY.formatValue(getTotalPaid() - getTotal());
     }
 //Added JDl 03.07.13
 
@@ -843,15 +864,15 @@ public final class TicketInfo implements SerializableRead, Externalizable {
      * @return
      */
     public boolean getOldTicket() {
-	return (oldTicket);
-}
+        return (oldTicket);
+    }
 
     /**
      *
      * @param otState
      */
     public void setOldTicket(Boolean otState) {
-	oldTicket = otState;
-}
-    
+        oldTicket = otState;
+    }
+
 }

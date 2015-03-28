@@ -685,4 +685,8 @@ public class TicketLineInfo implements SerializableWrite, SerializableRead, Seri
     public boolean getUpdated() {
         return updated;
     }
+
+    void incMultiply() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

@@ -979,6 +979,12 @@
             <column name="VERSION" value="1.3"/>
         </update>
     </changeSet>    
+   
+    <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.4" >
+        <update tableName="APPJL">
+            <column name="VERSION" value="1.4"/>
+        </update>
+    </changeSet> 
     
 </databaseChangeLog>
 

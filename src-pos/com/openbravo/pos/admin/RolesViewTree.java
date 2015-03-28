@@ -19,7 +19,6 @@
 package com.openbravo.pos.admin;
 
 import com.openbravo.basic.BasicException;
-import com.openbravo.data.gui.MessageInf;
 import com.openbravo.data.loader.SentenceList;
 import com.openbravo.data.loader.Session;
 import com.openbravo.data.user.DirtyManager;
@@ -29,12 +28,8 @@ import com.openbravo.pos.forms.AppConfig;
 import com.openbravo.pos.forms.AppLocal;
 import com.openbravo.pos.forms.AppViewConnection;
 import com.openbravo.pos.forms.JRootApp;
-import com.openbravo.pos.sales.SharedTicketInfo;
-import com.openbravo.pos.sales.shared.JTicketsBagShared;
-import com.openbravo.pos.sales.shared.JTicketsBagSharedList;
 import eu.floraresearch.lablib.gui.checkboxtree.*;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -49,7 +44,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -85,11 +79,9 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
     private HashMap<DefaultMutableTreeNode, String> descriptionMap;
     private HashMap<String, String> classMap;
     private HashMap<String, DefaultMutableTreeNode> nodePaths;
-    //  private String jName;
     private StringBuilder sent;
     private static SAXParser m_sp = null;
     private HashSet<String> m_apermissions = null;
-//    private String className;
     private String section;
     private String displayName;
     private String description;
@@ -103,8 +95,8 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         initComponents();
 
         passedDirty = dirty;
-        
-        AppConfig config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
+
+        config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
         config.load();
 
         try {
@@ -351,7 +343,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         role[0] = m_oId == null ? UUID.randomUUID().toString() : m_oId;
         role[1] = m_jName.getText();
         role[2] = Formats.BYTEA.parseValue(buildPermissionsStr());
-        
+
         if (!hasPermissions) {
             Object[] options = {AppLocal.getIntString("Button.NoPermissionsYes"), AppLocal.getIntString("Button.NoPermissionsNo")};
             if (JOptionPane.showOptionDialog(this,
@@ -361,7 +353,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
                 role = new Object[3];
                 role[0] = m_oId == null ? UUID.randomUUID().toString() : m_oId;
                 role[1] = m_jName.getText();
-                role[2] = Formats.BYTEA.parseValue(dlAdmin.findRolePermissions(role[0].toString()));               
+                role[2] = Formats.BYTEA.parseValue(dlAdmin.findRolePermissions(role[0].toString()));
                 return role;
             }
         }
@@ -538,10 +530,10 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
     }//GEN-LAST:event_jAddEntryActionPerformed
 
     private void jDeleteEntryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDeleteEntryActionPerformed
-       JPermissionsList permissions = JPermissionsList.getPermissionsList(this,s);
-       permissions.setVisible(true);
-       createTree();
-       
+        JPermissionsList permissions = JPermissionsList.getPermissionsList(this, s);
+        permissions.setVisible(true);
+        createTree();
+
     }//GEN-LAST:event_jDeleteEntryActionPerformed
 
 
