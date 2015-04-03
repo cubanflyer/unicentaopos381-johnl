@@ -65,7 +65,7 @@ public class DBPermissionsInfo implements IKeyed {
     public void setDescription(String description) {
         this.m_description = description;
     }
-
+        
     public static SerializerRead getSerializerRead() {
         return new SerializerRead() {
             @Override

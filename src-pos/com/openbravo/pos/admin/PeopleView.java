@@ -25,6 +25,7 @@ import com.openbravo.data.loader.SentenceList;
 import com.openbravo.data.user.*;
 import com.openbravo.format.Formats;
 import com.openbravo.pos.forms.AppLocal;
+import com.openbravo.pos.forms.AppView;
 import com.openbravo.pos.util.Hashcypher;
 import com.openbravo.pos.util.StringUtils;
 import java.awt.Component;
@@ -43,19 +44,21 @@ public class PeopleView extends JPanel implements EditorRecord {
     
     private final DirtyManager m_Dirty;
     
-    private final SentenceList m_sentrole;
+    private SentenceList m_sentrole;
     private ComboBoxValModel m_RoleModel;  
+    private final AppView m_appview;
+    private DataLogicAdmin m_dlAdmin;
     
     /** Creates new form PeopleEditor
      * @param dlAdmin
      * @param dirty */
-    public PeopleView(DataLogicAdmin dlAdmin, DirtyManager dirty) {
+    public PeopleView(DataLogicAdmin dlAdmin, DirtyManager dirty, AppView app) {
         initComponents();
-                
-        // El modelo de roles
-        m_sentrole = dlAdmin.getRolesList();
-        m_RoleModel = new ComboBoxValModel();
         
+        m_dlAdmin = dlAdmin;
+        m_appview = app;
+        m_RoleModel = new ComboBoxValModel();
+
         m_Dirty = dirty;
         m_jName.getDocument().addDocumentListener(dirty);
         m_jRole.addActionListener(dirty);
@@ -192,7 +195,7 @@ public class PeopleView extends JPanel implements EditorRecord {
      * @throws BasicException
      */
     public void activate() throws BasicException {
-        
+        m_sentrole = m_dlAdmin.getRolesList(m_dlAdmin.getRightsLevelID(m_appview.getAppUserView().getUser().getRole()));
         m_RoleModel = new ComboBoxValModel(m_sentrole.list());
         m_jRole.setModel(m_RoleModel);
     }
@@ -396,5 +399,6 @@ public class PeopleView extends JPanel implements EditorRecord {
     private javax.swing.JComboBox m_jRole;
     private javax.swing.JCheckBox m_jVisible;
     // End of variables declaration//GEN-END:variables
+
     
 }

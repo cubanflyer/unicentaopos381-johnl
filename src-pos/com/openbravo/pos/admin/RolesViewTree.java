@@ -95,6 +95,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         initComponents();
 
         passedDirty = dirty;
+        jRightsLevel.getDocument().addDocumentListener(dirty);
 
         config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
         config.load();
@@ -223,6 +224,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
             for (String userPermission : m_apermissions) {
                 uTree.addCheckingPath(new TreePath(nodePaths.get(userPermission).getPath()));
             }
+            jRightsLevel.setText(dlAdmin.getRightsLevel(m_jName.getText()).toString());
         }
     }
 
@@ -290,6 +292,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         m_oId = null;
         m_jName.setText(null);;
         m_jName.setEnabled(false);
+        jRightsLevel.setText(null);
     }
 
     /**
@@ -301,6 +304,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         m_oId = null;
         m_jName.setText(null);
         m_jName.setEnabled(true);
+        jRightsLevel.setText("30");
     }
 
     /**
@@ -338,11 +342,23 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
      */
     @Override
     public Object createValue() throws BasicException {
-        Object[] role = new Object[3];
-        role = new Object[3];
+        Object[] role = new Object[4];
+        role = new Object[4];
         role[0] = m_oId == null ? UUID.randomUUID().toString() : m_oId;
         role[1] = m_jName.getText();
         role[2] = Formats.BYTEA.parseValue(buildPermissionsStr());
+        role[3] = Integer.parseInt(jRightsLevel.getText());
+
+        if (Integer.parseInt(jRightsLevel.getText()) <= 1 || Integer.parseInt(jRightsLevel.getText()) >= 99) {
+            JOptionPane.showMessageDialog(this, AppLocal.getIntString("Message.rightslevel"), AppLocal.getIntString("Message.adminwarning"), JOptionPane.WARNING_MESSAGE);
+// Re-instate original permissions for this role                    
+            role = new Object[4];
+            role[0] = m_oId == null ? UUID.randomUUID().toString() : m_oId;
+            role[1] = m_jName.getText();
+            role[2] = Formats.BYTEA.parseValue(dlAdmin.findRolePermissions(role[0].toString()));
+            role[3] = dlAdmin.getRightsLevel(m_jName.getText());
+            return role;
+        }
 
         if (!hasPermissions) {
             Object[] options = {AppLocal.getIntString("Button.NoPermissionsYes"), AppLocal.getIntString("Button.NoPermissionsNo")};
@@ -350,10 +366,11 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
                     AppLocal.getIntString("Message.adminpermissions1") + m_jName.getText() + " " + AppLocal.getIntString("Message.adminpermissions2"), AppLocal.getIntString("Message.adminwarning"),
                     JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]) == 1) {
 // Re-instate original permissions for this role
-                role = new Object[3];
+                role = new Object[4];
                 role[0] = m_oId == null ? UUID.randomUUID().toString() : m_oId;
                 role[1] = m_jName.getText();
                 role[2] = Formats.BYTEA.parseValue(dlAdmin.findRolePermissions(role[0].toString()));
+                role[3] = dlAdmin.getRightsLevel(m_jName.getText());
                 return role;
             }
         }
@@ -432,6 +449,8 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         jPermissionDesc = new javax.swing.JTextArea();
         jAddEntry = new javax.swing.JButton();
         jDeleteEntry = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jRightsLevel = new javax.swing.JTextField();
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel2.setText(AppLocal.getIntString("Label.Name")); // NOI18N
@@ -470,6 +489,12 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jLabel1.setText(bundle.getString("label.rightslevel")); // NOI18N
+
+        jRightsLevel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jRightsLevel.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -488,7 +513,11 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
                         .addComponent(jAddEntry)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jDeleteEntry)
-                        .addGap(0, 14, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRightsLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 16, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -500,17 +529,21 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(m_jName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jAddEntry)
-                    .addComponent(jDeleteEntry))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(jRightsLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(m_jName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jAddEntry)
+                        .addComponent(jDeleteEntry)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -540,9 +573,11 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jAddEntry;
     private javax.swing.JButton jDeleteEntry;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextArea jPermissionDesc;
+    private javax.swing.JTextField jRightsLevel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField m_jName;

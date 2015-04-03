@@ -30,6 +30,8 @@ import com.openbravo.data.user.ListProviderCreator;
 import com.openbravo.data.user.SaveProvider;
 import com.openbravo.pos.forms.AppLocal;
 import com.openbravo.pos.panels.JPanelTable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ListCellRenderer;
 
 /**
@@ -50,9 +52,10 @@ public class PeoplePanel extends JPanelTable {
      */
     @Override
     protected void init() {      
-        DataLogicAdmin dlAdmin = (DataLogicAdmin) app.getBean("com.openbravo.pos.admin.DataLogicAdmin");        
+        DataLogicAdmin dlAdmin = (DataLogicAdmin) app.getBean("com.openbravo.pos.admin.DataLogicAdmin");  
+        
         tpeople = dlAdmin.getTablePeople();           
-        jeditor = new PeopleView(dlAdmin, dirty);    
+        jeditor = new PeopleView(dlAdmin, dirty, app);
     }
     
     /**

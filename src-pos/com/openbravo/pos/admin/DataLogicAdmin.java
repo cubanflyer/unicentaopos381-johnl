@@ -41,6 +41,8 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
     protected SentenceFind m_description;
     protected SentenceList m_displayList;
     protected SentenceFind m_roleID;
+    protected SentenceFind m_roleRightsLevel;
+    protected SentenceFind m_roleRightsLevelID;
     protected SentenceExec m_insertentry;
     private SentenceFind m_rolepermissions; 
     protected SentenceExec m_rolepermissionsdelete;
@@ -68,10 +70,10 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
                         
         m_troles = new TableDefinition(s,
             "ROLES"
-            , new String[] {"ID", "NAME", "PERMISSIONS"}
+            , new String[] {"ID", "NAME", "PERMISSIONS", "RIGHTSLEVEL"}
             , new String[] {"ID", AppLocal.getIntString("Label.Name"), "PERMISSIONS"}
-            , new Datas[] {Datas.STRING, Datas.STRING, Datas.BYTES}
-            , new Formats[] {Formats.STRING, Formats.STRING, Formats.NULL}
+            , new Datas[] {Datas.STRING, Datas.STRING, Datas.BYTES, Datas.INT}
+            , new Formats[] {Formats.STRING, Formats.STRING, Formats.NULL, Formats.INT }  
             , new int[] {0}
         );  
         
@@ -105,6 +107,15 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
                 , SerializerWriteString.INSTANCE
                 , SerializerReadString.INSTANCE);  
         
+        m_roleRightsLevel = new StaticSentence(s
+                , "SELECT RIGHTSLEVEL FROM ROLES WHERE NAME = ? "
+                , SerializerWriteString.INSTANCE
+                , SerializerReadString.INSTANCE); 
+
+        m_roleRightsLevelID = new StaticSentence(s
+                , "SELECT RIGHTSLEVEL FROM ROLES WHERE ID = ? "
+                , SerializerWriteString.INSTANCE
+                , SerializerReadString.INSTANCE); 
         
         m_rolesList = new StaticSentence(s
                 , "SELECT ID FROM ROLES "
@@ -115,7 +126,7 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
                 , SerializerWriteString.INSTANCE
                 , SerializerReadBytes.INSTANCE);      
         
-        
+               
         m_insertentry = new StaticSentence(s
                 , "INSERT INTO DBPERMISSIONS (CLASSNAME, SECTION, DISPLAYNAME, DESCRIPTION) " +
                   "VALUES (?, ?, ?, ?)"
@@ -135,9 +146,10 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
      *
      * @return
      */
-    public final SentenceList getRolesList() {
+    public final SentenceList getRolesList(String rightsLevel) {
+        String sql = "SELECT ID, NAME FROM ROLES WHERE RIGHTSLEVEL <= " + rightsLevel + " ORDER BY NAME ";
         return new StaticSentence(s
-            , "SELECT ID, NAME FROM ROLES ORDER BY NAME"
+            , sql
             , null
             , new SerializerReadClass(RoleInfo.class));
     }
@@ -216,11 +228,19 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
     public final List<String> getRoles() throws BasicException {
         return m_rolesList.list();
     }        
-    
+        
     public final String getRoleID(String roleName) throws BasicException {
         return m_roleID.find(roleName).toString();
     }    
 
+    public final Integer getRightsLevel(String roleName) throws BasicException {
+        return Integer.parseInt(m_roleRightsLevel.find(roleName).toString());
+    } 
+  
+    public final String getRightsLevelID(String roleName) throws BasicException {
+        return m_roleRightsLevelID.find(roleName).toString().toString();
+    }
+    
     public final void insertEntry(Object[] entry) throws BasicException {
         m_insertentry.exec(entry);
     }
