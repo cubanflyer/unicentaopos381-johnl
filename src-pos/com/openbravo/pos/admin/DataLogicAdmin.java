@@ -42,10 +42,12 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
     protected SentenceList m_displayList;
     protected SentenceFind m_roleID;
     protected SentenceFind m_roleRightsLevel;
-    protected SentenceFind m_roleRightsLevelID;
+    protected SentenceFind m_roleRightsLevelByID;
+    protected SentenceFind m_roleRightsLevelByUserName;
     protected SentenceExec m_insertentry;
     private SentenceFind m_rolepermissions; 
     protected SentenceExec m_rolepermissionsdelete;
+    protected SentenceList m_permissionClassList;
     
     /** Creates a new instance of DataLogicAdmin */
     public DataLogicAdmin() {
@@ -112,15 +114,27 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
                 , SerializerWriteString.INSTANCE
                 , SerializerReadString.INSTANCE); 
 
-        m_roleRightsLevelID = new StaticSentence(s
+        m_roleRightsLevelByID = new StaticSentence(s
                 , "SELECT RIGHTSLEVEL FROM ROLES WHERE ID = ? "
                 , SerializerWriteString.INSTANCE
                 , SerializerReadString.INSTANCE); 
-        
+      
+          m_roleRightsLevelByUserName = new StaticSentence(s
+                , "SELECT ROLES.RIGHTSLEVEL FROM ROLES INNER JOIN PEOPLE ON PEOPLE.ROLE=ROLES.ID WHERE PEOPLE.NAME= ? "
+                , SerializerWriteString.INSTANCE
+                , SerializerReadString.INSTANCE);      
+         
         m_rolesList = new StaticSentence(s
                 , "SELECT ID FROM ROLES "
                 , null
                 , SerializerReadString.INSTANCE);              
+        
+
+        m_permissionClassList = new StaticSentence(s
+                , "SELECT CLASSNAME FROM DBPERMISSIONS "
+                , null
+                , SerializerReadString.INSTANCE);      
+        
         
         m_rolepermissions = new PreparedSentence(s, "SELECT PERMISSIONS FROM ROLES WHERE ID = ?"
                 , SerializerWriteString.INSTANCE
@@ -229,6 +243,10 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
         return m_rolesList.list();
     }        
         
+    public final List<String> getClassNames() throws BasicException {
+        return m_permissionClassList.list();
+    }     
+
     public final String getRoleID(String roleName) throws BasicException {
         return m_roleID.find(roleName).toString();
     }    
@@ -237,9 +255,15 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
         return Integer.parseInt(m_roleRightsLevel.find(roleName).toString());
     } 
   
-    public final String getRightsLevelID(String roleName) throws BasicException {
-        return m_roleRightsLevelID.find(roleName).toString().toString();
+    public final String getRightsLevelByID(String roleName) throws BasicException {
+        return m_roleRightsLevelByID.find(roleName).toString();
     }
+    
+     public final String getRightsLevelByUserName(String userName) throws BasicException {
+        return m_roleRightsLevelByUserName.find(userName).toString();
+    }   
+    
+    
     
     public final void insertEntry(Object[] entry) throws BasicException {
         m_insertentry.exec(entry);
@@ -248,7 +272,5 @@ public class DataLogicAdmin extends BeanFactoryDataSingle {
     public final void deleteEntry(String entry) throws BasicException {
         m_rolepermissionsdelete.exec(entry);
     }  
-    
-    
-    
+  
  }

@@ -53,6 +53,7 @@ public class TaxCategoriesPanel extends JPanelTable {
         DataLogicSales dlSales = (DataLogicSales) app.getBean("com.openbravo.pos.forms.DataLogicSales");        
         ttaxcategories = dlSales.getTableTaxCategories();
         jeditor = new TaxCustCategoriesEditor(dirty);
+        AppLocal.LIST_BY_RIGHTS="";        
     }
     
     /**

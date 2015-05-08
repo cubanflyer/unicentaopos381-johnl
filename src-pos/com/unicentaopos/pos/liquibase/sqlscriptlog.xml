@@ -397,7 +397,7 @@
     </changeSet>   
     
 
-    <changeSet author="UnicentaOpos - John L" id="Create Roles Table">
+    <changeSet author="UnicentaOpos - John L" id="Create Roles Table" >
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="ROLES"/>
@@ -405,28 +405,25 @@
         </preConditions>
 
         <createTable tableName="ROLES">
-            <column name=	"ID" type="varchar(255)">
+            <column name="ID" type="varchar(255)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="NAME" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="PERMISSIONS" type="${blob.type}"/>
+            <column name="RIGHTSLEVEL" type="int" defaultValueNumeric="4" >
+                <constraints nullable="false"/> 
+            </column>
         </createTable>
+ 
+        <createIndex tableName="ROLES"
+                     indexName="ROLES_NAME_INX"
+                     unique="true">
+            <column name="NAME" type="varchar(255)"/>
+        </createIndex>                                                    
     </changeSet>
-
-    <changeSet author="Unicentaopos - John L" id="Add index on Roles mysql" dbms="mysql">
-        <sql>
-            CREATE UNIQUE INDEX ROLES_NAME_INX ON ROLES(NAME(20));
-        </sql>               
-    </changeSet>
-
-    <changeSet author="Unicentaopos - John L" id="Add index on Roles not mysql" dbms="postgresql, hypersql, hsqldb, derby, oracle">                     
-        <sql>
-            CREATE UNIQUE INDEX ROLES_NAME_INX ON ROLES(NAME);
-        </sql>            
-    </changeSet>       
-      
+            
                   
     <changeSet author="UnicentaOpos - John L" id="Insert into Roles Table">  
         <preConditions onFail="MARK_RAN">
@@ -438,21 +435,25 @@
             <column name="ID" value="0"/>
             <column name="NAME" value="Administrator role"/>
             <column name="PERMISSIONS" valueBlobResource="/com/openbravo/pos/templates/Role.Administrator.xml"/>
+            <column name="RIGHTSLEVEL" value="9" />
         </insert>
         <insert tableName="ROLES">
             <column name="ID" value="1"/>
             <column name="NAME" value="Manager role"/>
             <column name="PERMISSIONS" valueBlobResource="/com/openbravo/pos/templates/Role.Manager.xml"/>
+            <column name="RIGHTSLEVEL" value="5" />
         </insert>
         <insert tableName="ROLES">
             <column name="ID" value="2"/>
             <column name="NAME" value="Employee role"/>
             <column name="PERMISSIONS" valueBlobResource="/com/openbravo/pos/templates/Role.Employee.xml"/>
+            <column name="RIGHTSLEVEL" value="3" />
         </insert>
         <insert tableName="ROLES">
             <column name="ID" value="3"/>
             <column name="NAME" value="Guest role"/>
             <column name="PERMISSIONS" valueBlobResource="/com/openbravo/pos/templates/Role.Guest.xml"/>
+            <column name="RIGHTSLEVEL" value="1" />
         </insert>
     </changeSet>
 

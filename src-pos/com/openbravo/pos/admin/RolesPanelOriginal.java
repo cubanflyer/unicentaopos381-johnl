@@ -54,8 +54,8 @@ public class RolesPanelOriginal extends JPanelTable {
     protected void init() {
         dlAdmin = (DataLogicAdmin) app.getBean("com.openbravo.pos.admin.DataLogicAdmin");
         troles = dlAdmin.getTableRoles();
-
-        jeditor = new RolesView(dirty);
+        jeditor = new RolesView(dlAdmin, dirty);
+        AppLocal.LIST_BY_RIGHTS="";        
     }
 
     /**

@@ -298,9 +298,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         }
 
         @Override
-        public void actionPerformed(ActionEvent ae) {
-            // timer.stop();   
-            // lets check what mode we are operating in   
+        public void actionPerformed(ActionEvent ae) {  
             switch (m_App.getProperties().getProperty("machine.ticketsbag")) {
                 case "restaurant":
 //Go back to the main login screen if not set to go back to the tables.               
@@ -560,7 +558,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
 
             // The ticket name
             m_jTicketId.setText(m_oTicket.getName(m_oTicketExt));
-
+                      
             // Limpiamos todas las filas y anadimos las del ticket actual
             m_ticketlines.clearTicketLines();
 

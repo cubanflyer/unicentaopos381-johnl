@@ -59,6 +59,7 @@ public class JPanelFloors extends JPanelTable {
             , new int[] {0}
         );  
         jeditor = new FloorsEditor(dirty); 
+        AppLocal.LIST_BY_RIGHTS="";        
     }
     
     /**

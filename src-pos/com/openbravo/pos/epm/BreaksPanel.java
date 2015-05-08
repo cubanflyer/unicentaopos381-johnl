@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.pos.epm;
 
 import com.openbravo.basic.BasicException;
@@ -52,9 +51,10 @@ public class BreaksPanel extends JPanelTable {
      */
     @Override
     protected void init() {
-        DataLogicPresenceManagement dlPresenceManagement  = (DataLogicPresenceManagement) app.getBean("com.openbravo.pos.epm.DataLogicPresenceManagement");
+        DataLogicPresenceManagement dlPresenceManagement = (DataLogicPresenceManagement) app.getBean("com.openbravo.pos.epm.DataLogicPresenceManagement");
         tbreaks = dlPresenceManagement.getTableBreaks();
         jeditor = new BreaksView(app, dirty);
+        AppLocal.LIST_BY_RIGHTS = "";
     }
 
     /**
@@ -83,7 +83,7 @@ public class BreaksPanel extends JPanelTable {
      */
     @Override
     public SaveProvider getSaveProvider() {
-        return new SaveProvider(tbreaks, new int[] {0, 1, 2, 3});
+        return new SaveProvider(tbreaks, new int[]{0, 1, 2, 3});
     }
 
     /**
@@ -101,7 +101,7 @@ public class BreaksPanel extends JPanelTable {
      */
     @Override
     public ComparatorCreator getComparatorCreator() {
-        return tbreaks.getComparatorCreator(new int[] {1, 2});
+        return tbreaks.getComparatorCreator(new int[]{1, 2});
     }
 
     /**

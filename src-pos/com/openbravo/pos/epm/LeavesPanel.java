@@ -53,6 +53,7 @@ public class LeavesPanel extends JPanelTable {
         DataLogicPresenceManagement dlPresenceManagement  = (DataLogicPresenceManagement) app.getBean("com.openbravo.pos.epm.DataLogicPresenceManagement");
         tleaves = dlPresenceManagement.getTableLeaves();
         jeditor = new LeavesView(app, dirty);
+        AppLocal.LIST_BY_RIGHTS="";        
     }
 
     /**

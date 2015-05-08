@@ -27,9 +27,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.JOptionPane;
 
 
 public class JResetLiquibase extends javax.swing.JFrame {
+    private static final long serialVersionUID = 1L;
 
    // private Statement stmt;
 
@@ -43,7 +45,6 @@ public class JResetLiquibase extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-
                 AppConfig config = new AppConfig(args);
                 config.load();
 
@@ -66,9 +67,11 @@ public class JResetLiquibase extends javax.swing.JFrame {
                     SQL = "UPDATE APPJL SET VERSION = '0.00' WHERE NAME ='uniCenta oPOS' ";
                     stmt.execute(SQL);
                     SQL = "UPDATE APPLICATIONS SET VERSION = '0.00' WHERE NAME ='uniCenta oPOS' ";
-                    stmt.execute(SQL);                    
+                    stmt.execute(SQL);                     
+                    JOptionPane.showMessageDialog(null, "Liquibase tables cleared ready for new attempt.", "Liquibase Reset", JOptionPane.INFORMATION_MESSAGE);
                 } catch (BasicException | SQLException e) {
                     System.out.println(e.getMessage());
+                    JOptionPane.showMessageDialog(null, "Liquibase tables clear Failed.", "Liquibase Reset", JOptionPane.INFORMATION_MESSAGE);
                     System.exit(0);
                 }
             }

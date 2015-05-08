@@ -34,7 +34,9 @@ if (index >= 0) {
         sdiscount = Formats.PERCENT.formatValue((1-discountrate));
         for (int number= 0; number < ticket.getLinesCount(); number++) {
             line = ticket.getLine(number);
-            ticket.setLine(number,
+
+            if (line.canDiscount()){
+                    ticket.setLine(number,
             new TicketLineInfo(
                     line.getProductID(),
                     line.getProductName() + " - " + sdiscount,
@@ -42,7 +44,11 @@ if (index >= 0) {
                     line.getMultiply(),
                     (double)Math.rint(line.getPrice() * discountrate *100) /100d,
                     line.getTaxInfo())); 
+                    line.setDiscounted("yes");
+
         }  
+}
+
     } else {  
         java.awt.Toolkit.getDefaultToolkit().beep();
     }

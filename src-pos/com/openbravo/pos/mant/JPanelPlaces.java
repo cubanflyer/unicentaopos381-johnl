@@ -16,8 +16,8 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.pos.mant;
+
 import com.openbravo.basic.BasicException;
 import com.openbravo.data.gui.ListCellRendererBasic;
 import com.openbravo.data.loader.Datas;
@@ -38,14 +38,16 @@ import javax.swing.ListCellRenderer;
  * @author adrianromero
  */
 public class JPanelPlaces extends JPanelTable {
-    
+
     private TableDefinition tplaces;
     private PlacesEditor jeditor;
-    
-    /** Creates a new instance of JPanelPlaces */
+
+    /**
+     * Creates a new instance of JPanelPlaces
+     */
     public JPanelPlaces() {
     }
-    
+
     /**
      *
      */
@@ -53,18 +55,14 @@ public class JPanelPlaces extends JPanelTable {
     protected void init() {
         DataLogicSales dlSales = null;
         dlSales = (DataLogicSales) app.getBean("com.openbravo.pos.forms.DataLogicSales");
-        
+
         tplaces = new TableDefinition(app.getSession(),
-            "PLACES"
-            , new String[] {"ID", "NAME", "X", "Y", "FLOOR"}
-            , new String[] {"ID", AppLocal.getIntString("Label.Name"), "X", "Y", AppLocal.getIntString("label.placefloor")}
-            , new Datas[] {Datas.STRING, Datas.STRING, Datas.INT, Datas.INT, Datas.STRING}
-            , new Formats[] {Formats.STRING, Formats.STRING, Formats.INT, Formats.INT, Formats.NULL}
-            , new int[] {0}
-        ); 
-        jeditor = new PlacesEditor(dlSales, dirty); 
+                "PLACES", new String[]{"ID", "NAME", "X", "Y", "FLOOR"}, new String[]{"ID", AppLocal.getIntString("Label.Name"), "X", "Y", AppLocal.getIntString("label.placefloor")}, new Datas[]{Datas.STRING, Datas.STRING, Datas.INT, Datas.INT, Datas.STRING}, new Formats[]{Formats.STRING, Formats.STRING, Formats.INT, Formats.INT, Formats.NULL}, new int[]{0}
+        );
+        jeditor = new PlacesEditor(dlSales, dirty);
+        AppLocal.LIST_BY_RIGHTS = "";
     }
-        
+
     /**
      *
      * @return
@@ -73,16 +71,16 @@ public class JPanelPlaces extends JPanelTable {
     public ListProvider getListProvider() {
         return new ListProviderCreator(tplaces);
     }
-    
+
     /**
      *
      * @return
      */
     @Override
     public SaveProvider getSaveProvider() {
-        return new SaveProvider(tplaces);      
+        return new SaveProvider(tplaces);
     }
-    
+
     /**
      *
      * @return
@@ -91,7 +89,7 @@ public class JPanelPlaces extends JPanelTable {
     public Vectorer getVectorer() {
         return tplaces.getVectorerBasic(new int[]{1});
     }
-    
+
     /**
      *
      * @return
@@ -100,7 +98,7 @@ public class JPanelPlaces extends JPanelTable {
     public ListCellRenderer getListCellRenderer() {
         return new ListCellRendererBasic(tplaces.getRenderStringBasic(new int[]{1}));
     }
-    
+
     /**
      *
      * @return
@@ -127,5 +125,5 @@ public class JPanelPlaces extends JPanelTable {
     public void activate() throws BasicException {
         jeditor.activate(); // primero activo el editor 
         super.activate();   // segundo activo el padre        
-    }     
+    }
 }

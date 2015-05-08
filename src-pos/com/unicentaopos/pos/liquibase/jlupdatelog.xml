@@ -986,5 +986,66 @@
         </update>
     </changeSet> 
     
+    <changeSet author="UnicentaOpos - John L" id="Add Rights Level to permissions" >
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists columnName="RIGHTSLEVEL" tableName="ROLES"/>
+            </not>
+        </preConditions>         
+                
+        <addColumn tableName="ROLES">
+            <column name="RIGHTSLEVEL" type="int" defaultValueNumeric="5" >
+                <constraints nullable="false"/> 
+            </column>
+        </addColumn> 
+    </changeSet>
+  
+    <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.41" >
+        <update tableName="APPJL">
+            <column name="VERSION" value="1.41"/>
+        </update>
+    </changeSet>  
+    
+    <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.42" >
+        <update tableName="APPJL">
+            <column name="VERSION" value="1.42"/>
+        </update>
+    </changeSet> 
+
+    <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.5" >
+        <update tableName="APPJL">
+            <column name="VERSION" value="1.5"/>
+        </update>
+    </changeSet>    
+    
+    
+    
+    <changeSet author="Unicentaopos - John L" id="New 1.6 columns m" dbms="mysql, derby, oracle">
+        <addColumn tableName="PRODUCTS">
+            <column name="DISCOUNTED" type="varchar(5)" defaultValue="no"></column>  
+            <column name="CANDISCOUNT" type="${boolean.type}" defaultValueNumeric="1" >
+                <constraints nullable="false"/>  
+            </column>         
+        </addColumn>      
+    </changeSet>
+
+    <changeSet author="Unicentaopos - John L" id="New 1.6 columns p" dbms="postgresql, hypersql, hsqldb">
+        <addColumn tableName="PRODUCTS">
+            <column name="DISCOUNTED" type="varchar(5)" defaultValue="no"></column>  
+            <column name="CANDISCOUNT" type="${boolean.type}" defaultValueNumeric="true" >
+                <constraints nullable="false"/>  
+            </column>         
+        </addColumn>       
+    </changeSet>
+    
+    
+   <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.6" >
+        <update tableName="APPJL">
+            <column name="VERSION" value="1.6"/>
+        </update>
+    </changeSet>  
+    
+    
+    
 </databaseChangeLog>
 

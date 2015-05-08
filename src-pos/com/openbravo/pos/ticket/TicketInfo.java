@@ -290,6 +290,33 @@ public final class TicketInfo implements SerializableRead, Externalizable {
         return name.toString();
     }
 
+        public String getName(Object info, String pickupID) {
+// JG Aug 2014 - Add User info
+        StringBuilder name = new StringBuilder();
+
+       // if (m_User != null) {
+            name.append(pickupID);
+            name.append(" - ");
+       // }
+
+        if (info == null) {
+            if (m_iTicketId == 0) {
+                name.append("(").append(m_dateformat.format(m_dDate)).append(" ").append(Long.toString(m_dDate.getTime() % 1000)).append(")");
+            } else {
+                name.append(Integer.toString(m_iTicketId));
+            }
+        } else {
+            name.append(info.toString());
+
+        }
+        if (getCustomerId() != null) {
+            name.append(" - ");
+            name.append(m_Customer.toString());
+        }
+        return name.toString();
+    }
+    
+    
     /**
      *
      * @return

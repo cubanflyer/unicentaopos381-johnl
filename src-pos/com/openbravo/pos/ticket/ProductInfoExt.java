@@ -109,7 +109,7 @@ public class ProductInfoExt {
     /**
      *
      */
-        protected boolean m_bKitchen;
+    protected boolean m_bKitchen;
 // ADDED JG 25.06.11 - Service
     private boolean m_bService;
     
@@ -162,6 +162,13 @@ public class ProductInfoExt {
      * JDL 14 Feb 2015 product always available
      */   
     protected boolean m_bAlwaysAvailable;
+
+    
+    protected boolean m_canDiscount;
+    
+    protected String m_discounted;
+    
+    
     
     /*
      * Creates new ProductInfo
@@ -203,6 +210,10 @@ public class ProductInfoExt {
         m_sAlias=null;                  //24
 // ADDES JDL 14 Feb 2015
         m_bAlwaysAvailable = false;     //25
+        
+        m_canDiscount = true;
+        m_discounted = "no";
+        
     }
 
     /**
@@ -431,6 +442,19 @@ public class ProductInfoExt {
     public final void setAlwaysAvailable(boolean bValue) {
         m_bAlwaysAvailable = bValue;
     }
+ 
+    public final boolean getCanDiscount() {
+        return m_canDiscount;
+    }  
+    
+     public final String getDiscounted() {
+        return m_discounted;
+    }   
+    
+     public void setDiscounted(String discount) {
+        m_discounted = discount;
+    }     
+    
     
     /**
      *
@@ -684,6 +708,11 @@ public class ProductInfoExt {
                 product.m_sAlias = dr.getString(22);
  // JDL 14 Feb 2015               
                 product.m_bAlwaysAvailable = dr.getBoolean(23);
+                
+                product.m_discounted = dr.getString(24);
+                
+                product.m_canDiscount = dr.getBoolean(25);
+                
                 return product;
             }
         };

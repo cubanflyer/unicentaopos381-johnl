@@ -20,6 +20,7 @@ package com.openbravo.pos.sales.shared;
 
 import com.openbravo.basic.BasicException;
 import com.openbravo.data.gui.MessageInf;
+import com.openbravo.pos.admin.DataLogicAdmin;
 import com.openbravo.pos.forms.AppConfig;
 import com.openbravo.pos.forms.AppLocal;
 import com.openbravo.pos.forms.AppView;
@@ -35,6 +36,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import uk.chromis.logoffListener.AutoLogoff;
 
 /**
  *
@@ -44,6 +46,7 @@ public class JTicketsBagShared extends JTicketsBag {
 
     private String m_sCurrentTicket = null;
     private DataLogicReceipts dlReceipts = null;
+    private DataLogicAdmin dlAdmin;
 
     /**
      * Creates new form JTicketsBagShared
@@ -56,7 +59,7 @@ public class JTicketsBagShared extends JTicketsBag {
         super(app, panelticket);
 
         dlReceipts = (DataLogicReceipts) app.getBean("com.openbravo.pos.sales.DataLogicReceipts");
-
+        dlAdmin = (DataLogicAdmin) app.getBean("com.openbravo.pos.admin.DataLogicAdmin");
         initComponents();
     }
 
@@ -159,11 +162,17 @@ public class JTicketsBagShared extends JTicketsBag {
         m_config.load();
         List<SharedTicketInfo> nl;
         try {
+            //delete.rightslevel          
             if ("true".equals(m_config.getProperty("sharedticket.currentuser"))) {
                 nl = dlReceipts.getSharedTicketListByUser(m_App.getAppUserView().getUser().getName());
             } else {
                 nl = dlReceipts.getSharedTicketList();
             }
+     //       if (Integer.parseInt(dlAdmin.getRightsLevelByID(m_App.getAppUserView().getUser().getRole())) <= (Integer.parseInt(m_config.getProperty("delete.rightslevel")))) {
+     //       } else {
+     //           nl = dlReceipts.getSharedTicketList();
+     //       }
+
             if (nl.isEmpty()) {
                 m_jListTickets.setText("");
                 m_jListTickets.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/sale_pending.png")));
@@ -185,6 +194,10 @@ public class JTicketsBagShared extends JTicketsBag {
             } else {
                 l = dlReceipts.getSharedTicketList();
             }
+      //      if (Integer.parseInt(dlAdmin.getRightsLevelByID(m_App.getAppUserView().getUser().getRole())) <= (Integer.parseInt(m_config.getProperty("delete.rightslevel")))) {
+      //      } else {
+      //          l = dlReceipts.getSharedTicketList();
+      //      }
             checkLayaways();
             if (l.isEmpty()) {
                 newTicket();
@@ -276,7 +289,9 @@ public class JTicketsBagShared extends JTicketsBag {
     }// </editor-fold>//GEN-END:initComponents
 
     private void m_jListTicketsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jListTicketsActionPerformed
-
+        
+        AutoLogoff.getInstance().stop();
+                
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -289,20 +304,26 @@ public class JTicketsBagShared extends JTicketsBag {
                     } else {
                         l = dlReceipts.getSharedTicketList();
                     }
+       //             if (Integer.parseInt(dlAdmin.getRightsLevelByID(m_App.getAppUserView().getUser().getRole())) <= (Integer.parseInt(m_config.getProperty("delete.rightslevel")))) {
+       //             } else {
+       //                 l = dlReceipts.getSharedTicketList();
+       //             }
                     JTicketsBagSharedList listDialog = JTicketsBagSharedList.newJDialog(JTicketsBagShared.this);
                     String id = listDialog.showTicketsList(l);
 
                     if (id != null) {
                         saveCurrentTicket();
-                        setActiveTicket(id);
+                        setActiveTicket(id);                        
                     }
+                        AutoLogoff.getInstance().restart();
                 } catch (BasicException e) {
                     new MessageInf(e).show(JTicketsBagShared.this);
-                    newTicket();
+                        AutoLogoff.getInstance().restart();                    
+                        newTicket();
                 }
             }
         });
-
+        
     }//GEN-LAST:event_m_jListTicketsActionPerformed
 
     private void m_jDelTicketActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jDelTicketActionPerformed

@@ -49,6 +49,7 @@ public class DataLogicSystem extends BeanFactoryDataSingle {
      *
      */
     protected SentenceList m_peoplevisible;  
+    protected SentenceList m_peoplevisibleByRights;
 
     /**
      *
@@ -191,11 +192,16 @@ public class DataLogicSystem extends BeanFactoryDataSingle {
             , null
             , peopleread);
 
+        m_peoplevisibleByRights = new StaticSentence(s
+            , "SELECT ID, NAME, APPPASSWORD, CARD, ROLE, IMAGE FROM PEOPLE WHERE RIGHTSLEVEL > ? AND VISIBLE = " + s.DB.TRUE() + " ORDER BY NAME"
+            , SerializerWriteString.INSTANCE
+            , peopleread);      
+        
         m_peoplebycard = new PreparedSentence(s
             , "SELECT ID, NAME, APPPASSWORD, CARD, ROLE, IMAGE FROM PEOPLE WHERE CARD = ? AND VISIBLE = " + s.DB.TRUE()
             , SerializerWriteString.INSTANCE
             , peopleread);
-         
+           
         m_resourcebytes = new PreparedSentence(s
             , "SELECT CONTENT FROM RESOURCES WHERE NAME = ?"
             , SerializerWriteString.INSTANCE
@@ -349,6 +355,11 @@ public class DataLogicSystem extends BeanFactoryDataSingle {
         return m_peoplevisible.list();
     }
 
+    
+    public final List listPeopleVisibleByRights(Integer rightsLevel) throws BasicException {
+        return m_peoplevisibleByRights.list(rightsLevel);
+    } 
+        
     /**
      *
      * @param role

@@ -51,7 +51,8 @@ public class ResourcesPanel extends JPanelTable {
     protected void init() {
         DataLogicAdmin dlAdmin = (DataLogicAdmin) app.getBean("com.openbravo.pos.admin.DataLogicAdmin"); 
         tresources = dlAdmin.getTableResources();         
-        jeditor = new ResourcesView(dirty);           
+        jeditor = new ResourcesView(dirty);   
+        AppLocal.LIST_BY_RIGHTS="";
     }
 
     /**

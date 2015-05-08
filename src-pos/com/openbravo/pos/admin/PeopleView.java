@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.pos.admin;
 
 import com.openbravo.basic.BasicException;
@@ -41,20 +40,26 @@ public class PeopleView extends JPanel implements EditorRecord {
 
     private Object m_oId;
     private String m_sPassword;
-    
+
     private final DirtyManager m_Dirty;
-    
+
     private SentenceList m_sentrole;
-    private ComboBoxValModel m_RoleModel;  
+    private ComboBoxValModel m_RoleModel;
     private final AppView m_appview;
     private DataLogicAdmin m_dlAdmin;
-    
-    /** Creates new form PeopleEditor
+    private Object[] originalUser;
+
+    /**
+     * Creates new form PeopleEditor
+     *
      * @param dlAdmin
-     * @param dirty */
+     * @param dirty
+     */
     public PeopleView(DataLogicAdmin dlAdmin, DirtyManager dirty, AppView app) {
         initComponents();
-        
+// Part of quick fix
+        originalUser = new Object[7];
+
         m_dlAdmin = dlAdmin;
         m_appview = app;
         m_RoleModel = new ComboBoxValModel();
@@ -65,7 +70,6 @@ public class PeopleView extends JPanel implements EditorRecord {
         m_jVisible.addActionListener(dirty);
         m_jImage.addPropertyChangeListener("image", dirty);
 
-        
         writeValueEOF();
     }
 
@@ -90,7 +94,7 @@ public class PeopleView extends JPanel implements EditorRecord {
         jButton2.setEnabled(false);
         jButton3.setEnabled(false);
     }
-    
+
     /**
      *
      */
@@ -112,7 +116,7 @@ public class PeopleView extends JPanel implements EditorRecord {
         jButton2.setEnabled(true);
         jButton3.setEnabled(true);
     }
-    
+
     /**
      *
      * @param value
@@ -127,12 +131,12 @@ public class PeopleView extends JPanel implements EditorRecord {
         m_jVisible.setSelected(((Boolean) people[4]).booleanValue());
         jcard.setText(Formats.STRING.formatValue(people[5]));
         m_jImage.setImage((BufferedImage) people[6]);
-        
+
         m_jName.setEnabled(false);
         m_jRole.setEnabled(false);
         m_jVisible.setEnabled(false);
         jcard.setEnabled(false);
-        m_jImage.setEnabled(false);        
+        m_jImage.setEnabled(false);
         jButton1.setEnabled(false);
         jButton2.setEnabled(false);
         jButton3.setEnabled(false);
@@ -145,6 +149,9 @@ public class PeopleView extends JPanel implements EditorRecord {
     @Override
     public void writeValueEdit(Object value) {
         Object[] people = (Object[]) value;
+// **** part of quick fix solution *******       
+        Object[] originalUser = people;
+// ***************************************        
         m_oId = people[0];
         m_jName.setText(Formats.STRING.formatValue(people[1]));
         m_sPassword = Formats.STRING.formatValue(people[2]);
@@ -152,7 +159,7 @@ public class PeopleView extends JPanel implements EditorRecord {
         m_jVisible.setSelected(((Boolean) people[4]).booleanValue());
         jcard.setText(Formats.STRING.formatValue(people[5]));
         m_jImage.setImage((BufferedImage) people[6]);
-        
+
         m_jName.setEnabled(true);
         m_jRole.setEnabled(true);
         m_jVisible.setEnabled(true);
@@ -162,11 +169,10 @@ public class PeopleView extends JPanel implements EditorRecord {
         jButton2.setEnabled(true);
         jButton3.setEnabled(true);
     }
-    
+
     /**
      *
-     * @return
-     * @throws BasicException
+     * @return @throws BasicException
      */
     @Override
     public Object createValue() throws BasicException {
@@ -178,7 +184,18 @@ public class PeopleView extends JPanel implements EditorRecord {
         people[4] = Boolean.valueOf(m_jVisible.isSelected());
         people[5] = Formats.STRING.parseValue(jcard.getText());
         people[6] = m_jImage.getImage();
-        return people;
+// Part of quick fix to prevent high levels being changed
+// if new user save it        
+        if (m_oId == null) {
+            return people;
+        }
+
+        if (Integer.parseInt(m_dlAdmin.getRightsLevelByUserName(m_appview.getAppUserView().getUser().getName())) >= Integer.parseInt(m_dlAdmin.getRightsLevelByUserName(m_jName.getText()))) {
+            return people;
+        }
+        // Do not update record
+        m_Dirty.setDirty(false);
+        return originalUser;
     }
 
     /**
@@ -195,22 +212,28 @@ public class PeopleView extends JPanel implements EditorRecord {
      * @throws BasicException
      */
     public void activate() throws BasicException {
-        m_sentrole = m_dlAdmin.getRolesList(m_dlAdmin.getRightsLevelID(m_appview.getAppUserView().getUser().getRole()));
+        m_sentrole = m_dlAdmin.getRolesList( m_dlAdmin.getRightsLevelByID(m_appview.getAppUserView().getUser().getRole()));
+        
+        //String userLevel =(Integer.toString((Integer.parseInt(m_dlAdmin.getRightsLevelByID(m_appview.getAppUserView().getUser().getRole())))-1));
+        //m_sentrole = m_dlAdmin.getRolesList( m_dlAdmin.getRightsLevelByID(userLevel));
+        
+        
+        
         m_RoleModel = new ComboBoxValModel(m_sentrole.list());
         m_jRole.setModel(m_RoleModel);
     }
-    
+
     /**
      *
      */
     @Override
     public void refresh() {
     }
-     
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -364,26 +387,25 @@ public class PeopleView extends JPanel implements EditorRecord {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        
-        
-        if (JOptionPane.showConfirmDialog(this, AppLocal.getIntString("message.cardnew"), AppLocal.getIntString("title.editor"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {  
+
+        if (JOptionPane.showConfirmDialog(this, AppLocal.getIntString("message.cardnew"), AppLocal.getIntString("title.editor"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
 // JG 8 Jan 14 - Change "c" case to upper "C"        jcard.setText("c" + StringUtils.getCardNumber());
             jcard.setText("C" + StringUtils.getCardNumber());
             m_Dirty.setDirty(true);
         }
-        
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 
-        if (JOptionPane.showConfirmDialog(this, AppLocal.getIntString("message.cardremove"), AppLocal.getIntString("title.editor"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {  
+        if (JOptionPane.showConfirmDialog(this, AppLocal.getIntString("message.cardremove"), AppLocal.getIntString("title.editor"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
             jcard.setText(null);
             m_Dirty.setDirty(true);
         }
-        
+
     }//GEN-LAST:event_jButton3ActionPerformed
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -400,5 +422,4 @@ public class PeopleView extends JPanel implements EditorRecord {
     private javax.swing.JCheckBox m_jVisible;
     // End of variables declaration//GEN-END:variables
 
-    
 }

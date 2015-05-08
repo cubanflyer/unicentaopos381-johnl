@@ -55,6 +55,7 @@ public class CustomersPanel extends JPanelTable {
         DataLogicCustomers dlCustomers  = (DataLogicCustomers) app.getBean("com.openbravo.pos.customers.DataLogicCustomers");
         tcustomers = dlCustomers.getTableCustomers();
         jeditor = new CustomersView(app, dirty);    
+        AppLocal.LIST_BY_RIGHTS="";        
         
     }
     

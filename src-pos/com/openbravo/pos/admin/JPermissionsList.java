@@ -62,6 +62,7 @@ public class JPermissionsList extends javax.swing.JDialog {
         ls = s;
         initComponents();
         setTitle(AppLocal.getIntString("label.selectclass"));
+        
 
         try {
             con = s.getConnection();
@@ -74,7 +75,6 @@ public class JPermissionsList extends javax.swing.JDialog {
             jTableSelector.getColumnModel().getColumn(0).setPreferredWidth(180);
             jTableSelector.setRowSelectionAllowed(true);
             jTableSelector.getTableHeader().setReorderingAllowed(true);
-
         } catch (Exception e) {
         }
 
@@ -219,7 +219,7 @@ public class JPermissionsList extends javax.swing.JDialog {
         Object[] options = {AppLocal.getIntString("Button.NoPermissionsYes"), AppLocal.getIntString("Button.NoPermissionsNo")};
         if (JOptionPane.showOptionDialog(this,
                 AppLocal.getIntString("message.deleteclass"), AppLocal.getIntString("Message.adminwarning"),
-                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]) == 0) {        
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]) == 0) {
             try {
                 con = ls.getConnection();
                 stmt = (Statement) con.createStatement();

@@ -48,6 +48,7 @@ public class JPanelPromo extends JPanelTable {
             , new int[] {0}
         ); 
         jeditor = new PromoEditor(app, dlSales, dirty); 
+        AppLocal.LIST_BY_RIGHTS="";        
     }
         
     /**

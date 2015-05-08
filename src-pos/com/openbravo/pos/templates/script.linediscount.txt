@@ -27,22 +27,27 @@ import com.openbravo.format.Formats;
 import com.openbravo.pos.ticket.TicketLineInfo;
 import com.openbravo.pos.ticket.TicketProductInfo;
 
-discountrate = sales.getInputValue()/100;
+discountrate = 1 - (sales.getInputValue())/100;
 
 index = sales.getSelectedIndex();
-if (index >= 0) {
-    line = ticket.getLine(index);
-    if (line.getPrice() > 0.0 && discountrate > 0.0) {
 
-        sdiscount = Formats.PERCENT.formatValue(discountrate);
-        ticket.insertLine(index + 1,
+if (index >= 0) {
+    if (ticket.getTotal() > 0.0 && discountrate > 0.0) {
+        sdiscount = Formats.PERCENT.formatValue((1-discountrate));
+   
+            line = ticket.getLine(index);
+
+            if (line.canDiscount()){
+                    ticket.setLine(index,
             new TicketLineInfo(
-                    "Line Discount " + sdiscount,
+                    line.getProductID(),
+                    line.getProductName() + " - " + sdiscount,
                     line.getProductTaxCategoryID(),
                     line.getMultiply(),
-                    -(double)((line.getPriceTax() * discountrate * 100) / (1+line.getTaxRate()))/100,
-                    line.getTaxInfo()));
-        sales.setSelectedIndex(index + 1);
+                    (double)Math.rint(line.getPrice() * discountrate *100) /100d,
+                    line.getTaxInfo())); 
+                    line.setDiscounted("yes");
+      }
     } else {
          java.awt.Toolkit.getDefaultToolkit().beep();
     }

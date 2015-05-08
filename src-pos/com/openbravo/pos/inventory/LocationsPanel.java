@@ -53,6 +53,7 @@ public class LocationsPanel extends JPanelTable {
         DataLogicSales dlSales = (DataLogicSales) app.getBean("com.openbravo.pos.forms.DataLogicSales");          
         tlocations = dlSales.getTableLocations();
         jeditor = new LocationsView(dirty);
+        AppLocal.LIST_BY_RIGHTS="";        
     }
     
     /**

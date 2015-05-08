@@ -148,6 +148,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jAlias.getDocument().addDocumentListener(dirty);
         m_jAlwaysAvailable.addActionListener(dirty);
 
+// Addes JDl 6.5.15        
+        m_jDiscounted.addActionListener(dirty);
+        
         writeValueEOF();
     }
 
@@ -230,6 +233,10 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jAlias.setText(null);
         m_jAlwaysAvailable.setSelected(false);
 
+ //added JDL 6.5.2015       
+        m_jDiscounted.setSelected(false);    
+        
+        
         reportlock = false;
 
         m_jRef.setEnabled(false);
@@ -273,6 +280,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
 // Added JDL 14 Feb 2015
         m_jAlias.setEnabled(false);
         m_jAlwaysAvailable.setEnabled(false);
+        
+        
+        m_jDiscounted.setEnabled(false);        
 
         calculateMargin();
         calculatePriceSellTax();
@@ -327,6 +337,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
 // Added JDL 14 Feb 2015
         m_jAlias.setText(null);
         m_jAlwaysAvailable.setSelected(false);
+        
+        m_jDiscounted.setSelected(true);        
+        
 
         reportlock = false;
 
@@ -372,6 +385,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jAlias.setEnabled(true);
         m_jAlwaysAvailable.setEnabled(true);
 
+        
+        m_jDiscounted.setEnabled(true);
+        
         calculateMargin();
         calculatePriceSellTax();
         calculateGP();
@@ -427,6 +443,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jAlias.setText(Formats.STRING.formatValue(myprod[25]));
         m_jAlwaysAvailable.setSelected(((Boolean) myprod[26]));
 
+        
+        m_jDiscounted.setSelected(((Boolean) myprod[27]));        
+        
         txtAttributes.setCaretPosition(0);
 
         reportlock = false;
@@ -472,6 +491,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jAlias.setEnabled(false);
         m_jAlwaysAvailable.setEnabled(false);
 
+        
+        m_jDiscounted.setEnabled(false);
+        
         calculateMargin();
         calculatePriceSellTax();
         calculateGP();
@@ -530,6 +552,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jAlias.setText(Formats.STRING.formatValue(myprod[25]));
         m_jAlwaysAvailable.setSelected(((Boolean) myprod[26]));
 
+        m_jDiscounted.setSelected(((Boolean) myprod[28]));
+        
+        
         txtAttributes.setCaretPosition(0);
         reportlock = false;
 
@@ -577,6 +602,9 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jAlias.setEnabled(true);
         m_jAlwaysAvailable.setEnabled(true);
 
+        
+        m_jDiscounted.setEnabled(true);
+        
         calculateMargin();
         calculatePriceSellTax();
         calculateGP();
@@ -590,7 +618,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
     @Override
     public Object createValue() throws BasicException {
 
-        Object[] myprod = new Object[27];
+        Object[] myprod = new Object[29];
         myprod[0] = m_id;
         myprod[1] = m_jRef.getText();
         myprod[2] = m_jCode.getText();
@@ -632,6 +660,10 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         myprod[25] = m_jAlias.getText();
         myprod[26] = m_jAlwaysAvailable.isSelected();
 
+        myprod[27] = "no";
+        myprod[28] = m_jDiscounted.isSelected();
+
+        
         return myprod;
 
     }
@@ -1034,8 +1066,10 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         m_jVprice = new javax.swing.JCheckBox();
         jLabel23 = new javax.swing.JLabel();
         m_jStockUnits = new javax.swing.JTextField();
-        jLabel33 = new javax.swing.JLabel();
         m_jAlwaysAvailable = new javax.swing.JCheckBox();
+        jLabel35 = new javax.swing.JLabel();
+        jLabel33 = new javax.swing.JLabel();
+        m_jDiscounted = new javax.swing.JCheckBox();
         m_jImage = new com.openbravo.data.gui.JImageEditor();
         jPanel4 = new javax.swing.JPanel();
         jLabel28 = new javax.swing.JLabel();
@@ -1362,11 +1396,6 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         jPanel2.add(m_jStockUnits);
         m_jStockUnits.setBounds(240, 240, 80, 25);
 
-        jLabel33.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jLabel33.setText(bundle.getString("Label.AlwaysAvailable")); // NOI18N
-        jPanel2.add(jLabel33);
-        jLabel33.setBounds(10, 240, 130, 25);
-
         m_jAlwaysAvailable.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         m_jAlwaysAvailable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1375,6 +1404,18 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
         });
         jPanel2.add(m_jAlwaysAvailable);
         m_jAlwaysAvailable.setBounds(160, 240, 30, 25);
+
+        jLabel35.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel35.setText(bundle.getString("label.discounted")); // NOI18N
+        jPanel2.add(jLabel35);
+        jLabel35.setBounds(10, 270, 130, 25);
+
+        jLabel33.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel33.setText(bundle.getString("Label.AlwaysAvailable")); // NOI18N
+        jPanel2.add(jLabel33);
+        jLabel33.setBounds(10, 240, 130, 25);
+        jPanel2.add(m_jDiscounted);
+        m_jDiscounted.setBounds(160, 270, 20, 21);
 
         jTabbedPane1.addTab(AppLocal.getIntString("label.prodstock"), jPanel2); // NOI18N
         jTabbedPane1.addTab("Image", m_jImage);
@@ -1616,6 +1657,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
+    private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -1640,6 +1682,7 @@ public final class ProductsEditor extends JPanel implements EditorRecord {
     private javax.swing.JTextField m_jCode;
     private javax.swing.JComboBox m_jCodetype;
     private javax.swing.JCheckBox m_jComment;
+    private javax.swing.JCheckBox m_jDiscounted;
     private javax.swing.JTextPane m_jDisplay;
     private javax.swing.JTextField m_jGrossProfit;
     private com.openbravo.data.gui.JImageEditor m_jImage;

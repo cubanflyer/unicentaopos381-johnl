@@ -16,7 +16,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with uniCenta oPOS.  If not, see <http://www.gnu.org/licenses/>.
-
 package com.openbravo.pos.inventory;
 
 import com.openbravo.data.gui.ListCellRendererBasic;
@@ -40,21 +39,24 @@ public class TaxCustCategoriesPanel extends JPanelTable {
 
     private TableDefinition ttaxcategories;
     private TaxCustCategoriesEditor jeditor;
-    
-    /** Creates a new instance of JPanelDuty */
+
+    /**
+     * Creates a new instance of JPanelDuty
+     */
     public TaxCustCategoriesPanel() {
     }
-    
+
     /**
      *
      */
     @Override
     protected void init() {
-        DataLogicSales dlSales = (DataLogicSales) app.getBean("com.openbravo.pos.forms.DataLogicSales");        
+        DataLogicSales dlSales = (DataLogicSales) app.getBean("com.openbravo.pos.forms.DataLogicSales");
         ttaxcategories = dlSales.getTableTaxCustCategories();
         jeditor = new TaxCustCategoriesEditor(dirty);
+        AppLocal.LIST_BY_RIGHTS = "";
     }
-    
+
     /**
      *
      * @return
@@ -63,16 +65,16 @@ public class TaxCustCategoriesPanel extends JPanelTable {
     public ListProvider getListProvider() {
         return new ListProviderCreator(ttaxcategories);
     }
-    
+
     /**
      *
      * @return
      */
     @Override
     public SaveProvider getSaveProvider() {
-        return new SaveProvider(ttaxcategories);      
+        return new SaveProvider(ttaxcategories);
     }
-    
+
     /**
      *
      * @return
@@ -81,16 +83,16 @@ public class TaxCustCategoriesPanel extends JPanelTable {
     public Vectorer getVectorer() {
         return ttaxcategories.getVectorerBasic(new int[]{1});
     }
-    
+
     /**
      *
      * @return
      */
     @Override
     public ComparatorCreator getComparatorCreator() {
-        return ttaxcategories.getComparatorCreator(new int[] {1});
+        return ttaxcategories.getComparatorCreator(new int[]{1});
     }
-    
+
     /**
      *
      * @return
@@ -99,7 +101,7 @@ public class TaxCustCategoriesPanel extends JPanelTable {
     public ListCellRenderer getListCellRenderer() {
         return new ListCellRendererBasic(ttaxcategories.getRenderStringBasic(new int[]{1}));
     }
-    
+
     /**
      *
      * @return
@@ -108,7 +110,7 @@ public class TaxCustCategoriesPanel extends JPanelTable {
     public EditorRecord getEditor() {
         return jeditor;
     }
-        
+
     /**
      *
      * @return
@@ -116,5 +118,5 @@ public class TaxCustCategoriesPanel extends JPanelTable {
     @Override
     public String getTitle() {
         return AppLocal.getIntString("Menu.TaxCustCategories");
-    }     
+    }
 }

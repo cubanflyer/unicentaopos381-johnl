@@ -20,20 +20,17 @@ package com.openbravo.pos.admin;
 
 import com.openbravo.basic.BasicException;
 import com.openbravo.data.loader.SentenceList;
-import com.openbravo.data.loader.Session;
 import com.openbravo.data.user.DirtyManager;
 import com.openbravo.data.user.EditorRecord;
 import com.openbravo.format.Formats;
-import com.openbravo.pos.forms.AppConfig;
 import com.openbravo.pos.forms.AppLocal;
-import com.openbravo.pos.forms.AppViewConnection;
+import com.openbravo.pos.forms.AppView;
 import com.openbravo.pos.forms.JRootApp;
 import eu.floraresearch.lablib.gui.checkboxtree.*;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Enumeration;
@@ -66,11 +63,9 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
     private DefaultTreeModel model;
     private CheckboxTree uTree;
     private DefaultMutableTreeNode root;
-    private Session s;
     private DefaultMutableTreeNode node;
-    private AppConfig config;
     private List branches;
-    private DataLogicAdmin dlAdmin;
+    private DataLogicAdmin m_dlAdmin;
     private SentenceList m_branches;
     private List permissions;
     private List userPermissions;
@@ -87,25 +82,20 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
     private String description;
     private TreeCheckingModel cm;
     private Boolean hasPermissions;
+    private AppView m_app;
 
     /**
      * Creates new form RolesEditor
      */
-    public RolesViewTree(final DirtyManager dirty) {
+    public RolesViewTree(DataLogicAdmin dlAdmin, DirtyManager dirty, AppView app) {
         initComponents();
 
         passedDirty = dirty;
-        jRightsLevel.getDocument().addDocumentListener(dirty);
+        jRightsLevel.addChangeListener(dirty);
 
-        config = new AppConfig(new File((System.getProperty("user.home")), AppLocal.APP_ID + ".properties"));
-        config.load();
+        m_dlAdmin = dlAdmin;
+        m_app = app;
 
-        try {
-            s = AppViewConnection.createSession(config);
-            dlAdmin = new DataLogicAdmin();
-            dlAdmin.init(s);
-        } catch (BasicException ex) {
-        }
         m_jName.getDocument().addDocumentListener(dirty);
         createTree();
     }
@@ -157,8 +147,8 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         try {
 // Get list of all the permisions in the database
 // and the list of sections
-            dbPermissions = (List) dlAdmin.getAlldbPermissions();
-            branches = dlAdmin.getSectionsList();
+            dbPermissions = (List) m_dlAdmin.getAlldbPermissions();
+            branches = m_dlAdmin.getSectionsList();
         } catch (BasicException ex) {
             Logger.getLogger(RolesViewTree.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -224,7 +214,8 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
             for (String userPermission : m_apermissions) {
                 uTree.addCheckingPath(new TreePath(nodePaths.get(userPermission).getPath()));
             }
-            jRightsLevel.setText(dlAdmin.getRightsLevel(m_jName.getText()).toString());
+            jRightsLevel.setValue(m_dlAdmin.getRightsLevel(m_jName.getText()));
+            //    jRightsLevel.setText(m_dlAdmin.getRightsLevel(m_jName.getText()).toString());
         }
     }
 
@@ -292,7 +283,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         m_oId = null;
         m_jName.setText(null);;
         m_jName.setEnabled(false);
-        jRightsLevel.setText(null);
+        jRightsLevel.setValue(3);
     }
 
     /**
@@ -304,7 +295,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         m_oId = null;
         m_jName.setText(null);
         m_jName.setEnabled(true);
-        jRightsLevel.setText("30");
+        jRightsLevel.setValue(3);
     }
 
     /**
@@ -347,19 +338,8 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         role[0] = m_oId == null ? UUID.randomUUID().toString() : m_oId;
         role[1] = m_jName.getText();
         role[2] = Formats.BYTEA.parseValue(buildPermissionsStr());
-        role[3] = Integer.parseInt(jRightsLevel.getText());
-
-        if (Integer.parseInt(jRightsLevel.getText()) <= 1 || Integer.parseInt(jRightsLevel.getText()) >= 99) {
-            JOptionPane.showMessageDialog(this, AppLocal.getIntString("Message.rightslevel"), AppLocal.getIntString("Message.adminwarning"), JOptionPane.WARNING_MESSAGE);
-// Re-instate original permissions for this role                    
-            role = new Object[4];
-            role[0] = m_oId == null ? UUID.randomUUID().toString() : m_oId;
-            role[1] = m_jName.getText();
-            role[2] = Formats.BYTEA.parseValue(dlAdmin.findRolePermissions(role[0].toString()));
-            role[3] = dlAdmin.getRightsLevel(m_jName.getText());
-            return role;
-        }
-
+        role[3] = jRightsLevel.getValue();
+        
         if (!hasPermissions) {
             Object[] options = {AppLocal.getIntString("Button.NoPermissionsYes"), AppLocal.getIntString("Button.NoPermissionsNo")};
             if (JOptionPane.showOptionDialog(this,
@@ -369,8 +349,8 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
                 role = new Object[4];
                 role[0] = m_oId == null ? UUID.randomUUID().toString() : m_oId;
                 role[1] = m_jName.getText();
-                role[2] = Formats.BYTEA.parseValue(dlAdmin.findRolePermissions(role[0].toString()));
-                role[3] = dlAdmin.getRightsLevel(m_jName.getText());
+                role[2] = Formats.BYTEA.parseValue(m_dlAdmin.findRolePermissions(role[0].toString()));
+                role[3] = m_dlAdmin.getRightsLevel(m_jName.getText());
                 return role;
             }
         }
@@ -392,8 +372,8 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
 
     public void getPermissions() throws BasicException {
         try {
-            String m_roles = dlAdmin.getRoleID(m_jName.getText());
-            String sRolePermisions = dlAdmin.findRolePermissions(m_roles);
+            String m_roles = m_dlAdmin.getRoleID(m_jName.getText());
+            String sRolePermisions = m_dlAdmin.findRolePermissions(m_roles);
             m_apermissions = new HashSet<>();
             if (m_sp == null) {
                 SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -441,6 +421,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jSpinner1 = new javax.swing.JSpinner();
         jLabel2 = new javax.swing.JLabel();
         m_jName = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -450,12 +431,12 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         jAddEntry = new javax.swing.JButton();
         jDeleteEntry = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jRightsLevel = new javax.swing.JTextField();
+        jRightsLevel = new javax.swing.JSpinner();
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel2.setText(AppLocal.getIntString("Label.Name")); // NOI18N
 
-        m_jName.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        m_jName.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -492,8 +473,10 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel1.setText(bundle.getString("label.rightslevel")); // NOI18N
 
-        jRightsLevel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jRightsLevel.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        jRightsLevel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jRightsLevel.setModel(new javax.swing.SpinnerNumberModel(3, 0, 9, 1));
+        jRightsLevel.setMinimumSize(new java.awt.Dimension(35, 28));
+        jRightsLevel.setPreferredSize(new java.awt.Dimension(35, 28));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -516,8 +499,8 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRightsLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 16, Short.MAX_VALUE))
+                        .addComponent(jRightsLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 12, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -532,7 +515,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel1)
-                        .addComponent(jRightsLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jRightsLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(m_jName, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -543,7 +526,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -553,7 +536,7 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
         if (RolesAddNewEntry.showDialog(this)) {
             try {
                 // lets reload the tree
-                dbPermissions = (List) dlAdmin.getAlldbPermissions();
+                dbPermissions = (List) m_dlAdmin.getAlldbPermissions();
             } catch (BasicException ex) {
             }
 
@@ -563,10 +546,9 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
     }//GEN-LAST:event_jAddEntryActionPerformed
 
     private void jDeleteEntryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDeleteEntryActionPerformed
-        JPermissionsList permissions = JPermissionsList.getPermissionsList(this, s);
+        JPermissionsList permissions = JPermissionsList.getPermissionsList(this, m_app.getSession());
         permissions.setVisible(true);
         createTree();
-
     }//GEN-LAST:event_jDeleteEntryActionPerformed
 
 
@@ -577,9 +559,10 @@ public final class RolesViewTree extends javax.swing.JPanel implements EditorRec
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextArea jPermissionDesc;
-    private javax.swing.JTextField jRightsLevel;
+    private javax.swing.JSpinner jRightsLevel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTextField m_jName;
     // End of variables declaration//GEN-END:variables
 }

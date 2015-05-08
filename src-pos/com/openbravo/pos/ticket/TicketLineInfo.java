@@ -169,6 +169,10 @@ public class TicketLineInfo implements SerializableWrite, SerializableRead, Seri
             if (product.getCategoryID() != null) {
                 attributes.setProperty("product.categoryid", product.getCategoryID());
             }
+            attributes.setProperty("product.discounted", product.getDiscounted());
+            attributes.setProperty("product.candiscount", product.getCanDiscount() ? "true" : "false");
+            
+            
         }
         init(pid, null, dMultiply, dPrice, tax, attributes);
     }
@@ -661,6 +665,21 @@ public class TicketLineInfo implements SerializableWrite, SerializableRead, Seri
         return "true".equals(attributes.getProperty("product.alwaysavailable"));
     }
 
+    
+    public boolean canDiscount() {
+        return "true".equals(attributes.getProperty("product.candiscount"));
+    }
+    
+    public String getDiscounted() {
+        return (attributes.getProperty("product.discounted"));
+    }
+    
+    
+    public void setDiscounted(String value) {
+       attributes.setProperty("product.discounted",value);
+    }
+    
+    
 // Added JDL 14.02.15 - Alias
     /**
      *
@@ -687,6 +706,6 @@ public class TicketLineInfo implements SerializableWrite, SerializableRead, Seri
     }
 
     void incMultiply() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       
     }
 }

@@ -50,7 +50,8 @@ public class ThirdPartiesPanel extends JPanelTable {
     protected void init() {
         DataLogicThirdParties dlThirdParties = (DataLogicThirdParties) app.getBean("com.openbravo.pos.thirdparties.DataLogicThirdParties");        
         tthirdparties = dlThirdParties.getTableThirdParties();        
-        jeditor = new ThirdPartiesView(app, dirty);     
+        jeditor = new ThirdPartiesView(app, dirty);
+        AppLocal.LIST_BY_RIGHTS="";        
     }
     
     /**
