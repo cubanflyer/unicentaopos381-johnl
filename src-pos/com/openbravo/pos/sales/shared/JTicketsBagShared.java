@@ -36,7 +36,6 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import uk.chromis.logoffListener.AutoLogoff;
 
 /**
  *
@@ -290,7 +289,6 @@ public class JTicketsBagShared extends JTicketsBag {
 
     private void m_jListTicketsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_jListTicketsActionPerformed
         
-        AutoLogoff.getInstance().stop();
                 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -315,10 +313,8 @@ public class JTicketsBagShared extends JTicketsBag {
                         saveCurrentTicket();
                         setActiveTicket(id);                        
                     }
-                        AutoLogoff.getInstance().restart();
                 } catch (BasicException e) {
-                    new MessageInf(e).show(JTicketsBagShared.this);
-                        AutoLogoff.getInstance().restart();                    
+                    new MessageInf(e).show(JTicketsBagShared.this);                  
                         newTicket();
                 }
             }
