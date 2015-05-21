@@ -57,11 +57,8 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
         jTaxIncluded.addActionListener(dirty);
         jCheckPrice00.addActionListener(dirty);
         jMoveAMountBoxToTop.addActionListener(dirty);
-        jCloseCashbtn.addActionListener(dirty);
-        jchkHideCategory.addActionListener(dirty);
+        jCloseCashbtn.addActionListener(dirty);        
         jTableRetain.addChangeListener(dirty);
-        jCheckHideNoStock.addActionListener(dirty);
-        jCheckRefresh.addActionListener(dirty);
         jUpdatedbprice.addActionListener(dirty);
         jChangeSalesScreen.addActionListener(dirty);
         jConsolidate.addActionListener(dirty);
@@ -110,17 +107,12 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
         jMoveAMountBoxToTop.setSelected(Boolean.valueOf(config.getProperty("till.amountattop")));
         jCloseCashbtn.setSelected(Boolean.valueOf(config.getProperty("screen.600800")));
         jTableButtons.setSelected(Boolean.valueOf(config.getProperty("table.transparentbuttons")));
-        jchkHideCategory.setSelected(Boolean.valueOf(config.getProperty("panel.hidecategory")));
-        jCheckHideNoStock.setSelected(Boolean.valueOf(config.getProperty("panel.hidezerostockitems")));
-        jCheckRefresh.setSelected(Boolean.valueOf(config.getProperty("panel.refreshproducts")));
         jUpdatedbprice.setSelected(Boolean.valueOf(config.getProperty("db.productupdate")));
         jChangeSalesScreen.setSelected(Boolean.valueOf(config.getProperty("sales.newscreen")));
         jConsolidate.setSelected(Boolean.valueOf(config.getProperty("display.consolidated")));
 
 // hide some values until the code has been implmented        
-        jCheckRefresh.setVisible(false);
-        jCheckHideNoStock.setVisible(false);
-        jchkHideCategory.setVisible(false);
+
 
         if (config.getProperty("table.customercolour") == null) {
             jCustomerColour.setSelectedItem("blue");
@@ -156,11 +148,7 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
             jTableRetain.setModel(new SpinnerNumberModel(Integer.parseInt(tableRetain), 7, 90, 1));
         }
 
-        if (jCheckHideNoStock.isSelected()) {
-            jCheckRefresh.setVisible(true);
-        } else {
-            jCheckRefresh.setVisible(false);
-        }
+
 
         dirty.setDirty(false);
     }
@@ -187,20 +175,14 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
         config.setProperty("till.amountattop", Boolean.toString(jMoveAMountBoxToTop.isSelected()));
         config.setProperty("screen.600800", Boolean.toString(jCloseCashbtn.isSelected()));
         config.setProperty("table.transparentbuttons", Boolean.toString(jTableButtons.isSelected()));
-        config.setProperty("panel.hidecategory", Boolean.toString(jchkHideCategory.isSelected()));
+
         config.setProperty("dbtable.retaindays", jTableRetain.getValue().toString());
-        config.setProperty("panel.hidezerostockitems", Boolean.toString(jCheckHideNoStock.isSelected()));
+
         config.setProperty("db.productupdate", Boolean.toString(jUpdatedbprice.isSelected()));
         config.setProperty("sales.newscreen", Boolean.toString( jChangeSalesScreen.isSelected()));
         config.setProperty("display.consolidated", Boolean.toString( jConsolidate.isSelected()));
         
-        
 
-        if (jCheckHideNoStock.isSelected()) {
-            config.setProperty("panel.refreshproducts", Boolean.toString(jCheckRefresh.isSelected()));
-        } else {
-            config.setProperty("panel.refreshproducts", "false");
-        }
 
         dirty.setDirty(false);
     }
@@ -236,11 +218,8 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
         jchkTextOverlay = new javax.swing.JCheckBox();
         jTaxIncluded = new javax.swing.JCheckBox();
         jMoveAMountBoxToTop = new javax.swing.JCheckBox();
-        jchkHideCategory = new javax.swing.JCheckBox();
-        jCheckHideNoStock = new javax.swing.JCheckBox();
         jTableRetain = new javax.swing.JSpinner();
         jLabel4 = new javax.swing.JLabel();
-        jCheckRefresh = new javax.swing.JCheckBox();
         jUpdatedbprice = new javax.swing.JCheckBox();
         jChangeSalesScreen = new javax.swing.JCheckBox();
         jConsolidate = new javax.swing.JCheckBox();
@@ -433,21 +412,6 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
         jPanel4.add(jMoveAMountBoxToTop);
         jMoveAMountBoxToTop.setBounds(410, 50, 180, 30);
 
-        jchkHideCategory.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jchkHideCategory.setText(bundle.getString("label.hidecategory")); // NOI18N
-        jPanel4.add(jchkHideCategory);
-        jchkHideCategory.setBounds(10, 110, 200, 23);
-
-        jCheckHideNoStock.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jCheckHideNoStock.setText(bundle.getString("label.hidezerostock")); // NOI18N
-        jCheckHideNoStock.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckHideNoStockActionPerformed(evt);
-            }
-        });
-        jPanel4.add(jCheckHideNoStock);
-        jCheckHideNoStock.setBounds(210, 110, 180, 23);
-
         jTableRetain.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         jTableRetain.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -461,11 +425,6 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
         jLabel4.setText(bundle.getString("label.cleardrawertable")); // NOI18N
         jPanel4.add(jLabel4);
         jLabel4.setBounds(70, 170, 370, 15);
-
-        jCheckRefresh.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jCheckRefresh.setText(bundle.getString("label.refreshproductpanels")); // NOI18N
-        jPanel4.add(jCheckRefresh);
-        jCheckRefresh.setBounds(410, 110, 160, 23);
 
         jUpdatedbprice.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jUpdatedbprice.setText(bundle.getString("label.updatepricefromedit")); // NOI18N
@@ -526,13 +485,7 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
     private void jCustomerColourActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCustomerColourActionPerformed
 
     }//GEN-LAST:event_jCustomerColourActionPerformed
-    private void jCheckHideNoStockActionPerformed(java.awt.event.ActionEvent evt) {
-        if (jCheckHideNoStock.isSelected()) {
-            jCheckRefresh.setVisible(true);
-        } else {
-            jCheckRefresh.setVisible(false);
-        }
-    }
+
 
     private void jTableRetainStateChanged(javax.swing.event.ChangeEvent evt) {
         // TODO add your handling code here:
@@ -549,9 +502,7 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox jChangeSalesScreen;
-    private javax.swing.JCheckBox jCheckHideNoStock;
     private javax.swing.JCheckBox jCheckPrice00;
-    private javax.swing.JCheckBox jCheckRefresh;
     private javax.swing.JCheckBox jCloseCashbtn;
     private javax.swing.JCheckBox jConsolidate;
     private javax.swing.JComboBox jCustomerColour;
@@ -575,7 +526,6 @@ public class JPanelConfigSystem extends javax.swing.JPanel implements PanelConfi
     private javax.swing.JComboBox jWaiterColour;
     private javax.swing.JCheckBox jchkAutoLogoff;
     private javax.swing.JCheckBox jchkAutoLogoffToTables;
-    private javax.swing.JCheckBox jchkHideCategory;
     private javax.swing.JCheckBox jchkShowCustomerDetails;
     private javax.swing.JCheckBox jchkShowWaiterDetails;
     private javax.swing.JCheckBox jchkTextOverlay;
