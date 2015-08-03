@@ -1617,6 +1617,70 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         }
     }
 
+    
+    public void kitchenOrderScreen() {
+            kitchenOrderScreen(kitchenOrderId(), 1, true);
+    }
+    
+
+    public void kitchenOrderScreen(String id) {
+        kitchenOrderScreen(id, 1, true);        
+    }        
+    
+    
+    public void kitchenOrderScreen(Integer display, String ticketid) {       
+        kitchenOrderScreen(kitchenOrderId(), display, false);        
+    }  
+    
+    public void kitchenOrderScreen(Integer display) {      
+        kitchenOrderScreen(kitchenOrderId(), display, false);        
+    }
+
+    
+    public String kitchenOrderId(){
+                String id = "";
+        if ((m_oTicket.getCustomer() != null)) {
+            return m_oTicket.getCustomer().getName();
+        } else if (m_oTicketExt!=null){
+            return m_oTicketExt.toString();
+        } else {
+            if (m_oTicket.getPickupId() == 0) {
+                try {
+                    m_oTicket.setPickupId(dlSales.getNextPickupIndex());
+                } catch (BasicException e) {
+                    m_oTicket.setPickupId(0);
+                }
+            }            
+                 return getPickupString(m_oTicket);                            
+    }
+    } 
+    
+    
+    
+    public void kitchenOrderScreen(String id, Integer display, boolean primary) {
+        // Create a UUID for this order for the kitchenorder table
+        String orderUUID = UUID.randomUUID().toString();
+        for (int i = 0; i < m_oTicket.getLinesCount(); i++) {           
+           if ("No".equals(m_oTicket.getLine(i).getProperty("sendstatus"))){
+               if (primary){  
+                   if ((m_oTicket.getLine(i).getProperty("display")==null) || (m_oTicket.getLine(i).getProperty("display")=="")){  
+                       display=1;
+                   }else{
+                   display = Integer.parseInt(m_oTicket.getLine(i).getProperty("display"));
+               }
+               }
+            try {
+                dlSystem.addOrder(UUID.randomUUID().toString(), orderUUID, (int) m_oTicket.getLine(i).getMultiply(), m_oTicket.getLine(i).getProductName(),
+                        m_oTicket.getLine(i).getProductAttSetInstDesc(), m_oTicket.getLine(i).getProperty("notes"), id, display);
+            } catch (BasicException ex) {
+                Logger.getLogger(JPanelTicket.class.getName()).log(Level.SEVERE, null, ex);
+            }            
+           } 
+        }
+    }
+    
+    
+    
     private Object evalScript(ScriptObject scr, String resource, ScriptArg... args) {
 
         // resource here is guaranteed to be not null
@@ -1876,7 +1940,8 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         jButton1 = new javax.swing.JButton();
         btnCustomer = new javax.swing.JButton();
         btnSplit = new javax.swing.JButton();
-        btnReprint = new javax.swing.JButton();
+        jbtnLogout = new javax.swing.JButton();
+        btnReprint1 = new javax.swing.JButton();
         m_jPanelScripts = new javax.swing.JPanel();
         m_jButtonsExt = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -1967,18 +2032,33 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
             }
         });
 
-        btnReprint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/reprint.png"))); // NOI18N
-        btnReprint.setToolTipText("Reprint Last Ticket");
-        btnReprint.setFocusPainted(false);
-        btnReprint.setFocusable(false);
-        btnReprint.setMargin(new java.awt.Insets(0, 4, 0, 4));
-        btnReprint.setMaximumSize(new java.awt.Dimension(50, 40));
-        btnReprint.setMinimumSize(new java.awt.Dimension(50, 40));
-        btnReprint.setPreferredSize(new java.awt.Dimension(50, 40));
-        btnReprint.setRequestFocusEnabled(false);
-        btnReprint.addActionListener(new java.awt.event.ActionListener() {
+        jbtnLogout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/logout.png"))); // NOI18N
+        jbtnLogout.setToolTipText("Reprint Last Ticket");
+        jbtnLogout.setFocusPainted(false);
+        jbtnLogout.setFocusable(false);
+        jbtnLogout.setMargin(new java.awt.Insets(0, 4, 0, 4));
+        jbtnLogout.setMaximumSize(new java.awt.Dimension(50, 40));
+        jbtnLogout.setMinimumSize(new java.awt.Dimension(50, 40));
+        jbtnLogout.setPreferredSize(new java.awt.Dimension(50, 40));
+        jbtnLogout.setRequestFocusEnabled(false);
+        jbtnLogout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnReprintActionPerformed(evt);
+                btnLogout(evt);
+            }
+        });
+
+        btnReprint1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/openbravo/images/reprint.png"))); // NOI18N
+        btnReprint1.setToolTipText("Reprint Last Ticket");
+        btnReprint1.setFocusPainted(false);
+        btnReprint1.setFocusable(false);
+        btnReprint1.setMargin(new java.awt.Insets(0, 4, 0, 4));
+        btnReprint1.setMaximumSize(new java.awt.Dimension(50, 40));
+        btnReprint1.setMinimumSize(new java.awt.Dimension(50, 40));
+        btnReprint1.setPreferredSize(new java.awt.Dimension(50, 40));
+        btnReprint1.setRequestFocusEnabled(false);
+        btnReprint1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReprint1ActionPerformed(evt);
             }
         });
 
@@ -1987,22 +2067,25 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         m_jButtonsLayout.setHorizontalGroup(
             m_jButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(m_jButtonsLayout.createSequentialGroup()
-                .addGap(5, 5, 5)
+                .addGap(6, 6, 6)
+                .addComponent(jbtnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSplit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnReprint, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5))
+                .addComponent(btnReprint1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1, 1, 1))
         );
         m_jButtonsLayout.setVerticalGroup(
             m_jButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(m_jButtonsLayout.createSequentialGroup()
                 .addGap(5, 5, 5)
                 .addGroup(m_jButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnReprint, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnReprint1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jbtnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSplit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -2630,35 +2713,19 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
         }
     }//GEN-LAST:event_m_jaddtaxActionPerformed
 
-    private void btnReprintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReprintActionPerformed
-        // test if there is valid ticket in the system at this till to be printed
-        if (m_config.getProperty("lastticket.number") != null) {
-            try {
-                TicketInfo ticket = dlSales.loadTicket(Integer.parseInt((m_config.getProperty("lastticket.type"))), Integer.parseInt((m_config.getProperty("lastticket.number"))));
-                if (ticket == null) {
-                    JFrame frame = new JFrame();
-                    JOptionPane.showMessageDialog(frame, AppLocal.getIntString("message.notexiststicket"), AppLocal.getIntString("message.notexiststickettitle"), JOptionPane.WARNING_MESSAGE);
-                } else {
-                    m_ticket = ticket;
-                    m_ticketCopy = null; // se asigna al pulsar el boton de editar o devolver
-                    try {
-                        taxeslogic.calculateTaxes(m_ticket);
-                        TicketTaxInfo[] taxlist = m_ticket.getTaxLines();
-                    } catch (TaxesException ex) {
-                    }
-                    printTicket("Printer.ReprintLastTicket", m_ticket, null);
-                }
-            } catch (BasicException e) {
-                MessageInf msg = new MessageInf(MessageInf.SGN_WARNING, AppLocal.getIntString("message.cannotloadticket"), e);
-                msg.show(this);
-            }
-        }
-    }//GEN-LAST:event_btnReprintActionPerformed
+    private void btnLogout(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogout
+        deactivate();        
+        ((JRootApp)m_App).closeAppView(); 
+    }//GEN-LAST:event_btnLogout
+
+    private void btnReprint1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReprint1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnReprint1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCustomer;
-    private javax.swing.JButton btnReprint;
+    private javax.swing.JButton btnReprint1;
     private javax.swing.JButton btnSplit;
     private javax.swing.JPanel catcontainer;
     private javax.swing.JButton jButton1;
@@ -2669,6 +2736,7 @@ public abstract class JPanelTicket extends JPanel implements JPanelView, BeanFac
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JButton j_btnKitchenPrt;
+    private javax.swing.JButton jbtnLogout;
     private javax.swing.JButton jbtnMooring;
     private javax.swing.JPanel m_jButtons;
     private javax.swing.JPanel m_jButtonsExt;
