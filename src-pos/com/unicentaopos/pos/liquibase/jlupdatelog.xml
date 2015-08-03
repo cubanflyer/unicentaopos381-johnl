@@ -1018,9 +1018,12 @@
         </update>
     </changeSet>    
     
-    
-    
     <changeSet author="Unicentaopos - John L" id="New 1.6 columns m" dbms="mysql, derby, oracle">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists columnName="DISCOUNTED" tableName="PRODUCTS"/>
+            </not>
+        </preConditions> 
         <addColumn tableName="PRODUCTS">
             <column name="DISCOUNTED" type="varchar(5)" defaultValue="no"></column>  
             <column name="CANDISCOUNT" type="${boolean.type}" defaultValueNumeric="1" >
@@ -1030,22 +1033,33 @@
     </changeSet>
 
     <changeSet author="Unicentaopos - John L" id="New 1.6 columns p" dbms="postgresql, hypersql, hsqldb">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists columnName="DISCOUNTED" tableName="PRODUCTS"/>
+            </not>
+        </preConditions>  
         <addColumn tableName="PRODUCTS">
             <column name="DISCOUNTED" type="varchar(5)" defaultValue="no"></column>  
             <column name="CANDISCOUNT" type="${boolean.type}" defaultValueNumeric="true" >
                 <constraints nullable="false"/>  
             </column>         
         </addColumn>       
-    </changeSet>
+    </changeSet> 
+    
+
     
     
-   <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.6" >
+    <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.6" >
         <update tableName="APPJL">
             <column name="VERSION" value="1.6"/>
         </update>
     </changeSet>  
     
-    
+    <changeSet author="UnicentaOpos - John L" id="Register APPJL 1.7" >
+        <update tableName="APPJL">
+            <column name="VERSION" value="1.7"/>
+        </update>
+    </changeSet>   
     
 </databaseChangeLog>
 

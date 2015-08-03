@@ -45,8 +45,8 @@ public class AppLocal {
     private static final LocaleResources m_resources;
     
     public static final String APP_IDJL = "Unicenta John L's changes";    
-    public static final String APP_VERSIONJL ="1.6";
-    public static final String APP_VERSIONJLCORE="050515";    
+    public static final String APP_VERSIONJL ="1.7";
+    public static final String APP_VERSIONJLCORE="040715";    
     
     public static String LIST_BY_RIGHTS = "";
             
